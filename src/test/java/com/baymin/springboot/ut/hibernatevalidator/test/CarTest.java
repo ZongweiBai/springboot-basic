@@ -1,6 +1,6 @@
-package com.baymin.springboot.hibernatevalidator.test;
+package com.baymin.springboot.ut.hibernatevalidator.test;
 
-import com.baymin.springboot.hibernatevalidator.module.Car;
+import com.baymin.springboot.ut.hibernatevalidator.module.Car;
 import org.junit.BeforeClass;
 import org.junit.Test;
 

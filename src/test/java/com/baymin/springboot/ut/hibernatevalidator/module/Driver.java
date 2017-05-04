@@ -1,6 +1,6 @@
-package com.baymin.springboot.hibernatevalidator.module;
+package com.baymin.springboot.ut.hibernatevalidator.module;
 
-import com.baymin.springboot.hibernatevalidator.checkgroup.DriverChecks;
+import com.baymin.springboot.ut.hibernatevalidator.checkgroup.DriverChecks;
 
 import javax.validation.constraints.AssertTrue;
 import javax.validation.constraints.Min;

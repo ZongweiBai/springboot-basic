@@ -1,4 +1,4 @@
-package com.baymin.springboot.hibernatevalidator.module;
+package com.baymin.springboot.ut.hibernatevalidator.module;
 
 import javax.validation.constraints.NotNull;
 

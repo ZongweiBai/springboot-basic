@@ -5,6 +5,8 @@ import com.baymin.springboot.entity.UserProfile;
 import com.baymin.springboot.service.IUserProfileService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

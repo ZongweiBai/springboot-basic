@@ -14,7 +14,7 @@
 
     <groupId>com.baymin</groupId>
     <artifactId>springboot-basic</artifactId>
-    <packaging>pom</packaging>
+    <packaging>jar</packaging>
     <version>master-SNAPSHOT</version>
 
     <properties>
@@ -31,6 +31,7 @@
         <jackson-provider.version>2.8.8</jackson-provider.version>
         <junit.version>4.12</junit.version>
         <rest-assured.version>2.9.0</rest-assured.version>
+        <redis-starter.version>1.4.6.RELEASE</redis-starter.version>
     </properties>
 
     <dependencies>
@@ -76,6 +77,13 @@
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>${jackson-provider.version}</version>
+        </dependency>
+
+        <!-- redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-redis</artifactId>
+            <version>${redis-starter.version}</version>
         </dependency>
 
         <dependency>
@@ -137,14 +145,12 @@
     </dependencies>
 
     <build>
+        <finalName>webapi</finalName>
         <plugins>
-            <!-- 这是spring boot devtool plugin -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <!--fork :  如果没有该项配置，肯呢个devtools不会起作用，即应用不会restart -->
-                    <fork>true</fork>
                     <mainClass>com.baymin.springboot.SpringBootApp</mainClass>
                     <layout>ZIP</layout>
                 </configuration>

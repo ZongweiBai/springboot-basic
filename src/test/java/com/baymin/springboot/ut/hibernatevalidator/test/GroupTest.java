@@ -1,9 +1,9 @@
-package com.baymin.springboot.hibernatevalidator.test;
+package com.baymin.springboot.ut.hibernatevalidator.test;
 
-import com.baymin.springboot.hibernatevalidator.checkgroup.CarChecks;
-import com.baymin.springboot.hibernatevalidator.checkgroup.DriverChecks;
-import com.baymin.springboot.hibernatevalidator.module.Car;
-import com.baymin.springboot.hibernatevalidator.module.Driver;
+import com.baymin.springboot.ut.hibernatevalidator.checkgroup.CarChecks;
+import com.baymin.springboot.ut.hibernatevalidator.checkgroup.DriverChecks;
+import com.baymin.springboot.ut.hibernatevalidator.module.Car;
+import com.baymin.springboot.ut.hibernatevalidator.module.Driver;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
