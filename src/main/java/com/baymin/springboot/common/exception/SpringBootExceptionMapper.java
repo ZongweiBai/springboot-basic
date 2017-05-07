@@ -1,4 +1,4 @@
-package com.baymin.springboot.exception;
+package com.baymin.springboot.common.exception;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;

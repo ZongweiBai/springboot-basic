@@ -1,4 +1,4 @@
-package com.baymin.springboot.exception;
+package com.baymin.springboot.common.exception;
 
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;

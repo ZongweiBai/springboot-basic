@@ -32,6 +32,7 @@
         <junit.version>4.12</junit.version>
         <rest-assured.version>2.9.0</rest-assured.version>
         <redis-starter.version>1.4.6.RELEASE</redis-starter.version>
+        <commons-lang3.version>3.5</commons-lang3.version>
     </properties>
 
     <dependencies>
@@ -111,15 +112,9 @@
         </dependency>
 
         <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <version>${joda-time.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jadira.usertype</groupId>
-            <artifactId>usertype.jodatime</artifactId>
-            <version>${usertype.jodatime.version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
         </dependency>
 
         <!-- test -->
@@ -161,6 +156,14 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>

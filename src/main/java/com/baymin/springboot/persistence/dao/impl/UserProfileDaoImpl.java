@@ -1,8 +1,8 @@
-package com.baymin.springboot.dao.impl;
+package com.baymin.springboot.persistence.dao.impl;
 
-import com.baymin.springboot.dao.IUserProfileDao;
-import com.baymin.springboot.entity.UserProfile;
-import com.baymin.springboot.repository.IUserProfileRepository;
+import com.baymin.springboot.persistence.dao.IUserProfileDao;
+import com.baymin.springboot.persistence.entity.UserProfile;
+import com.baymin.springboot.persistence.repository.IUserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -26,7 +26,6 @@ public class UserProfileDaoImpl implements IUserProfileDao {
     @Override
     @Cacheable(value = "userProfile", keyGenerator = "wiselyKeyGenerator")
     public UserProfile findByAccount(String account) {
-        System.out.println("not cache, query db");
         return userProfileRepository.findByAccount(account);
     }
 }

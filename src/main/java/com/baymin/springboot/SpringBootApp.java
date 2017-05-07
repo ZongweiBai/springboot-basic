@@ -1,6 +1,6 @@
 package com.baymin.springboot;
 
-import com.baymin.springboot.exception.SpringBootExceptionMapper;
+import com.baymin.springboot.common.exception.SpringBootExceptionMapper;
 import com.baymin.springboot.rest.UserProfileApi;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import org.apache.cxf.Bus;

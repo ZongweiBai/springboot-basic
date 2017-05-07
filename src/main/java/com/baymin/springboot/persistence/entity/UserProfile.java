@@ -1,13 +1,12 @@
-package com.baymin.springboot.entity;
+package com.baymin.springboot.persistence.entity;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Type;
-import org.joda.time.DateTime;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by Baymin on 2017/4/9.
@@ -24,7 +23,7 @@ public class UserProfile implements Serializable {
     private String actualName;
     private String password;
     private String payPassword;
-    private DateTime registerTime;
+    private Date registerTime;
 
     @Id
     @Column(name = "ID", length = 32)
@@ -59,9 +58,8 @@ public class UserProfile implements Serializable {
         return payPassword;
     }
 
-    @Type(type = "org.jadira.usertype.dateandtime.joda.PersistentDateTime")
-    @Column(name = "REGISTER_TIME")
-    public DateTime getRegisterTime() {
+    @Column(name = "REGISTER_TIME", columnDefinition = "timestamp")
+    public Date getRegisterTime() {
         return registerTime;
     }
 }

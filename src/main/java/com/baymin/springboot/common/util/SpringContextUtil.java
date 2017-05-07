@@ -1,4 +1,4 @@
-package com.baymin.springboot.util;
+package com.baymin.springboot.common.util;
 
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;

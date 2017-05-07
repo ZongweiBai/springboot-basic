@@ -1,6 +1,6 @@
 package com.baymin.springboot.service;
 
-import com.baymin.springboot.entity.UserProfile;
+import com.baymin.springboot.persistence.entity.UserProfile;
 
 /**
  * Created by Baymin on 2017/4/9.

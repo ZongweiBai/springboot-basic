@@ -1,4 +1,4 @@
-package com.baymin.springboot.exception;
+package com.baymin.springboot.common.exception;
 
 /**
  * Created by ebaizon on 4/20/2017.

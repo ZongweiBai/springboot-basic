@@ -1,15 +1,13 @@
 package com.baymin.springboot.service.impl;
 
-import com.baymin.springboot.dao.IUserProfileDao;
-import com.baymin.springboot.entity.UserProfile;
+import com.baymin.springboot.persistence.dao.IUserProfileDao;
+import com.baymin.springboot.persistence.entity.UserProfile;
 import com.baymin.springboot.service.IUserProfileService;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Date;
 
 /**
  * Created by Baymin on 2017/4/9.
@@ -28,7 +26,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
     @Override
     public void saveUserProfile(UserProfile userProfile) {
-        userProfile.setRegisterTime(new DateTime());
+        userProfile.setRegisterTime(new Date());
         userProfileDao.save(userProfile);
     }
 }
