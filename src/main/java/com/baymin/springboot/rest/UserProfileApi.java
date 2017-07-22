@@ -3,12 +3,9 @@ package com.baymin.springboot.rest;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.SpringBootException;
-import com.baymin.springboot.common.util.SpringContextUtil;
-import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.persistence.entity.UserProfile;
+import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IUserProfileService;
-import com.baymin.springboot.service.impl.RedisServiceImpl;
-import com.baymin.springboot.service.impl.UserProfileServiceImpl;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.annotation.Resource;
@@ -35,7 +32,6 @@ public class UserProfileApi {
     @GET
     @Path("/{account}")
     public UserProfile queryByAccount(@PathParam("account") String account) {
-        userProfileService = SpringContextUtil.getBean(UserProfileServiceImpl.class);
         UserProfile userProfile = userProfileService.findByAccount(account);
         if (userProfile == null) {
             String description = String.format(RECORD_NOT_EXIST, "userProfile", account);
@@ -46,8 +42,6 @@ public class UserProfileApi {
 
     @POST
     public void saveUserProfile(UserProfile userProfile) {
-        userProfileService = SpringContextUtil.getBean(UserProfileServiceImpl.class);
-        redisService = SpringContextUtil.getBean(RedisServiceImpl.class);
         userProfileService.saveUserProfile(userProfile);
 
         String userCount = redisService.get("userCount");

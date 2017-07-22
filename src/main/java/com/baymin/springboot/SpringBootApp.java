@@ -29,10 +29,15 @@ public class SpringBootApp {
     }
 
     @Bean
+    public UserProfileApi getUserProfileApi() {
+        return new UserProfileApi();
+    }
+
+    @Bean
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
-        endpoint.setServiceBeans(Arrays.asList(new UserProfileApi()));
+        endpoint.setServiceBeans(Arrays.asList(getUserProfileApi()));
         endpoint.setAddress("/");
 
         endpoint.setInInterceptors(Arrays.asList(new LoggingInInterceptor()));
