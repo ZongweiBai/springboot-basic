@@ -37,13 +37,13 @@ public class SpringBootApp {
     public Server rsServer() {
         JAXRSServerFactoryBean endpoint = new JAXRSServerFactoryBean();
         endpoint.setBus(bus);
-//        endpoint.setServiceBeans(Arrays.asList(getUserProfileApi()));
+        endpoint.setServiceBeans(Arrays.asList(getUserProfileApi()));
         endpoint.setAddress("/");
 
-//        endpoint.setInInterceptors(Arrays.asList(new LoggingInInterceptor()));
-//        endpoint.setInFaultInterceptors(Arrays.asList(new LoggingInInterceptor()));
-//        endpoint.setOutInterceptors(Arrays.asList(new LoggingOutInterceptor()));
-//        endpoint.setOutFaultInterceptors(Arrays.asList(new LoggingOutInterceptor()));
+        endpoint.setInInterceptors(Arrays.asList(new LoggingInInterceptor()));
+        endpoint.setInFaultInterceptors(Arrays.asList(new LoggingInInterceptor()));
+        endpoint.setOutInterceptors(Arrays.asList(new LoggingOutInterceptor()));
+        endpoint.setOutFaultInterceptors(Arrays.asList(new LoggingOutInterceptor()));
 
         endpoint.setProviders(Arrays.asList(new JacksonJaxbJsonProvider(), new SpringBootExceptionMapper()));
         return endpoint.create();
