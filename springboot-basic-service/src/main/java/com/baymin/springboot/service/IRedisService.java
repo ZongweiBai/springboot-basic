@@ -21,8 +21,10 @@ public interface IRedisService {
 
     long lpush(String key, Object obj) throws JsonProcessingException;
 
+    String lpop(String key);
+
     long rpush(String key, Object obj) throws JsonProcessingException;
 
-    String lpop(String key);
+    String rpop(String key);
 
 }
