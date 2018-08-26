@@ -5,9 +5,11 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Service;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import com.baymin.springboot.service.IRedisService;
@@ -22,7 +24,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RedisServiceImpl implements IRedisService {
 
     @Autowired
-    private RedisTemplate<String, ?> redisTemplate;
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private RedisTemplate<String, Serializable> redisTemplate;
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -38,17 +43,12 @@ public class RedisServiceImpl implements IRedisService {
 
     @Override
     public String get(final String key) {
-        String result = redisTemplate.execute((RedisCallback<String>) connection -> {
-            RedisSerializer<String> serializer = redisTemplate.getStringSerializer();
-            byte[] value = connection.get(serializer.serialize(key));
-            return serializer.deserialize(value);
-        });
-        return result;
+        return stringRedisTemplate.opsForValue().get(key);
     }
 
     @Override
-    public boolean expire(final String key, long expire) {
-        return redisTemplate.expire(key, expire, TimeUnit.SECONDS);
+    public Boolean expire(final String key, long expire) {
+        return stringRedisTemplate.expire(key, expire, TimeUnit.SECONDS);
     }
 
     @Override

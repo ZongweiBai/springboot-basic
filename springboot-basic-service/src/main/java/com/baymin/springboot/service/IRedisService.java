@@ -13,7 +13,7 @@ public interface IRedisService {
 
     String get(String key);
 
-    boolean expire(String key, long expire);
+    Boolean expire(String key, long expire);
 
     <T> boolean setList(String key, List<T> list) throws JsonProcessingException;
 

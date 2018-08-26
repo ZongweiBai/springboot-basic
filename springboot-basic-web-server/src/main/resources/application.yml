@@ -1,23 +1,25 @@
 server:
   port: 8888
-  context-path: /springboot
+  servlet:
+    context-path: /springboot
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://127.0.0.1:3306/one_moment
+    url: jdbc:mysql://127.0.0.1:3306/familily-casr
     username: root
     password: root
     driverClassName: com.mysql.jdbc.Driver
-    max-active: 20
-    max-idle: 8
-    min-idle: 8
-    initial-size: 10
+    hikari:
+      maximum-pool-size: 50
+      minimum-idle: 20
   jpa:
     database: MYSQL
     show-sql: true
     hibernate:
       ddl-auto: update
-      naming.strategy: org.hibernate.cfg.ImprovedNamingStrategy
+      naming:
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
     properties.hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
   http:
     encoding:
@@ -31,11 +33,13 @@ spring:
     host: 127.0.0.1
     #password:
     port: 6379
-    pool:
-      max-idle: 8
-      min-idle: 0
-      max-active: 8
-      max-wait: -1
+    lettuce:
+      pool:
+        max-idle: 8
+        min-idle: 0
+        max-wait: -1
+        max-active: 8
 cxf:
   path: /rest
-  jaxrs.client.classes-scan-packages: com.baymin.springboot.rest.api
+  jaxrs:
+    client.classes-scan-packages: com.baymin.springboot.rest.api

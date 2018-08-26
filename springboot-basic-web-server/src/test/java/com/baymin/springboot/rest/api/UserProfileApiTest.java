@@ -1,7 +1,7 @@
 package com.baymin.springboot.rest.api;
 
 import com.baymin.springboot.store.entity.UserProfile;
-import com.jayway.restassured.RestAssured;
+import io.restassured.RestAssured;
 import org.junit.Test;
 
 import java.util.Random;
