@@ -1,4 +1,4 @@
-package com.baymin.springboot.rest.api;
+package com.baymin.springboot.webserver.api;
 
 import io.restassured.RestAssured;
 import org.junit.Before;
@@ -21,7 +21,7 @@ public class AbstractTest {
     public void setUp() throws Exception {
         RestAssured.baseURI = "http://127.0.0.1";
         RestAssured.port = port;
-        RestAssured.basePath = "/springboot/rest";
+        RestAssured.basePath = "/springboot/webserver";
     }
 
 }

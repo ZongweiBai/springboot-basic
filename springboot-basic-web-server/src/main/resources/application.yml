@@ -1,11 +1,11 @@
 server:
   port: 8888
   servlet:
-    context-path: /springboot
+    context-path: /family-care
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://127.0.0.1:3306/familily-casr
+    url: jdbc:mysql://127.0.0.1:13306/family_care?characterEncoding=utf8&useSSL=false
     username: root
     password: root
     driverClassName: com.mysql.jdbc.Driver
@@ -16,7 +16,7 @@ spring:
     database: MYSQL
     show-sql: true
     hibernate:
-      ddl-auto: update
+      ddl-auto: none
       naming:
         implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
         physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
@@ -32,14 +32,10 @@ spring:
     database: 0
     host: 127.0.0.1
     #password:
-    port: 6379
+    port: 16379
     lettuce:
       pool:
         max-idle: 8
         min-idle: 0
         max-wait: -1
         max-active: 8
-cxf:
-  path: /rest
-  jaxrs:
-    client.classes-scan-packages: com.baymin.springboot.rest.api

@@ -1,4 +1,4 @@
-package com.baymin.springboot.rest.api;
+package com.baymin.springboot.webserver.api;
 
 import com.baymin.springboot.store.entity.UserProfile;
 import io.restassured.RestAssured;

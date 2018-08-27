@@ -1,30 +1,24 @@
-package com.baymin.springboot.rest.api;
+package com.baymin.springboot.webserver.api;
 
-import org.apache.commons.lang3.StringUtils;
-import javax.annotation.Resource;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
-import com.baymin.springboot.rest.exception.SpringBootException;
 import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.webserver.exception.WebServerException;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT_EXIST;
 
 /**
  * Created by Baymin on 2017/4/11.
  */
-@Path("/userProfile")
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@RestController
+@RequestMapping(path = "/userprofile")
 public class UserProfileApi {
 
     @Resource
@@ -33,27 +27,17 @@ public class UserProfileApi {
     @Resource
     private IRedisService redisService;
 
-    @GET
-    @Path("/{account}")
-    public UserProfile queryByAccount(@PathParam("account") String account) {
+    @GetMapping(path = "/{account}")
+    public UserProfile queryByAccount(@PathVariable("account") String account) {
         UserProfile userProfile = userProfileService.findByAccount(account);
         if (userProfile == null) {
             String description = String.format(RECORD_NOT_EXIST, "userProfile", account);
-            throw new SpringBootException(Response.Status.NOT_FOUND, new ErrorInfo(ErrorCode.not_found.name(), description));
+            throw new WebServerException(HttpStatus.NOT_FOUND, new ErrorInfo(ErrorCode.not_found.name(), description));
         }
         return userProfile;
     }
 
-    @GET
-    @Path("/{account}")
-    public String queryByAccountForTest(@PathParam("account") String account) {
-        UserProfile userProfile = new UserProfile();
-        userProfile.setId(account);
-        userProfile.setAccount(account);
-        return userProfile.toString();
-    }
-
-    @POST
+    @PostMapping
     public void saveUserProfile(UserProfile userProfile) {
         userProfileService.saveUserProfile(userProfile);
 

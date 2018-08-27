@@ -22,8 +22,8 @@
         <java.version>1.8</java.version>
         <springboot.version>2.0.4.RELEASE</springboot.version>
         <mysql.version>8.0.12</mysql.version>
-        <hibernate-validator.version>5.4.1.Final</hibernate-validator.version>
-        <el-api.version>2.2.5</el-api.version>
+        <hibernate-validator.version>6.0.11.Final</hibernate-validator.version>
+        <el-api.version>3.0.1-b06</el-api.version>
         <hikaricp.version>3.2.0</hikaricp.version>
         <lombok.version>1.18.2</lombok.version>
         <joda-time.version>2.9.9</joda-time.version>
