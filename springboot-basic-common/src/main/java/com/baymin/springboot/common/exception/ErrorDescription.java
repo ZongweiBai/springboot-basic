@@ -5,6 +5,11 @@ package com.baymin.springboot.common.exception;
  */
 public class ErrorDescription {
 
+    public static final String INVALID_REQUEST = "请求参数非法";
+    public static final String INVALID_SMS_CODE = "用户名或验证码错误";
+    public static final String INVALID_PASSWORD = "用户名或密码错误";
+    public static final String SERVER_ERROR = "服务器异常";
+
     public static final String MISSING_PARAM = "parameter %s is empty or null";
     public static final String INVALID_PARAM = "parameter %s is invalid";
     public static final String INVALID_ENTITY_TYPE = "entity type %s is invalid";
