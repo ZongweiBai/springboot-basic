@@ -10,4 +10,6 @@ public interface IUserProfileDao {
     void save(UserProfile userProfile);
 
     UserProfile findByAccount(String account);
+
+    UserProfile findById(String userId);
 }

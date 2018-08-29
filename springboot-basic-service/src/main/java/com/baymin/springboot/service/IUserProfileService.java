@@ -11,4 +11,5 @@ public interface IUserProfileService {
 
     void saveUserProfile(UserProfile userProfile);
 
+    UserProfile findById(String userId);
 }

@@ -28,4 +28,9 @@ public class UserProfileDaoImpl implements IUserProfileDao {
     public UserProfile findByAccount(String account) {
         return userProfileRepository.findByAccount(account);
     }
+
+    @Override
+    public UserProfile findById(String userId) {
+        return userProfileRepository.findById(userId).orElse(null);
+    }
 }

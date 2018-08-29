@@ -99,6 +99,12 @@
                 <version>${springboot.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.vladmihalcea</groupId>
+                <artifactId>hibernate-types-52</artifactId>
+                <version>2.2.3</version>
+            </dependency>
+
             <!-- mysql driver -->
             <dependency>
                 <groupId>mysql</groupId>

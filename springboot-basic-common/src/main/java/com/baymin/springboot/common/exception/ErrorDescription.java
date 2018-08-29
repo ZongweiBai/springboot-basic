@@ -9,16 +9,13 @@ public class ErrorDescription {
     public static final String INVALID_SMS_CODE = "用户名或验证码错误";
     public static final String INVALID_PASSWORD = "用户名或密码错误";
     public static final String SERVER_ERROR = "服务器异常";
-
-    public static final String MISSING_PARAM = "parameter %s is empty or null";
-    public static final String INVALID_PARAM = "parameter %s is invalid";
-    public static final String INVALID_ENTITY_TYPE = "entity type %s is invalid";
-    public static final String NOT_ALLOWED_PARAM = "parameter %s value not allowed";
-    public static final String MISMATCH_PARAM = "parameter %s mismatch";
-    public static final String RECORD_NOT_EXIST = "record of %s through %s not exist";
-    public static final String RECORD_ALREADY_EXIST = "record of %s through %s already exist";
-    public static final String RECORD_SAVE_ERROR = "record of %s through save error";
-    public static final String JSON_PARSE_ERROR = "json string %s parse error";
-    public static final String INTERNAL_SERVER_ERROR = "Internal server error.";
+    public static final String TOKEN_INVALID = "Token非法";
+    public static final String TOKEN_EXPIRED = "Token已过期";
+    public static final String ORDER_INFO_NOT_CORRECT = "订单信息不正确";
+    public static final String USER_NOT_EXIST = "用户不存在";
+    public static final String USER_EXIST = "用户已存在";
+    public static final String NOT_MEET_CONDITION = "不满足评价条件";
+    public static final String ORDER_PAYED = "订单已支付，不能重复支付";
+    public static final String RECORD_NOT_EXIST = "记录不存在";
 
 }

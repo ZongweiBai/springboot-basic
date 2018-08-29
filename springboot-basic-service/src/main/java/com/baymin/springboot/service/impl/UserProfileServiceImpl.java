@@ -28,4 +28,9 @@ public class UserProfileServiceImpl implements IUserProfileService {
         userProfile.setRegisterTime(new Date());
         userProfileDao.save(userProfile);
     }
+
+    @Override
+    public UserProfile findById(String userId) {
+        return userProfileDao.findById(userId);
+    }
 }

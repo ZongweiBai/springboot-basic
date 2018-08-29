@@ -18,7 +18,7 @@ import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT
  * Created by Baymin on 2017/4/11.
  */
 @RestController
-@RequestMapping(path = "/userprofile")
+@RequestMapping(path = "/user")
 public class UserProfileApi {
 
     @Resource

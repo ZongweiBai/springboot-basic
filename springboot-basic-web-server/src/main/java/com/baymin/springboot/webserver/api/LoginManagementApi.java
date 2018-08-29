@@ -9,16 +9,20 @@ import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.webserver.exception.WebServerException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.SignatureException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
 
@@ -29,6 +33,7 @@ import static com.baymin.springboot.common.exception.ErrorDescription.*;
 public class LoginManagementApi {
 
     private static final Logger log = LoggerFactory.getLogger(LoginManagementApi.class);
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     @Autowired
     private IUserProfileService userProfileService;
@@ -79,6 +84,42 @@ public class LoginManagementApi {
         } catch (Exception e) {
             log.error("Error occurred", e);
             throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SERVER_ERROR));
+        }
+    }
+
+    @RequestMapping(value = "/token/refresh", method = RequestMethod.POST)
+    @ResponseBody
+    public TokenVo refreshAccessToken(String refreshToken, HttpServletResponse response) {
+        if (refreshToken == null) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        try {
+            Claims claims = JwtUtil.parseJWT(refreshToken);
+            Map<String, Object> accountMap = objectMapper.readValue(claims.getSubject(), new TypeReference<Map<String, Object>>() {
+            });
+            if (!StringUtils.equals(Constant.JWTAPI.JWT_REFRESH_TOKEN, String.valueOf(accountMap.get("tokenType")))) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
+            }
+            UserProfile userProfile = userProfileService.findById(String.valueOf(accountMap.get("userId")));
+            if (userProfile == null) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
+            }
+            String subject = JwtUtil.generalSubject(userProfile.getId(), Constant.JWTAPI.JWT_TOKEN);
+            String accessToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_TTL);
+            TokenVo tokenVo = new TokenVo();
+            tokenVo.setAccessToken(accessToken);
+            tokenVo.setRefreshToken(refreshToken);
+            tokenVo.setExpiresIn(Constant.JWTAPI.JWT_TTL / 1000);
+            tokenVo.setTokenType("bearer");
+            return tokenVo;
+        } catch (SignatureException | ExpiredJwtException | IOException e) {
+            if (e instanceof SignatureException) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
+            } else if (e instanceof ExpiredJwtException) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_EXPIRED));
+            } else {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), SERVER_ERROR));
+            }
         }
     }
 

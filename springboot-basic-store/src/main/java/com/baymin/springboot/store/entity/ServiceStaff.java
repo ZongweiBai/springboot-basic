@@ -1,6 +1,7 @@
 package com.baymin.springboot.store.entity;
 
 import com.baymin.springboot.store.enumconstant.ServiceStaffType;
+import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
@@ -64,4 +65,7 @@ public class ServiceStaff {
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
+
+    @Column(name = "SERVICE_STATUS")
+    private ServiceStatus serviceStatus;
 }
