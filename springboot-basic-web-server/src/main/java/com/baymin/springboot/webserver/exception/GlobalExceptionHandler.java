@@ -1,6 +1,7 @@
 package com.baymin.springboot.webserver.exception;
 
 import com.baymin.springboot.common.exception.ErrorInfo;
+import com.baymin.springboot.common.exception.WebServerException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

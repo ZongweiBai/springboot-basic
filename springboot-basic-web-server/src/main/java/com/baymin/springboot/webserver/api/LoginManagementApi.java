@@ -8,7 +8,7 @@ import com.baymin.springboot.common.util.JwtUtil;
 import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.webserver.exception.WebServerException;
+import com.baymin.springboot.common.exception.WebServerException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Map;
 import java.util.Objects;
@@ -89,7 +88,7 @@ public class LoginManagementApi {
 
     @RequestMapping(value = "/token/refresh", method = RequestMethod.POST)
     @ResponseBody
-    public TokenVo refreshAccessToken(String refreshToken, HttpServletResponse response) {
+    public TokenVo refreshAccessToken(String refreshToken) {
         if (refreshToken == null) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }

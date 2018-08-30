@@ -1,4 +1,4 @@
-package com.baymin.springboot.webserver.exception;
+package com.baymin.springboot.common.exception;
 
 import lombok.Data;
 

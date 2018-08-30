@@ -1,12 +1,13 @@
 package com.baymin.springboot.store.dao.impl;
 
+import com.baymin.springboot.store.dao.IUserProfileDao;
+import com.baymin.springboot.store.entity.QUserProfile;
+import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.store.repository.IUserProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Repository;
-import com.baymin.springboot.store.dao.IUserProfileDao;
-import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.store.repository.IUserProfileRepository;
 
 /**
  * Created by Baymin on 2017/4/9.
@@ -31,6 +32,7 @@ public class UserProfileDaoImpl implements IUserProfileDao {
 
     @Override
     public UserProfile findById(String userId) {
-        return userProfileRepository.findById(userId).orElse(null);
+        QUserProfile qUserProfile = QUserProfile.userProfile;
+        return userProfileRepository.findOne(qUserProfile.id.eq(userId));
     }
 }

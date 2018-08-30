@@ -49,7 +49,7 @@ public class OrderExt implements Serializable {
     @Column(name = "SERVICE_NUMBER", length = 4)
     private Integer serviceNumber;
 
-    @Column(name = "SERVICE_AddRESS", length = 128)
+    @Column(name = "SERVICE_ADDRESS", length = 128)
     private String serviceAddress;
 
     @Column(name = "CONTACT", length = 20)

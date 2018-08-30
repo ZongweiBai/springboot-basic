@@ -5,7 +5,7 @@ import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.webserver.exception.WebServerException;
+import com.baymin.springboot.common.exception.WebServerException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

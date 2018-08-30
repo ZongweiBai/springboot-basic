@@ -36,7 +36,7 @@ public class Order implements Serializable {
     private Date orderTime;
 
     @Column(name = "CLOSE_TIME", columnDefinition = "timestamp")
-    private Date closeDate;
+    private Date closeTime;
 
     @Column(name = "ORDER_TYPE")
     private OrderType orderType;
