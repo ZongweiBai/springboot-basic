@@ -12,7 +12,7 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
-@Entity(name = "t_order")
+@Entity(name = "T_INVOICE")
 public class Invoice {
 
     @Id
@@ -36,6 +36,9 @@ public class Invoice {
     @Column(name = "TAX_NO", length = 32)
     private String taxNo;
 
+    @Column(name = "INVOICE_FEE", precision=10, scale=2)
+    private Double invoiceFee;
+
     @Column(name = "ORDER_IDS", length = 256)
     private String orderIds;
 
@@ -46,12 +49,12 @@ public class Invoice {
      * 创建日期
      */
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Date createTime;
+    private Long createTime;
 
     /**
      * 处理日期
      */
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
-    private Date DEAL_Time;
+    private Long DEAL_Time;
 
 }

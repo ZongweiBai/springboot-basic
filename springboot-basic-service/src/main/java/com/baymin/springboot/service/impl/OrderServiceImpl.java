@@ -1,38 +1,35 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.common.constant.RequestConstant;
-import com.baymin.springboot.common.exception.ErrorCode;
-import com.baymin.springboot.common.exception.ErrorInfo;
-import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
+import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.OrderExt;
 import com.baymin.springboot.store.enumconstant.InvoiceStatus;
+import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.UserOrderRequest;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.baymin.springboot.store.repository.IEvaluateRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.vladmihalcea.hibernate.type.json.internal.JacksonUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.*;
 
 import static com.baymin.springboot.common.constant.RequestConstant.*;
-import static com.baymin.springboot.common.exception.ErrorDescription.SERVER_ERROR;
 import static com.baymin.springboot.store.enumconstant.OrderType.HOME_CARE;
 import static com.baymin.springboot.store.enumconstant.OrderType.HOSPITAL_CARE;
 import static com.baymin.springboot.store.enumconstant.OrderType.REHABILITATION;
 
 @Service
+@Transactional
 public class OrderServiceImpl implements IOrderService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
@@ -44,13 +41,16 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IInvoiceDao invoiceDao;
 
+    @Autowired
+    private IEvaluateRepository evaluateRepository;
+
     @Override
     public Order saveUserOrder(UserOrderRequest request) {
         Invoice invoice = request.getInvoice();
         Order order = new Order();
 
         order.setOrderUserId(request.getOrderUserId());
-        order.setOrderTime(new Date());
+        order.setOrderTime(System.currentTimeMillis());
         order.setOrderType(request.getOrderType());
         if (StringUtils.equals(RequestConstant.OFFLINE, request.getPayway())) {
             order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
@@ -61,8 +61,9 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.isNull(request.getInvoice())) {
             order.setInvoiceStatus(InvoiceStatus.NOT_INVOICED);
         } else {
-            order.setInvoiceStatus(InvoiceStatus.INVOICED);
+            order.setInvoiceStatus(InvoiceStatus.INVOICING);
         }
+        order.setStatus(OrderStatus.ORDER_UN_PAY);
 
         OrderExt orderExt = new OrderExt();
         orderExt.setContact(request.getContact());
@@ -70,8 +71,8 @@ public class OrderServiceImpl implements IOrderService {
         orderExt.setServiceAddress(request.getServiceAddress());
         orderExt.setServiceDuration(request.getServiceDuration());
         orderExt.setServiceNumber(request.getServiceNumber());
-        orderExt.setServiceStartTime(new Date(request.getServiceStartTime()));
-        orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
+        orderExt.setServiceStartTime(request.getServiceStartDate());
+        orderExt.setServiceEndDate(request.getServiceEndDate());
         Map<String, Object> extension = request.getExtension();
         if (Objects.nonNull(extension)) {
             Map<String, Object> patientInfo = new HashMap<>();
@@ -98,20 +99,13 @@ public class OrderServiceImpl implements IOrderService {
             }
 
             if (!patientInfo.isEmpty()) {
-                JsonNode jsonNode;
-                try {
-                    jsonNode = JacksonUtil.toJsonNode(objectMapper.writeValueAsString(patientInfo));
-                } catch (JsonProcessingException e) {
-                    logger.error("Got error when write Object:{} as String", patientInfo, e);
-                    throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SERVER_ERROR));
-                }
-                orderExt.setPatientInfo(jsonNode);
+                orderExt.setPatientInfo(patientInfo);
             }
         }
         order = orderDao.saveUserOrder(order, orderExt);
 
         if (Objects.nonNull(invoice)) {
-            invoice.setCreateTime(new Date());
+            invoice.setCreateTime(System.currentTimeMillis());
             invoice.setDealStatus(false);
             invoice.setOrderIds(order.getId());
             invoiceDao.save(invoice);
@@ -121,8 +115,18 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Map<String, Object> queryUserOrder(String userId, String status) {
-        List<Order> orders = orderDao.queryUserOrder(userId, status);
-        return null;
+    public List<Order> queryUserOrder(String userId, String status, String ownerType) {
+        return orderDao.queryUserOrder(userId, status, ownerType);
+    }
+
+    @Override
+    public Map<String, Object> queryOrderDetail(String orderId) {
+        return orderDao.queryOrderDetail(orderId);
+    }
+
+    @Override
+    public void orderEvaluate(Evaluate evaluate) {
+        evaluate.setCreateTime(new Date());
+        evaluateRepository.save(evaluate);
     }
 }

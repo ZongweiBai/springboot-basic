@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -42,6 +43,7 @@ public class PayRecord implements Serializable {
     /**
      * 支付类型
      */
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "PAY_WAY")
     private PayWay payWay;
 
@@ -59,12 +61,12 @@ public class PayRecord implements Serializable {
      * 创建日期
      */
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Date createTime;
+    private Long createTime;
     /**
      * 支付完成日期
      */
     @Column(name = "FINISH_TIME", columnDefinition = "timestamp")
-    private Date finishTime;
+    private Long finishTime;
     /**
      * 订单ID
      */

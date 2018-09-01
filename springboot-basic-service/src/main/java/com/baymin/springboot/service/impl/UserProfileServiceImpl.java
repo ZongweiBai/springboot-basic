@@ -25,7 +25,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
     @Override
     public void saveUserProfile(UserProfile userProfile) {
-        userProfile.setRegisterTime(new Date());
+        userProfile.setRegisterTime(System.currentTimeMillis());
         userProfileDao.save(userProfile);
     }
 

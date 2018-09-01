@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -31,9 +32,11 @@ public class OrderFlow implements Serializable {
     @Column(name = "ORDER_ID", length = 32)
     private String orderId;
 
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "OLD_STATUS", length = 2)
     private OrderStatus oldStatus;
 
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "NEW_STATUS", length = 2)
     private OrderStatus newStatus;
 
@@ -41,6 +44,6 @@ public class OrderFlow implements Serializable {
     private String flowDesc;
 
     @Column(name = "FLOW_TIME", columnDefinition = "timestamp")
-    private Date flowTime;
+    private Long flowTime;
 
 }

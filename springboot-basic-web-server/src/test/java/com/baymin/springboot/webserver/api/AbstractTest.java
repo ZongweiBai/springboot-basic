@@ -18,10 +18,10 @@ public class AbstractTest {
     int port;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         RestAssured.baseURI = "http://127.0.0.1";
         RestAssured.port = port;
-        RestAssured.basePath = "/springboot/webserver";
+        RestAssured.basePath = "/family-care";
     }
 
 }

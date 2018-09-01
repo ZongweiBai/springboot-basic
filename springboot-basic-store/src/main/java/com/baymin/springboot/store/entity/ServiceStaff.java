@@ -5,6 +5,7 @@ import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -60,11 +61,12 @@ public class ServiceStaff {
     @Column(name = "MANDARIN", length = 2)
     private String mandarin; // A\B\C
 
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "SERVICE_STAFF_TYPE", length = 2)
     private ServiceStaffType serviceStaffType;
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Date createTime;
+    private Long createTime;
 
     @Column(name = "SERVICE_STATUS")
     private ServiceStatus serviceStatus;

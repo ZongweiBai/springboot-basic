@@ -1,9 +1,11 @@
 package com.baymin.springboot.store.enumconstant;
 
+import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
+
 /**
  * Created by Administrator on 2015/1/4 0004.
  */
-public enum InvoiceStatus {
+public enum InvoiceStatus implements IBaseDbEnum {
 
     NOT_INVOICED("未开票", 0),
     INVOICING("开票中", 1),

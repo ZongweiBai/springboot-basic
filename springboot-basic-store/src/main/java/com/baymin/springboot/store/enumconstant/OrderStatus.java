@@ -1,14 +1,17 @@
 package com.baymin.springboot.store.enumconstant;
 
+import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
+
 /**
  * Created by Administrator on 2015/1/4 0004.
  */
-public enum OrderStatus {
+public enum OrderStatus implements IBaseDbEnum {
 
     ORDER_UN_PAY("已下单待付款", 0),
     ORDER_PAYED("已付款待指派", 1),
-    ORDER_PROCESSING("服务中", 2),
-    ORDER_FINISH("已完成", 3);
+    ORDER_ASSIGN("已指派待服务", 2),
+    ORDER_PROCESSING("服务中", 3),
+    ORDER_FINISH("已完成", 4);
 
     OrderStatus(String name, int index) {
         this.name = name;

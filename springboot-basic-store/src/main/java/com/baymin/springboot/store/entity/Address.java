@@ -1,5 +1,8 @@
 package com.baymin.springboot.store.entity;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -7,6 +10,9 @@ import javax.persistence.*;
 /**
  * 用户地址
  */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "T_ADDRESS")
 public class Address {
 
@@ -15,6 +21,9 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
+
+    @Column(name = "USER_ID", length = 32)
+    private String userId;
     /**
      * 省
      */
@@ -59,4 +68,11 @@ public class Address {
      */
     @Column(name = "COMMUNITY_DETAIL", length = 128)
     private String communityDetail;
+
+    @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
+    private Long createTime;
+
+    public Address(String addressId) {
+        this.id = addressId;
+    }
 }

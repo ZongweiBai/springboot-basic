@@ -20,4 +20,8 @@ public interface RequestConstant {
     String ORDER_PROCESSING = "PROCESSING";
     String ORDER_FINISHED = "FINISHED";
 
+    // address type
+    String ADDR_HOME = "M";
+    String ADDR_HOSPITAL = "H";
+
 }

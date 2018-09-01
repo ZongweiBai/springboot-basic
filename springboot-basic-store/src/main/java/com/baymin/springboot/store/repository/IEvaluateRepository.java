@@ -1,8 +1,8 @@
 package com.baymin.springboot.store.repository;
 
-import com.baymin.springboot.store.entity.Order;
+import com.baymin.springboot.store.entity.Evaluate;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-public interface IOrderRepository extends PagingAndSortingRepository<Order, String>, JpaSpecificationExecutor<Order> {
+public interface IEvaluateRepository extends PagingAndSortingRepository<Evaluate, String>, JpaSpecificationExecutor<Evaluate> {
 }

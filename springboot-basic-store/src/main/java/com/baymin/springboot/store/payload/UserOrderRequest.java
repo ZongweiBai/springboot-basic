@@ -17,7 +17,7 @@ public class UserOrderRequest {
 
     private Invoice invoice;
 
-    private Long serviceStartTime;
+    private Long serviceStartDate;
 
     private Long serviceEndDate;
 

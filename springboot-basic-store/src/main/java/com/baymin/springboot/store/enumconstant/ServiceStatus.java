@@ -1,9 +1,11 @@
 package com.baymin.springboot.store.enumconstant;
 
+import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
+
 /**
  * Created by Administrator on 2015/1/4 0004.
  */
-public enum ServiceStatus {
+public enum ServiceStatus implements IBaseDbEnum {
 
     FREE("空闲", 0),
     IN_SERVICE("服务中", 1);

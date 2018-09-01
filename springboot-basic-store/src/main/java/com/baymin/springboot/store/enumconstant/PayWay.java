@@ -1,15 +1,17 @@
 package com.baymin.springboot.store.enumconstant;
 
+import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
+
 /**
  * 支付方式
  */
-public enum PayWay {
+public enum PayWay implements IBaseDbEnum {
 
-    PAY_ONLINE_WITH_WECHAT("微信支付", 0),
-    PAY_OFFLINE_CASH("线下支付-现金", 1),
-    PAY_OFFLINE_POS("线下支付-POS", 2),
-    PAY_OFFLINE_ALI("线下支付-支付宝", 3),
-    PAY_OFFLINE_WECHAT("线下支付-微信", 4);
+    PAY_ONLINE_WITH_WECHAT("微信支付", 10),
+    PAY_OFFLINE_CASH("线下支付-现金", 20),
+    PAY_OFFLINE_POS("线下支付-POS", 21),
+    PAY_OFFLINE_ALI("线下支付-支付宝", 22),
+    PAY_OFFLINE_WECHAT("线下支付-微信", 24);
 
     private String name;
     private int index;
