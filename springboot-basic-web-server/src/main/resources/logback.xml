@@ -52,7 +52,7 @@
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger level="INFO" name="com.baymin.springboot.controller" additivity="false">
+    <logger level="DEBUG" name="com.baymin.springboot" additivity="false">
         <appender-ref ref="API_ACCESS"/>
         <appender-ref ref="STDOUT"/>
     </logger>
