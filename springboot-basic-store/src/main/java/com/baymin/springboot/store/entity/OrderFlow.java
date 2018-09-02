@@ -18,7 +18,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_ORDER_FLOW")
+@Entity
+@Table(name = "T_ORDER_FLOW")
 public class OrderFlow implements Serializable {
 
     private static final long serialVersionUID = -4824749589780482250L;

@@ -16,7 +16,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_SYS_ROLE")
+@Entity
+@Table(name = "T_SYS_ROLE")
 public class SysRole implements Serializable {
 
     private static final long serialVersionUID = -127270392034689229L;

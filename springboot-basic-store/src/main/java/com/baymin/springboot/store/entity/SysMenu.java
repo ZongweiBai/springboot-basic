@@ -16,7 +16,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_SYS_MENU")
+@Entity
+@Table(name = "T_SYS_MENU")
 public class SysMenu implements Serializable {
 
     private static final long serialVersionUID = 4192075544699716172L;

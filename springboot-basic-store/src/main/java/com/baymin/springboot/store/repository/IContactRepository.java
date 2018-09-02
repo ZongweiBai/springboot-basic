@@ -12,9 +12,8 @@ import java.util.List;
 public interface IContactRepository extends PagingAndSortingRepository<Contact, String>, JpaSpecificationExecutor<Contact> {
 
     @Modifying
-    @Query(value = "update T_CONTACT set DEFAULT_CONTACT = :defaultContact where USER_ID = :userId and MY_ROLE = :myRole", nativeQuery = true)
-//    @Query("update Contact set defaultContact = ?3 where userId = ?1 and myRole = ?2")
-    int updateDefaultContacts(@Param("userId") String userId, @Param("myRole") String myRole, @Param("defaultContact") String defaultContact);
+    @Query(value = "update Contact set defaultFlag = :defaultFlag where userId = :userId and myRole = :myRole")
+    int updateDefault(@Param("userId") String userId, @Param("myRole") String myRole, @Param("defaultFlag") String defaultContact);
 
     List<Contact> findByUserId(String userId);
 }

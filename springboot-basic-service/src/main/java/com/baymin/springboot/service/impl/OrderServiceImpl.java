@@ -1,6 +1,9 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.common.constant.RequestConstant;
+import com.baymin.springboot.common.exception.ErrorCode;
+import com.baymin.springboot.common.exception.ErrorInfo;
+import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
@@ -13,20 +16,23 @@ import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 import com.baymin.springboot.store.repository.IEvaluateRepository;
+import com.baymin.springboot.store.repository.IOrderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.*;
 
 import static com.baymin.springboot.common.constant.RequestConstant.*;
-import static com.baymin.springboot.store.enumconstant.OrderType.HOME_CARE;
-import static com.baymin.springboot.store.enumconstant.OrderType.HOSPITAL_CARE;
-import static com.baymin.springboot.store.enumconstant.OrderType.REHABILITATION;
+import static com.baymin.springboot.store.enumconstant.CareType.HOME_CARE;
+import static com.baymin.springboot.store.enumconstant.CareType.HOSPITAL_CARE;
+import static com.baymin.springboot.store.enumconstant.CareType.REHABILITATION;
 
 @Service
 @Transactional
@@ -44,6 +50,9 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IEvaluateRepository evaluateRepository;
 
+    @Autowired
+    private IOrderRepository orderRepository;
+
     @Override
     public Order saveUserOrder(UserOrderRequest request) {
         Invoice invoice = request.getInvoice();
@@ -51,7 +60,7 @@ public class OrderServiceImpl implements IOrderService {
 
         order.setOrderUserId(request.getOrderUserId());
         order.setOrderTime(System.currentTimeMillis());
-        order.setOrderType(request.getOrderType());
+        order.setCareType(request.getOrderType());
         if (StringUtils.equals(RequestConstant.OFFLINE, request.getPayway())) {
             order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
         }
@@ -105,7 +114,7 @@ public class OrderServiceImpl implements IOrderService {
         order = orderDao.saveUserOrder(order, orderExt);
 
         if (Objects.nonNull(invoice)) {
-            invoice.setCreateTime(System.currentTimeMillis());
+            invoice.setCreateTime(new Date());
             invoice.setDealStatus(false);
             invoice.setOrderIds(order.getId());
             invoiceDao.save(invoice);
@@ -128,5 +137,22 @@ public class OrderServiceImpl implements IOrderService {
     public void orderEvaluate(Evaluate evaluate) {
         evaluate.setCreateTime(new Date());
         evaluateRepository.save(evaluate);
+    }
+
+    @Override
+    public void saveInvoiceRequest(Invoice invoice) {
+        String orderIds = invoice.getOrderIds();
+        List<String> orderIdList = Arrays.asList(orderIds.split(","));
+        List<Order> invoicedOrders = orderRepository.findInvoicedOrder(orderIdList, InvoiceStatus.NOT_INVOICED);
+        if (CollectionUtils.isNotEmpty(invoicedOrders)) {
+            logger.error("Those orders:{} has been invoiced!", StringUtils.join(orderIdList));
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "部分订单已开票，请重新选择"));
+        }
+
+        invoice.setCreateTime(new Date());
+        invoice.setDealStatus(false);
+        invoiceDao.save(invoice);
+
+        orderRepository.updateInvoiceStatus(orderIdList, InvoiceStatus.INVOICING);
     }
 }

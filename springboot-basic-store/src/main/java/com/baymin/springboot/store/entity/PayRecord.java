@@ -17,7 +17,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_PAY_RECORD")
+@Entity
+@Table(name = "T_PAY_RECORD")
 public class PayRecord implements Serializable {
 
     private static final long serialVersionUID = 8755986028863452969L;

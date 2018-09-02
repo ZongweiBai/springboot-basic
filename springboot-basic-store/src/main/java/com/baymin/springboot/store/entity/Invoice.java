@@ -12,7 +12,8 @@ import java.util.Date;
  */
 @Data
 @NoArgsConstructor
-@Entity(name = "T_INVOICE")
+@Entity
+@Table(name = "T_INVOICE")
 public class Invoice {
 
     @Id
@@ -49,12 +50,12 @@ public class Invoice {
      * 创建日期
      */
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Long createTime;
+    private Date createTime;
 
     /**
      * 处理日期
      */
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
-    private Long DEAL_Time;
+    private Date DEAL_Time;
 
 }

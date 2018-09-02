@@ -1,7 +1,7 @@
 package com.baymin.springboot.store.payload;
 
 import com.baymin.springboot.store.entity.Invoice;
-import com.baymin.springboot.store.enumconstant.OrderType;
+import com.baymin.springboot.store.enumconstant.CareType;
 import lombok.Data;
 
 import java.util.Map;
@@ -11,7 +11,7 @@ public class UserOrderRequest {
 
     private String orderUserId;
 
-    private OrderType orderType;
+    private CareType orderType;
 
     private String payway; //支付方式 ONLINE_WECHAT  OFFLINE
 

@@ -1,6 +1,7 @@
 package com.baymin.springboot.service;
 
 import com.baymin.springboot.store.entity.Evaluate;
+import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 
@@ -16,4 +17,6 @@ public interface IOrderService {
     Map<String, Object> queryOrderDetail(String orderId);
 
     void orderEvaluate(Evaluate evaluate);
+
+    void saveInvoiceRequest(Invoice invoice);
 }

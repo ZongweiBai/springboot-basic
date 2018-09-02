@@ -2,7 +2,7 @@ package com.baymin.springboot.store.entity;
 
 import com.baymin.springboot.store.enumconstant.InvoiceStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.enumconstant.OrderType;
+import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +17,8 @@ import java.io.Serializable;
  */
 @Data
 @NoArgsConstructor
-@Entity(name = "T_ORDER")
+@Entity
+@Table(name = "T_ORDER")
 public class Order implements Serializable {
 
     @Id
@@ -39,8 +40,8 @@ public class Order implements Serializable {
     private Long closeTime;
 
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
-    @Column(name = "ORDER_TYPE")
-    private OrderType orderType;
+    @Column(name = "CARE_TYPE")
+    private CareType careType;
 
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "STATUS", length = 2)

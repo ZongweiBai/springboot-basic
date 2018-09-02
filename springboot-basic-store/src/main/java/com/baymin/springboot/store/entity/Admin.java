@@ -13,7 +13,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_ADMIN")
+@Entity
+@Table(name = "T_ADMIN")
 public class Admin implements Serializable {
 
     @Id

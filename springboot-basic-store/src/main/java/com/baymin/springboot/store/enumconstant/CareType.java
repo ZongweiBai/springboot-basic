@@ -5,7 +5,7 @@ import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
 /**
  * 陪护类型
  */
-public enum OrderType implements IBaseDbEnum {
+public enum CareType implements IBaseDbEnum {
 
     HOSPITAL_CARE("医院陪护", 1),
     HOME_CARE("居家照护", 2),
@@ -14,7 +14,7 @@ public enum OrderType implements IBaseDbEnum {
     private String name;
     private int index;
 
-    OrderType(String name, int index) {
+    CareType(String name, int index) {
         this.name = name;
         this.index = index;
     }

@@ -13,7 +13,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_SYS_DICT")
+@Entity
+@Table(name = "T_SYS_DICT")
 public class SysDict implements Serializable {
 
     private static final long serialVersionUID = 3686269078770784906L;

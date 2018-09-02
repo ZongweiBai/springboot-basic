@@ -15,7 +15,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_FEEDBACK")
+@Entity
+@Table(name = "T_FEEDBACK")
 public class Feedback implements Serializable {
 
     @Id

@@ -17,7 +17,8 @@ import java.util.Map;
  */
 @Data
 @NoArgsConstructor
-@Entity(name = "T_ORDER_EXT")
+@Entity
+@Table(name = "T_ORDER_EXT")
 @TypeDef(name = "json", typeClass = JsonStringType.class)
 public class OrderExt implements Serializable {
 

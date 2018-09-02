@@ -5,6 +5,7 @@ import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.entity.Evaluate;
+import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 import org.aspectj.weaver.ast.Or;
@@ -72,7 +73,14 @@ public class UserOrderApi {
         }
 
         orderService.orderEvaluate(evaluate);
+    }
 
+    @PostMapping("/invoice")
+    public void saveInvoiceRequest(@RequestBody Invoice invoice) {
+        if (Objects.isNull(invoice)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        orderService.saveInvoiceRequest(invoice);
     }
 
 }

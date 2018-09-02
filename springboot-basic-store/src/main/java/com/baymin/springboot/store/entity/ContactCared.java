@@ -9,14 +9,14 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * 联系人信息
+ * 被照护人信息
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "T_CONTACT")
-public class Contact {
+@Table(name = "T_CONTACT_CARED")
+public class ContactCared {
 
     @Id
     @Column(name = "ID", length = 32)
@@ -27,17 +27,23 @@ public class Contact {
     @Column(name = "USER_ID", length = 32)
     private String userId;
 
-    @Column(name = "MY_ROLE", length = 2)
-    private String myRole; // 1:监护人  2：被监护人
-
     @Column(name = "CONTACT_NAME", length = 20)
     private String contactName;
 
     @Column(name = "SEX", length = 2)
     private String sex;
 
+    @Column(name = "TALL", precision = 5, scale = 2)
+    private Double tall;
+
+    @Column(name = "WEIGHT", precision = 5, scale = 2)
+    private Double weight;
+
     @Column(name = "CONTACT_NUMBER", length = 20)
     private String contactNumber;
+
+    @Column(name = "OTHER_INFO", length = 256)
+    private String otherInfo;
 
     @Column(name = "DEFAULT_FLAG", length = 2)
     private String defaultFlag;

@@ -26,8 +26,8 @@ public class ContactServiceImpl implements IContactService {
 
     @Override
     public Contact saveContact(Contact contact) {
-        if ("T".equalsIgnoreCase(contact.getDefaultContact())) {
-            contactRepository.updateDefaultContacts(contact.getUserId(), contact.getMyRole(), "F");
+        if ("T".equalsIgnoreCase(contact.getDefaultFlag())) {
+            contactRepository.updateDefault(contact.getUserId(), contact.getMyRole(), "F");
         }
 
         contact.setCreateTime(new Date());
@@ -46,13 +46,13 @@ public class ContactServiceImpl implements IContactService {
             throw new WebServerException(HttpStatus.NOT_FOUND, new ErrorInfo(not_found.name(), RECORD_NOT_EXIST));
         }
 
-        if ("T".equalsIgnoreCase(contact.getDefaultContact())) {
-            contactRepository.updateDefaultContacts(contact.getUserId(), contact.getMyRole(), "F");
+        if ("T".equalsIgnoreCase(contact.getDefaultFlag())) {
+            contactRepository.updateDefault(contact.getUserId(), contact.getMyRole(), "F");
         }
 
         contactInDB.setContactName(contact.getContactName());
         contactInDB.setContactNumber(contact.getContactNumber());
-        contactInDB.setDefaultContact(contact.getDefaultContact());
+        contactInDB.setDefaultFlag(contact.getDefaultFlag());
         contactInDB.setMyRole(contact.getMyRole());
         contactInDB.setSex(contact.getSex());
         return contactRepository.save(contactInDB);

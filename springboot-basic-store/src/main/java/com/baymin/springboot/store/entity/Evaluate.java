@@ -15,7 +15,8 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_EVALUATE")
+@Entity
+@Table(name = "T_EVALUATE")
 public class Evaluate implements Serializable {
 
     private static final long serialVersionUID = 3109228357668258013L;

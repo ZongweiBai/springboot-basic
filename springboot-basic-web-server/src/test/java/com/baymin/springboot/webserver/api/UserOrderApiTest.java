@@ -2,12 +2,11 @@ package com.baymin.springboot.webserver.api;
 
 import com.baymin.springboot.common.constant.RequestConstant;
 import com.baymin.springboot.store.entity.Invoice;
-import com.baymin.springboot.store.enumconstant.OrderType;
+import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 import io.restassured.RestAssured;
 import org.junit.Test;
 
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,7 +32,7 @@ public class UserOrderApiTest extends AbstractTest {
         invoice.setInvoiceType("E");
         orderRequest.setInvoice(invoice);
 
-        orderRequest.setOrderType(OrderType.HOME_CARE);
+        orderRequest.setOrderType(CareType.HOME_CARE);
         orderRequest.setPayway("ONLINE_WECHAT");
         orderRequest.setServiceAddress("南方医院1111号");
         orderRequest.setServiceDuration(2.5);
