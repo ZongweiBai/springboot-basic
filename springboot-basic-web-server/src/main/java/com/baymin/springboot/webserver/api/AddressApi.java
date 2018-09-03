@@ -5,9 +5,7 @@ import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IAddressService;
 import com.baymin.springboot.store.entity.Address;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,17 +14,16 @@ import java.util.Objects;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
-@Api
+@Api(value = "常用地址", tags = "常用地址")
 @RestController
 @RequestMapping(path = "/api/address")
 public class AddressApi {
 
     private IAddressService addressService;
 
-    @ApiResponses({
-            @ApiResponse(code = 201,message = "Created"),
-            @ApiResponse(code = 400,message = "parameters error",response = ErrorInfo.class),
-            @ApiResponse(code = 500,message = "server error",response = ErrorInfo.class)
+    @ApiOperation(value = "新增常用地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "address.addressType", value = "地址类型 H：医院 M：居家")
     })
     @PostMapping
     @ResponseBody
@@ -37,6 +34,7 @@ public class AddressApi {
         return addressService.saveAddress(address);
     }
 
+    @ApiOperation(value = "删除常用地址")
     @DeleteMapping("/{userId}/{addressId}")
     public void deleteAddress(@PathVariable String userId,
                               @PathVariable String addressId) {
@@ -46,6 +44,7 @@ public class AddressApi {
         addressService.deleteAddress(userId, addressId);
     }
 
+    @ApiOperation(value = "更新常用地址")
     @PutMapping
     @ResponseBody
     public Address updateAddress(@RequestBody Address address) {
@@ -55,6 +54,7 @@ public class AddressApi {
         return addressService.updateAddress(address);
     }
 
+    @ApiOperation(value = "根据用户ID查询地址")
     @GetMapping("/{userId}")
     @ResponseBody
     public List<Address> queryAddress(@PathVariable String userId) {
@@ -64,6 +64,7 @@ public class AddressApi {
         return addressService.queryUserAddress(userId);
     }
 
+    @ApiOperation(value = "查询地址明细")
     @GetMapping("/{userId}/{addressId}")
     @ResponseBody
     public Address queryAddressDetail(@PathVariable String userId,

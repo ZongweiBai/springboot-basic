@@ -8,7 +8,10 @@ import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.payload.UserOrderRequest;
-import org.aspectj.weaver.ast.Or;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +23,7 @@ import java.util.Objects;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
+@Api(value = "订单", tags = "订单")
 @RestController
 @RequestMapping(path = "/api/order")
 public class UserOrderApi {
@@ -27,6 +31,11 @@ public class UserOrderApi {
     @Autowired
     private IOrderService orderService;
 
+    @ApiOperation(value = "用户下单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "request.orderType", value = "HOSPITAL_CARE：医院陪护  HOME_CARE：居家照护 REHABILITATION：康复护理"),
+            @ApiImplicitParam(name = "request.payway", value = "支付方式 ONLINE_WECHAT  OFFLINE")
+    })
     @PostMapping
     @ResponseBody
     public Map<String, Object> saveOrder(@RequestBody UserOrderRequest request) {
@@ -40,6 +49,11 @@ public class UserOrderApi {
         return reMap;
     }
 
+    @ApiOperation(value = "查询用户订单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "status", value = "INIT：代付款  PROCESSING：服务中  FINISHED：已完成"),
+            @ApiImplicitParam(name = "ownerType", value = "user：普通用户  staff：护工/护士")
+    })
     @GetMapping("/{userId}/")
     @ResponseBody
     public Map<String, Object> queryUserOrder(@PathVariable String userId,
@@ -54,6 +68,7 @@ public class UserOrderApi {
         return reMap;
     }
 
+    @ApiOperation(value = "查询用户订单详情")
     @GetMapping("/{userId}/{orderId}/")
     @ResponseBody
     public Map<String, Object> queryOrderDetail(@PathVariable String userId,
@@ -65,6 +80,7 @@ public class UserOrderApi {
         return reMap;
     }
 
+    @ApiOperation(value = "订单评价")
     @PostMapping("/evaluate")
     public void orderEvaluate(@RequestBody Evaluate evaluate) {
 
@@ -75,6 +91,11 @@ public class UserOrderApi {
         orderService.orderEvaluate(evaluate);
     }
 
+    @ApiOperation(value = "订单开票申请")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "invoice.invoiceType", value = "发票类型 E：电子  P：纸质"),
+            @ApiImplicitParam(name = "invoice.headerType", value = "抬头类型 C:企业单位  P:个人")
+    })
     @PostMapping("/invoice")
     public void saveInvoiceRequest(@RequestBody Invoice invoice) {
         if (Objects.isNull(invoice)) {

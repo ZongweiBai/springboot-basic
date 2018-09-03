@@ -3,17 +3,20 @@ package com.baymin.springboot.webserver.api;
 import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
+import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.model.TokenVo;
 import com.baymin.springboot.common.util.JwtUtil;
 import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.common.exception.WebServerException;
+import com.baymin.springboot.webserver.request.LoginRequest;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.SignatureException;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +30,7 @@ import java.util.Objects;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.*;
 
+@Api(value = "登陆及Token", tags = "登陆及Token")
 @RestController
 @RequestMapping(path = "/api/")
 public class LoginManagementApi {
@@ -40,12 +44,13 @@ public class LoginManagementApi {
     @Autowired
     private IRedisService redisService;
 
+    @ApiOperation(value = "登陆")
     @PostMapping("login")
     @ResponseBody
-    public void login(Map<String, String> request) {
-        String userAccount = request.get("account");
-        String smsCode = request.get("smsCode");
-        String password = request.get("password");
+    public TokenVo login(@RequestBody LoginRequest loginRequest) {
+        String userAccount = loginRequest.getAccount();
+        String smsCode = loginRequest.getSmsCode();
+        String password = loginRequest.getPassword();
 
         if (StringUtils.isBlank(userAccount) || (StringUtils.isBlank(smsCode) && StringUtils.isBlank(password))) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
@@ -80,12 +85,14 @@ public class LoginManagementApi {
             tokenVo.setRefreshToken(refreshToken);
             tokenVo.setExpiresIn(Constant.JWTAPI.JWT_TTL / 1000);
             tokenVo.setTokenType("bearer");
+            return tokenVo;
         } catch (Exception e) {
             log.error("Error occurred", e);
             throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SERVER_ERROR));
         }
     }
 
+    @ApiOperation(value = "刷新Token")
     @RequestMapping(value = "/token/refresh", method = RequestMethod.POST)
     @ResponseBody
     public TokenVo refreshAccessToken(String refreshToken) {

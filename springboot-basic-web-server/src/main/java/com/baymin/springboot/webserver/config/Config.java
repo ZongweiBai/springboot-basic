@@ -18,7 +18,7 @@ public class Config {
     @Bean
     public FilterRegistrationBean filterRegistration() {
         FilterRegistrationBean registration = new FilterRegistrationBean(new LoggingFilter());
-        registration.addUrlPatterns("/*");
+        registration.addUrlPatterns("/api/*");
         return registration;
     }
 
