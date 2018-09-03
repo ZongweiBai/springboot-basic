@@ -28,7 +28,7 @@ import java.util.Objects;
 import static com.baymin.springboot.common.exception.ErrorDescription.*;
 
 @RestController
-@RequestMapping(path = "/")
+@RequestMapping(path = "/api/")
 public class LoginManagementApi {
 
     private static final Logger log = LoggerFactory.getLogger(LoginManagementApi.class);

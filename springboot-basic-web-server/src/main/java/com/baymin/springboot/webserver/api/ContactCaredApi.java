@@ -15,7 +15,7 @@ import java.util.Objects;
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
 @RestController
-@RequestMapping(path = "/contactcared")
+@RequestMapping(path = "/api/contactcared")
 public class ContactCaredApi {
 
     @Autowired

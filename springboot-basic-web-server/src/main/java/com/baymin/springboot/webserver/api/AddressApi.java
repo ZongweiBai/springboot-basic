@@ -5,6 +5,9 @@ import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IAddressService;
 import com.baymin.springboot.store.entity.Address;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,12 +16,18 @@ import java.util.Objects;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
+@Api
 @RestController
-@RequestMapping(path = "/address")
+@RequestMapping(path = "/api/address")
 public class AddressApi {
 
     private IAddressService addressService;
 
+    @ApiResponses({
+            @ApiResponse(code = 201,message = "Created"),
+            @ApiResponse(code = 400,message = "parameters error",response = ErrorInfo.class),
+            @ApiResponse(code = 500,message = "server error",response = ErrorInfo.class)
+    })
     @PostMapping
     @ResponseBody
     public Address saveAddress(@RequestBody Address address) {

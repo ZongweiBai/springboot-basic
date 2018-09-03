@@ -14,7 +14,7 @@ import java.util.Objects;
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
 @RestController
-@RequestMapping(path = "/sys")
+@RequestMapping(path = "/api/sys")
 public class SystemApi {
 
     @Autowired

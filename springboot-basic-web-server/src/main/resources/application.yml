@@ -40,3 +40,12 @@ spring:
         min-idle: 0
         max-wait: -1
         max-active: 8
+logging:
+  config: file:${IAM_IDPPROXY_CONFIG}/logback.xml
+#security:
+#  basic:
+#    enabled: true
+#    path: /v2/api-docs,/swagger**
+#  user:
+#    password: family_care_admin
+#    name: admin

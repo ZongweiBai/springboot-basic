@@ -21,7 +21,7 @@ import java.util.Objects;
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
 @RestController
-@RequestMapping(path = "/order")
+@RequestMapping(path = "/api/order")
 public class UserOrderApi {
 
     @Autowired
