@@ -3,6 +3,7 @@ package com.baymin.springboot.store.entity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -23,18 +24,19 @@ public class SysRole implements Serializable {
     private static final long serialVersionUID = -127270392034689229L;
 
     @Id
-    @Column(name = "ROLE_ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer roleId;
+    @Column(name = "ID", length = 32)
+    @GeneratedValue(strategy = GenerationType.TABLE, generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")
+    private String id;
 
+    @Column(name = "ROLE_TYPE", length = 4)
     private String roleType;
 
+    @Column(name = "ROLE_NAME", length = 20)
     private String roleName;
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Long createTime;
-
-    private String createBy;
+    private Date createTime;
 
     @Transient
     private List<SysMenu> menuList;

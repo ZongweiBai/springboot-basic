@@ -1,0 +1,82 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>全民拼团</title>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link href="css/H-ui.login.css" th:href="@{/css/H-ui.login.css}" rel="stylesheet" type="text/css"/>
+    <head th:include="common/base">
+</head>
+<body>
+<input type="hidden" id="TenantId" name="TenantId" value=""/>
+<div class="header"></div>
+<div class="loginWraper">
+    <div id="loginformDiv" class="loginBox">
+        <form id="loginForm" class="form form-horizontal" method="post">
+            <div class="row cl">
+                <label class="form-label col-3"><i style="font-size: 18px;" class="Hui-iconfont">&#xe60d;</i></label>
+                <div class="formControls col-8">
+                    <input id="account" name="userName" type="text" placeholder="账户" class="input-text size-L">
+                </div>
+            </div>
+            <div class="row cl">
+                <label class="form-label col-3"><i style="font-size: 18px;" class="Hui-iconfont">&#xe60e;</i></label>
+                <div class="formControls col-8">
+                    <input id="password" name="passWord" type="password" placeholder="密码" class="input-text size-L">
+                </div>
+            </div>
+            <div class="row">
+                <div class="formControls col-8 col-offset-3" style="text-align: center;">
+                    <input type="button" class="btn btn-success radius size-L"
+                           onclick="login();" value="&nbsp;登&nbsp;&nbsp;&nbsp;&nbsp;录&nbsp;">
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="footer">CopyRight2016&copy;版权所有 baymin | Powered by H-ui.admin.v2.3</div>
+<script>
+
+    /**
+     * 登录
+     */
+    function login() {
+        var account = $("#account").val();
+        var password = $("#password").val();
+        if (isEmpty(account)) {
+            tip.tips("帐号不能为空", "account");
+            return;
+        }
+        if (isEmpty(password)) {
+            tip.tips("密码不能为空", "password");
+            return;
+        }
+        $.ajax({
+            type: "POST",
+            url: contextPath + "system/login",
+            data: $("#loginForm").serialize(),
+            beforeSend: function () {
+                tip.showLoading();
+            },
+            error: function (data) {
+                tip.hideLoading();
+                tip.toast("请求失败，请稍后再试");
+            },
+            success: function (data) {
+                tip.hideLoading();
+                if (data.result == 200) {
+                    window.location.href = contextPath + "/system/main";
+                } else {
+                    tip.toast(data.message);
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

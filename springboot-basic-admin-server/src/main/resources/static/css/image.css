@@ -1,0 +1,48 @@
+@charset "utf-8";
+/* 你自己的样式 */
+.picsh {
+    overflow: hidden;
+    padding: 10px 0 0;
+    position: relative;
+}
+
+.picsh .pic3 {
+    margin-bottom: 12px;
+    position: relative;
+}
+.picsh span {
+    display: block;
+    float: left;
+    margin: 0 18px 0 0;
+    width: 80px;
+}
+
+.picsh span img {
+    height: 80px;
+    width: 80px;
+}
+
+.picsh .pic3 .guanbi {
+    background: rgba(0, 0, 0, 0) url("../images/close.png") no-repeat scroll 0 0 / cover ;
+    cursor: pointer;
+    height: 26px;
+    position: absolute;
+    right: -8px;
+    top: -8px;
+    width: 26px;
+}
+
+.picsh .pic4 {
+    background: rgba(0, 0, 0, 0) url("../images/tup1.png") no-repeat scroll 0 0 / cover ;
+    height: 80px;
+    width: 80px;
+}
+
+.picsh .pic4 input {
+    border: 0 none;
+    cursor: pointer;
+    height: 70px;
+    opacity: 0;
+    outline: medium none;
+    width: 100%;
+}

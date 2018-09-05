@@ -1,0 +1,38 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <LINK rel="Bookmark" href="/favicon.ico">
+    <LINK rel="Shortcut Icon" href="/favicon.ico"/>
+    <link href="css/H-ui.min.css" th:href="@{/css/H-ui.min.css}" rel="stylesheet" type="text/css"/>
+    <link href="css/H-ui.admin.css" th:href="@{/css/H-ui.admin.css}" rel="stylesheet" type="text/css"/>
+    <link href="skin/default/skin.css" th:href="@{/skin/default/skin.css}" rel="stylesheet" type="text/css" id="skin"/>
+    <link href="lib/Hui-iconfont/1.0.1/iconfont.css" th:href="@{/lib/Hui-iconfont/1.0.1/iconfont.css}" rel="stylesheet" type="text/css"/>
+    <link href="lib/layer/skin/layer.css" th:href="@{/lib/layer/skin/layer.css}" rel="stylesheet" type="text/css"/>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        contextPath = /*[[@{/}]]*/ ''
+        session = /*[[${session.xx}]]*/
+        yy = /*[[${yy}]]*/
+        /*]]>*/
+        console.info(contextPath);
+
+        /*
+        var adminGrade = "<%=adminGrade%>";
+        var adminId = "<%=adminId%>";
+        var imgPath = "<%=Constant.basePath%>";*/
+    </script>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5.js" th:src="@{/lib/html5.js}"></script>
+    <script type="text/javascript" src="lib/respond.min.js" th:src="@{/lib/respond.min.js}"></script>
+    <script type="text/javascript" src="lib/PIE-2.0beta1/PIE_IE678.js" th:src="@{/lib/PIE-2.0beta1/PIE_IE678.js}"></script>
+    <![endif]-->
+    <!--[if IE 6]>
+    <script type="text/javascript" src="http://lib.h-ui.net/DD_belatedPNG_0.0.8a-min.js"/>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js" th:src="@{/lib/jquery/1.9.1/jquery.min.js}"></script>
+    <script type="text/javascript" src="lib/layer/layer.js" th:src="@{/lib/layer/layer.js}"></script>
+    <script type="text/javascript" src="lib/layer/tip.js" th:src="@{/lib/layer/tip.js}"></script>
+    <script type="text/javascript" src="js/H-ui.js" th:src="@{/js/H-ui.js}"></script>
+    <script type="text/javascript" src="js/H-ui.admin.js" th:src="@{/js/H-ui.admin.js}"></script>
+    <script type="text/javascript" src="js/common.js" th:src="@{/js/common.js}"></script>
+</html>

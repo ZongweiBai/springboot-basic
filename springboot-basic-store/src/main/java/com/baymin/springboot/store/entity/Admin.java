@@ -25,37 +25,38 @@ public class Admin implements Serializable {
     /**
      * 账号
      */
+    @Column(name = "ACCOUNT", length = 32)
     private String account;
     /**
      * 密码
      */
+    @Column(name = "PASSWORD", length = 32)
     private String password;
     /**
      * 等级
-     * 1、超级管理员 2、普通管理员 3、商家
+     * 1、超级管理员 2、普通管理员
      */
+    @Column(name = "GRADE", precision = 2, scale = 0)
     private int grade;
     /**
      * 角色ID
      */
-    private Integer roleId;
+    @Column(name = "ROLE_ID", length = 32)
+    private String roleId;
     /**
      * 角色名称
      */
+    @Column(name = "ROLE_NAME", length = 32)
     private String roleName;
     /**
      * 创建时间
      */
+    @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
-
-    /**
-     * 创建人
-     */
-    private String creator;
-
     /**
      * 手机号码
      */
+    @Column(name = "MOBILE", length = 11)
     private String mobile;
 
 }
