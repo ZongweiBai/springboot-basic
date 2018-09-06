@@ -1,5 +1,3 @@
-var menuId = getQueryString("menuId");
-
 $(function () {
 
     initForm();
@@ -18,7 +16,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/system/sysManageController/saveMenu",
+                url: contextPath + "/system/saveMenu",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -46,7 +44,7 @@ function initForm() {
 function loadParentMenu() {
     $.ajax({
         type: "POST",
-        url: contextPath + "/system/sysManageController/getMainMenuList",
+        url: contextPath + "/system/getMainMenuList",
         data: {},
         success: function (data) {
             if (data.result == 200) {
@@ -54,7 +52,7 @@ function loadParentMenu() {
                 var content = '<option value="">选择上级菜单</option>';
                 for (var i = 0; i < rows.length; i++) {
                     var menuObj = rows[i];
-                    content += '<option value="' + menuObj.menuId + '">' + menuObj.menuName + '</option>';
+                    content += '<option value="' + menuObj.id + '">' + menuObj.menuName + '</option>';
                 }
                 $("#parentId").html(content);
             }
@@ -94,7 +92,7 @@ function selectLevel(obj) {
 function loadMenuData(menuId) {
     $.ajax({
         type: "POST",
-        url: contextPath + "/system/sysManageController/getMenuById",
+        url: contextPath + "/system/getMenuById",
         data: {
             "menuId": menuId
         },

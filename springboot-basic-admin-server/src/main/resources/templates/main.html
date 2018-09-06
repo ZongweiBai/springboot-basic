@@ -43,12 +43,12 @@
     <input runat="server" id="divScrollValue" type="hidden" value=""/>
     <div class="menu_dropdown bk_2" th:each="sysMenu:${sysMenuList}">
         <dl id="menu-article">
-            <dt><i style="font-size: 18px;" class="Hui-iconfont">${sysMenu.menuIcon}</i>&nbsp;${sysMenu.menuName}<i
+            <dt><i style="font-size: 18px;" class="Hui-iconfont" th:utext="${sysMenu.menuIcon}"></i>&nbsp;<span th:text="${sysMenu.menuName}"></span><i
                     class="Hui-iconfont menu_dropdown-arrow">&#xe6d5;</i></dt>
             <dd>
                 <ul th:each="subMenu:${sysMenu.subMenuList}">
-                    <li><a _href="${subMenu.menuUrl}"
-                           href="javascript:void(0)">${subMenu.menuName}</a></li>
+                    <li><a th:attr="_href=${#servletContext.contextPath} + ${subMenu.menuUrl}"
+                           href="javascript:void(0)"><span th:text="${subMenu.menuName}"></span></a></li>
                 </ul>
             </dd>
         </dl>

@@ -10,6 +10,8 @@ import java.util.List;
 
 public interface ISysMenuRepository extends PagingAndSortingRepository<SysMenu, String>, JpaSpecificationExecutor<SysMenu> {
 
-    @Query("select 0 from SysMenu o where o.id in :menuIds")
+    @Query("select o from SysMenu o where o.id in :menuIds")
     List<SysMenu> findByMenuIds(@Param("menuIds") List<String> menuIdList);
+
+    List<SysMenu> findByLevel(int level);
 }

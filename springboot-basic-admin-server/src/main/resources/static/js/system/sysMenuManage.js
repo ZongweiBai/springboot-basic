@@ -5,14 +5,14 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/system/sysManageController/queryMenuForPage",
+        url: contextPath + "/system/queryMenuForPage",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
-                limit: params.limit,  //页面大小
-                offset: params.offset,
+                size: params.limit,  //页面大小
+                page: params.offset,
                 sort: params.sort,
                 order: params.order
             };
@@ -60,12 +60,7 @@ function loadTable() {
                 }
             },
             {
-                field: 'createBy',
-                title: '创建人',
-                align: 'center'
-            },
-            {
-                field: 'menuId',
+                field: 'id',
                 title: '操作',
                 align: 'center',
                 formatter: function (value, row, index) {
@@ -82,7 +77,7 @@ function loadTable() {
  * 新增菜单
  */
 function addMenu() {
-    tip.openIframe("新增菜单", contextPath + '/system/sysMenu/sysMenuAdd.jsp');
+    tip.openIframe("新增菜单", contextPath + 'index/sysmenu/add');
 }
 
 /**
@@ -90,5 +85,5 @@ function addMenu() {
  * @param menuId
  */
 function editMenu(menuId) {
-    tip.openIframe("编辑菜单", contextPath + '/system/sysMenu/sysMenuAdd.jsp?menuId=' + menuId);
+    tip.openIframe("编辑菜单", contextPath + 'index/sysmenu/add?menuId=' + menuId);
 }
