@@ -5,14 +5,14 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/system/sysManageController/queryRoleForPage",
+        url: contextPath + "/system/queryRoleForPage",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
-                limit: params.limit,  //页面大小
-                offset: params.offset,
+                size: params.limit,  //页面大小
+                page: params.offset,
                 sort: params.sort,
                 order: params.order,
                 roleName: $("#roleName").val(),
@@ -61,7 +61,7 @@ function loadTable() {
                 align: 'center'
             },
             {
-                field: 'roleId',
+                field: 'id',
                 title: '操作',
                 align: 'center',
                 formatter: function (value, row, index) {
@@ -78,7 +78,7 @@ function loadTable() {
  * 新增角色
  */
 function addRole() {
-    tip.openIframe("新增角色", contextPath + '/system/sysRole/sysRoleAdd.jsp');
+    tip.openIframe("新增角色", contextPath + 'index/sysrole/add');
 }
 
 /**
@@ -86,5 +86,5 @@ function addRole() {
  * @param roleId
  */
 function editRole(roleId) {
-    tip.openIframe("编辑角色", contextPath + '/system/sysRole/sysRoleAdd.jsp?roleId=' + roleId);
+    tip.openIframe("编辑角色", contextPath + 'index/sysrole/add?roleId=' + roleId);
 }

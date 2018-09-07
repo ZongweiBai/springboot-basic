@@ -1,5 +1,3 @@
-var roleId = getQueryString("roleId");
-
 $(function () {
 
     initForm();
@@ -19,7 +17,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/system/sysManageController/saveRole",
+                url: contextPath + "/system/saveRole",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -51,7 +49,7 @@ function initForm() {
 function loadRoleData(roleId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/system/sysManageController/getMenuByRoleId",
+        url: contextPath + "/system/getMenuByRoleId",
         data: {
             "roleId": roleId
         },
@@ -85,7 +83,7 @@ function loadRoleData(roleId) {
 function loadMenuData() {
     $.ajax({
         type: "POST",
-        url: contextPath + "/system/sysManageController/getAllMenu",
+        url: contextPath + "/system/getAllMenu",
         data: {},
         beforeSend: function () {
             tip.showLoading();
@@ -120,9 +118,9 @@ function parseMenuList(rows) {
         content += '<dl class="permission-list">';
         content += '<dt>';
         if (mainMenu.checked == true) {
-            content += '<label><input type="checkbox" value="' + mainMenu.menuId + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].menuId" onclick="selectMainMenu(this)" checked="checked" />' + mainMenu.menuName + '</label>';
+            content += '<label><input type="checkbox" value="' + mainMenu.id + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].menuId" onclick="selectMainMenu(this)" checked="checked" />' + mainMenu.menuName + '</label>';
         } else {
-            content += '<label><input type="checkbox" value="' + mainMenu.menuId + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].menuId" onclick="selectMainMenu(this)" />' + mainMenu.menuName + '</label>';
+            content += '<label><input type="checkbox" value="' + mainMenu.id + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].menuId" onclick="selectMainMenu(this)" />' + mainMenu.menuName + '</label>';
         }
         content += '</dt>';
         menuIndex++;
@@ -134,9 +132,9 @@ function parseMenuList(rows) {
                 content += '<dt>';
                 content += '<label class="">';
                 if (subMenu.checked == true) {
-                    content += '<input type="checkbox" value="' + subMenu.menuId + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].menuId" onclick="selectSubMenu(this)" checked="checked" />' + subMenu.menuName + '</label>';
+                    content += '<input type="checkbox" value="' + subMenu.id + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].menuId" onclick="selectSubMenu(this)" checked="checked" />' + subMenu.menuName + '</label>';
                 } else {
-                    content += '<input type="checkbox" value="' + subMenu.menuId + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].menuId" onclick="selectSubMenu(this)" />' + subMenu.menuName + '</label>';
+                    content += '<input type="checkbox" value="' + subMenu.id + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].menuId" onclick="selectSubMenu(this)" />' + subMenu.menuName + '</label>';
                 }
                 content += '</dt>';
                 menuIndex++;

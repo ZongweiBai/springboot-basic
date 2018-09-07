@@ -15,7 +15,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -52,7 +54,7 @@ public class SystemController {
     }
 
     @GetMapping("/main")
-    public String main(HttpServletRequest request, Model model) {
+    public String main(HttpServletRequest request, HttpServletResponse response, Model model) throws IOException {
         HttpSession session = request.getSession();
         Admin sysUser = (Admin) session.getAttribute(WebConstant.ADMIN_USER_SESSION);
         if (sysUser == null) {
@@ -62,6 +64,7 @@ public class SystemController {
         List<SysMenu> sysMenuList = new ArrayList<>();
 
         if (sysUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
             return "login";
         }
 

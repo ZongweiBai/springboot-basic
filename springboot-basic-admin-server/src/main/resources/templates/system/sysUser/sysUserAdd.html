@@ -54,6 +54,11 @@
         </div>
     </form>
 </div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userId = [[${userId}]];
+    /*]]>*/
+</script>
 <script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
 <script type="text/javascript" src="js/system/sysUserAdd.js" th:src="@{/js/system/sysUserAdd.js}"></script>
 </body>

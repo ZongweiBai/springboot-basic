@@ -1,5 +1,3 @@
-var userId = getQueryString("userId");
-
 $(function () {
 
     loadRoleData();
@@ -19,7 +17,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/system/sysManageController/saveAdmin",
+                url: contextPath + "/system/saveAdmin",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -51,7 +49,7 @@ function initForm() {
 function loadRoleData() {
     $.ajax({
         type: "GET",
-        url: contextPath + "/system/sysManageController/getAllRoleList",
+        url: contextPath + "/system/getAllRoleList",
         data: {},
         beforeSend: function () {
             tip.showLoading();
@@ -63,7 +61,7 @@ function loadRoleData() {
                 var content = '<option value="">请选择所属角色</option>';
                 for (var i = 0; i < rows.length; i++) {
                     var roleObj = rows[i];
-                    content += '<option value="' + roleObj.roleId + '">' + roleObj.roleName + '</option>';
+                    content += '<option value="' + roleObj.id + '">' + roleObj.roleName + '</option>';
                 }
                 $("#roleId").html(content);
             } else {
@@ -83,7 +81,7 @@ function loadRoleData() {
 function loadUserData(userId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/system/sysManageController/getAdminById",
+        url: contextPath + "/system/getAdminById",
         data: {
             "userId": userId,
         },

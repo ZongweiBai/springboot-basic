@@ -62,4 +62,30 @@ public class IndexController {
         return "system/sysMenu/sysMenuManage";
     }
 
+    @GetMapping("/index/sysmenu/add")
+    public String addSysRole(String roleId, Model model) {
+        if (Objects.nonNull(roleId)) {
+            model.addAttribute("roleId", roleId);
+        }
+        return "system/sysRole/sysRoleAdd";
+    }
+
+    @GetMapping("/index/sysrole/manage")
+    public String manageSysRole() {
+        return "system/sysRole/sysRoleManage";
+    }
+
+    @GetMapping("/index/sysuser/add")
+    public String addSysUser(String userId, Model model) {
+        if (Objects.nonNull(userId)) {
+            model.addAttribute("userId", userId);
+        }
+        return "system/sysUser/sysUserAdd";
+    }
+
+    @GetMapping("/index/sysuser/manage")
+    public String manageSysUser() {
+        return "system/sysUser/sysUserManage";
+    }
+
 }

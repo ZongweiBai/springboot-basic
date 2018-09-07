@@ -5,14 +5,14 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/system/sysManageController/queryAdminForPage",
+        url: contextPath + "/system/queryAdminForPage",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
-                limit: params.limit,  //页面大小
-                offset: params.offset,
+                size: params.limit,  //页面大小
+                page: params.offset,
                 sort: params.sort,
                 order: params.order
             };
@@ -100,7 +100,7 @@ function loadTable() {
  * 新增用户
  */
 function addRole() {
-    tip.openIframe("新增用户", contextPath + '/system/sysUser/sysUserAdd.jsp');
+    tip.openIframe("新增用户", contextPath + 'index/sysuser/add');
 }
 
 /**
@@ -108,14 +108,14 @@ function addRole() {
  * @param roleId
  */
 function editRole(userId) {
-    tip.openIframe("编辑用户", contextPath + '/system/sysUser/sysUserAdd.jsp?userId=' + userId);
+    tip.openIframe("编辑用户", contextPath + 'index/sysuser/add?userId=' + userId);
 }
 
 
 function resetPsd(account){
     $.ajax({
         type: "GET",
-        url: contextPath + "/system/sysManageController/resetPsd",
+        url: contextPath + "/system/resetPsd",
         data: {
             "account": account
         },

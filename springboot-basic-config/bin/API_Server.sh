@@ -1,18 +1,18 @@
 #!/bin/bash
 #################
-# Component:        iam-idpproxy
+# Component:        api-server
 # Required-Start:   $all
 # Required-Stop:    $all
 # Default-Start:    2 3 4 5
 # Default-Stop:     0 1 6
-# Description:      IAM IDPProxy
+# Description:      API Server
 # chkconfig: 345 90 10
 ##################
 
-NAME=idpproxy
+NAME=springboot-basic-web-server
 CMD=$1
-TARGET_PATH=/opt/cac/CI/jboss_zongwei/idpproxy
-APP_PATH=$TARGET_PATH/$NAME.jar
+TARGET_PATH=/var/lib/modules/API-Server
+APP_PATH=$TARGET_PATH/webapp/$NAME.jar
 
 # JVM Args
 JVM_XMS_IDP=2048m
@@ -20,11 +20,11 @@ JVM_XMX_IDP=2048m
 JVM_MetaspaceSize_IDP=512m
 JVM_MaxMetaspaceSize_IDP=512m
 
-DEFAULT_PORT=8103
+DEFAULT_PORT=8888
 DEFAULT_DEBUG_PORT=8798
-IAM_IDPPROXY_CONFIG=/opt/cac/CI/jboss_zongwei/iam_config/idpProxy
-IAM_LOG_CONFIG=/opt/cac/CI/jboss_zongwei/iam_config/log
-IAM_IDPPROXY_CLASSPATH=/opt/cac/CI/jboss_zongwei/iam_config/idpProxy/lib
+IAM_IDPPROXY_CONFIG=/var/lib/modules/API-Server/config
+IAM_LOG_CONFIG=/var/lib/modules/API-Server/log
+IAM_IDPPROXY_CLASSPATH=/var/lib/modules/API-Server/lib
 
 start() {
         echo "Starting $NAME ..."
