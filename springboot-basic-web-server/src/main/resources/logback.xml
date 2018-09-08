@@ -5,55 +5,25 @@
             <pattern>####%d{yyyy-M-d HH:mm:ss.SSS} %t %p %m%n</pattern>
         </encoder>
     </appender>
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-    </root>
 
     <!-- application log -->
-    <appender name="SPRINGBOOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="EVENT-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/logback/springboot_%d{yyyy-M-d}.log</FileNamePattern>
+            <FileNamePattern>/var/lib/modules/API-Server/log/event_log_%d{yyyy-M-d}.log</FileNamePattern>
             <MaxHistory>10</MaxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger level="INFO" name="com.baymin.springboot" additivity="false">
-        <appender-ref ref="SPRINGBOOT"/>
+
+    <logger level="DEBUG" name="root" additivity="false">
+        <appender-ref ref="EVENT-LOG"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <!-- application error log -->
-    <appender name="SPRINGBOOT_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/logback/springboot_error_%d{yyyy-M-d}.log</FileNamePattern>
-            <MaxHistory>10</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-    </appender>
-    <logger level="ERROR" name="com.baymin.springboot.exception" additivity="false">
-        <appender-ref ref="SPRINGBOOT_ERROR"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <!-- api access log -->
-    <appender name="API_ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/logback/api_access_%d{yyyy-M-d}.log</FileNamePattern>
-            <MaxHistory>10</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
-        </encoder>
-    </appender>
     <logger level="DEBUG" name="com.baymin.springboot" additivity="false">
-        <appender-ref ref="API_ACCESS"/>
+        <appender-ref ref="EVENT-LOG"/>
         <appender-ref ref="STDOUT"/>
     </logger>
 </configuration>

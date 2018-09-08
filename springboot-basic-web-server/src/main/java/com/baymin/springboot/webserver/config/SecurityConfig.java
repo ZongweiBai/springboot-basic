@@ -11,7 +11,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+        http
+                .csrf().disable()
+                .authorizeRequests()
                 //普通的接口不需要校验
                 .antMatchers("/api/**").permitAll()
                 //swagger页面需要添加登录校验

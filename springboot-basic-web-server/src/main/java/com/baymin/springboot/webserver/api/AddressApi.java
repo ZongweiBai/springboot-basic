@@ -6,6 +6,7 @@ import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IAddressService;
 import com.baymin.springboot.store.entity.Address;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +20,7 @@ import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_RE
 @RequestMapping(path = "/api/address")
 public class AddressApi {
 
+    @Autowired
     private IAddressService addressService;
 
     @ApiOperation(value = "新增常用地址")
