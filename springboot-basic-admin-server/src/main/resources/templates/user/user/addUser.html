@@ -53,6 +53,8 @@
             <div class="col-2"></div>
         </div>
 
+        <input type="hidden" id="userId" name="id" value=""/>
+
         <div class="row cl">
             <div class="col-9 col-offset-3">
                 <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
@@ -60,6 +62,11 @@
         </div>
     </form>
 </div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userId = [[${userId}]];
+    /*]]>*/
+</script>
 <script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
 <script type="text/javascript" src="js/user/user/addUser.js" th:src="@{/js/user/user/addUser.js}"></script>
 </body>
