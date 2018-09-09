@@ -9,6 +9,7 @@ import com.baymin.springboot.store.repository.IRelateRoleMenuRepository;
 import com.baymin.springboot.store.repository.ISysMenuRepository;
 import com.baymin.springboot.store.repository.ISysRoleRepository;
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -67,7 +68,7 @@ public class MenuServiceImpl implements IMenuService {
                 sysMenu.setParentName(mainSysMenu.getMenuName());
             }
         }
-        if (sysMenu.getId() == null) {
+        if (StringUtils.isBlank(sysMenu.getId())) {
             sysMenu.setCreateTime(new Date());
             sysMenu.setStatus(1);
             sysMenuRepository.save(sysMenu);
@@ -95,7 +96,25 @@ public class MenuServiceImpl implements IMenuService {
 
     @Override
     public void saveRole(SysRole sysRole) {
+        if (StringUtils.isNotBlank(sysRole.getId())) {
+            List<RelateRoleMenu> relateRoleMenus = relateRoleMenuRepository.findByRoleId(sysRole.getId());
+            if (relateRoleMenus != null && !relateRoleMenus.isEmpty()) {
+                for (RelateRoleMenu relateRoleMenu : relateRoleMenus) {
+                    relateRoleMenuRepository.delete(relateRoleMenu);
+                }
+            }
+        }
         sysRoleRepository.save(sysRole);
+        if (sysRole.getMenuList() != null && !sysRole.getMenuList().isEmpty()) {
+            RelateRoleMenu relateRoleMenu;
+            for (SysMenu sysMenu : sysRole.getMenuList()) {
+                if (StringUtils.isNotBlank(sysMenu.getId())) {
+                    relateRoleMenu = new RelateRoleMenu(sysMenu.getId(), sysRole.getId());
+                    relateRoleMenuRepository.save(relateRoleMenu);
+                }
+            }
+        }
+
     }
 
     @Override

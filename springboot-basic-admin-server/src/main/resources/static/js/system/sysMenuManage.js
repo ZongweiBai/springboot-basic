@@ -12,7 +12,7 @@ function loadTable() {
         queryParams: function (params) {
             var paramsMap = {
                 size: params.limit,  //页面大小
-                page: params.offset,
+                page: params.offset/params.limit,
                 sort: params.sort,
                 order: params.order
             };

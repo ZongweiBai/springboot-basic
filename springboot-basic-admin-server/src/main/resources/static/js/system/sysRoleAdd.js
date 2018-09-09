@@ -118,9 +118,9 @@ function parseMenuList(rows) {
         content += '<dl class="permission-list">';
         content += '<dt>';
         if (mainMenu.checked == true) {
-            content += '<label><input type="checkbox" value="' + mainMenu.id + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].menuId" onclick="selectMainMenu(this)" checked="checked" />' + mainMenu.menuName + '</label>';
+            content += '<label><input type="checkbox" value="' + mainMenu.id + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].id" onclick="selectMainMenu(this)" checked="checked" />' + mainMenu.menuName + '</label>';
         } else {
-            content += '<label><input type="checkbox" value="' + mainMenu.id + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].menuId" onclick="selectMainMenu(this)" />' + mainMenu.menuName + '</label>';
+            content += '<label><input type="checkbox" value="' + mainMenu.id + '" id="menu_' + i + '" name="menuList[' + menuIndex + '].id" onclick="selectMainMenu(this)" />' + mainMenu.menuName + '</label>';
         }
         content += '</dt>';
         menuIndex++;
@@ -132,9 +132,9 @@ function parseMenuList(rows) {
                 content += '<dt>';
                 content += '<label class="">';
                 if (subMenu.checked == true) {
-                    content += '<input type="checkbox" value="' + subMenu.id + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].menuId" onclick="selectSubMenu(this)" checked="checked" />' + subMenu.menuName + '</label>';
+                    content += '<input type="checkbox" value="' + subMenu.id + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].id" onclick="selectSubMenu(this)" checked="checked" />' + subMenu.menuName + '</label>';
                 } else {
-                    content += '<input type="checkbox" value="' + subMenu.id + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].menuId" onclick="selectSubMenu(this)" />' + subMenu.menuName + '</label>';
+                    content += '<input type="checkbox" value="' + subMenu.id + '" id="menu_' + i + '_' + j + '" name="menuList[' + menuIndex + '].id" onclick="selectSubMenu(this)" />' + subMenu.menuName + '</label>';
                 }
                 content += '</dt>';
                 menuIndex++;

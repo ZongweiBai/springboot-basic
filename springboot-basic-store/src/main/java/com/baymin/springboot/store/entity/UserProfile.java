@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * Created by ebaizon on 7/31/2017.
@@ -27,8 +28,17 @@ public class UserProfile implements Serializable {
     @Column(name = "ACCOUNT", nullable = false, unique = true, updatable = false, length = 32)
     private String account;
 
+    @Column(name = "SEX", length = 2, nullable = false)
+    private String sex; // M:男 F:女
+
     @Column(name = "NICK_NAME", length = 32)
     private String nickName;
+
+    @Column(name = "IDP_NICK_NAME", length = 32)
+    private String idpNickName;
+
+    @Column(name = "IDP_ID", length = 64)
+    private String idpId;
 
     @Column(name = "ACTUAL_NAME", length = 32)
     private String actualName;
@@ -40,5 +50,8 @@ public class UserProfile implements Serializable {
     private String payPassword;
 
     @Column(name = "REGISTER_TIME", columnDefinition = "timestamp")
-    private Long registerTime;
+    private Date registerTime;
+
+    @Column(name = "ORDER_COUNT", precision = 4, scale = 0)
+    private Integer orderCount;
 }

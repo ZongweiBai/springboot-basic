@@ -5,20 +5,17 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/system/queryRoleForPage",
+        url: contextPath + "/service/queryServiceForPage",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
                 size: params.limit,  //页面大小
-                page: params.offset/params.limit,
+                page: params.offset,
                 sort: params.sort,
                 order: params.order,
-                roleName: $("#roleName").val(),
-                roleType: $("#roleType").val(),
-                datemin: $("#datemin").val(),
-                datemax: $("#datemax").val()
+                serviceType: $("#basicServiceType").val()
             };
             return paramsMap;
         },
@@ -29,21 +26,30 @@ function loadTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
-                field: 'roleName',
-                title: '角色名称',
+                field: 'basicServiceType',
+                title: '服务分类',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == 'BASIC') {
+                        return "基础护理";
+                    } else if (value == 'MEDICAL') {
+                        return "医疗照护";
+                    } else if (value == 'LIFE') {
+                        return "活动照护";
+                    } else if (value == 'HOME') {
+                        return "生活服务";
+                    }
+                }
+            },
+            {
+                field: 'serviceName',
+                title: '服务项目',
                 align: 'center'
             },
             {
-                field: 'roleType',
-                title: '角色类型',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == 'A') {
-                        return "系统管理员";
-                    } else {
-                        return "普通管理员";
-                    }
-                }
+                field: 'serviceFee',
+                title: '服务价格',
+                align: 'center'
             },
             {
                 field: 'createTime',
@@ -70,16 +76,16 @@ function loadTable() {
 }
 
 /**
- * 新增角色
+ * 新增
  */
 function addRole() {
-    tip.openIframe("新增角色", contextPath + 'index/sysrole/add');
+    tip.openIframe("新增服务项目", contextPath + 'index/service/basic/add');
 }
 
 /**
- * 编辑角色
- * @param roleId
+ * 编辑
+ * @param serviceId
  */
-function editRole(roleId) {
-    tip.openIframe("编辑角色", contextPath + 'index/sysrole/add?roleId=' + roleId);
+function editRole(serviceId) {
+    tip.openIframe("编辑服务项目", contextPath + 'index/service/basic/add?serviceId=' + serviceId);
 }

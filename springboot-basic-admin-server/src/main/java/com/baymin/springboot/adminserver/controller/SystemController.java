@@ -39,7 +39,7 @@ public class SystemController {
         Map<String, Object> reMap = new HashMap<>();
         Admin admin = adminService.getAdminByAccount(userName);
         if (admin != null) {
-            if (admin.getPassword().equals(passWord)) {
+            if (StringUtils.equals(admin.getPassword(), passWord)) {
                 request.getSession().setAttribute(WebConstant.ADMIN_USER_SESSION, admin);
                 reMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             } else {
@@ -74,7 +74,7 @@ public class SystemController {
             if (sysUser.getRoleId() != null) {
                 List<RelateRoleMenu> relateRoleMenus = menuService.getRelateRoleMenuByRoleId(sysUser.getRoleId());
                 if (CollectionUtils.isNotEmpty(relateRoleMenus)) {
-                    List<String> menuIdList = relateRoleMenus.stream().map(RelateRoleMenu::getId).collect(Collectors.toList());
+                    List<String> menuIdList = relateRoleMenus.stream().map(RelateRoleMenu::getMenuId).collect(Collectors.toList());
                     sysMenuList.addAll(menuService.getSysMenuByIds(menuIdList));
                 }
             }
@@ -379,7 +379,7 @@ public class SystemController {
         Map<String, Object> resultMap = new HashMap<>();
         Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
         try {
-            if (sysRole.getId() == null) {
+            if (StringUtils.isBlank(sysRole.getId())) {
                 sysRole.setCreateTime(new Date());
             } else {
                 SysRole oldSysRole = menuService.getRoleById(sysRole.getId());

@@ -32,7 +32,7 @@ public class SysMenu implements Serializable {
     @Column(name = "MENU_NAME", length = 32)
     private String menuName;
 
-    @Column(name = "MENU_URL", length = 32)
+    @Column(name = "MENU_URL", length = 256)
     private String menuUrl;
 
     @Column(name = "LEVEL")

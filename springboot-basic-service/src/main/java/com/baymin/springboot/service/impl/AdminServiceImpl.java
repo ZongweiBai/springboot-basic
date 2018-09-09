@@ -41,6 +41,7 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public void saveAdmin(Admin admin, Admin sysUser) {
         admin.setCreateTime(new Date());
+        admin.setPassword("888888");
         adminRepository.save(admin);
     }
 }

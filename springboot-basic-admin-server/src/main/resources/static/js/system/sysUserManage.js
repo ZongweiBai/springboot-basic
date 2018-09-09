@@ -12,7 +12,7 @@ function loadTable() {
         queryParams: function (params) {
             var paramsMap = {
                 size: params.limit,  //页面大小
-                page: params.offset,
+                page: params.offset/params.limit,
                 sort: params.sort,
                 order: params.order
             };
@@ -34,7 +34,7 @@ function loadTable() {
                 title: '用户等级',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    //1、超级管理员 2、普通管理员 3、商家
+                    //1、超级管理员 2、普通管理员
                     var gradeName = "";
                     switch (value) {
                         case 1:
@@ -42,9 +42,6 @@ function loadTable() {
                             break;
                         case 2:
                             gradeName = "普通管理员";
-                            break;
-                        case 3:
-                            gradeName = "商家";
                             break;
                     }
                     return gradeName;
@@ -114,7 +111,7 @@ function editRole(userId) {
 
 function resetPsd(account){
     $.ajax({
-        type: "GET",
+        type: "POST",
         url: contextPath + "/system/resetPsd",
         data: {
             "account": account

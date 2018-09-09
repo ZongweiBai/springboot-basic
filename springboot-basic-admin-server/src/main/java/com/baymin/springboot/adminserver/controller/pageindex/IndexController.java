@@ -62,7 +62,7 @@ public class IndexController {
         return "system/sysMenu/sysMenuManage";
     }
 
-    @GetMapping("/index/sysmenu/add")
+    @GetMapping("/index/sysrole/add")
     public String addSysRole(String roleId, Model model) {
         if (Objects.nonNull(roleId)) {
             model.addAttribute("roleId", roleId);
@@ -87,5 +87,61 @@ public class IndexController {
     public String manageSysUser() {
         return "system/sysUser/sysUserManage";
     }
+
+    @GetMapping("/index/service/basic/manage")
+    public String manageBasicService() {
+        return "service/basic/serviceManage";
+    }
+
+    @GetMapping("/index/service/basic/add")
+    public String addBasicService(String serviceId, Model model) {
+        if (Objects.nonNull(serviceId)) {
+            model.addAttribute("serviceId", serviceId);
+        }
+        return "service/basic/serviceAdd";
+    }
+
+    @GetMapping("/index/userprofile/manage")
+    public String manageUserProfile() {
+        return "user/user/userManage";
+    }
+
+    @GetMapping("/index/userprofile/add")
+    public String addUser(String userId, Model model) {
+        if (Objects.nonNull(userId)) {
+            model.addAttribute("userId", userId);
+        }
+        return "user/user/addUser";
+    }
+
+    @GetMapping("/index/userprofile/detail")
+    public String userDetail(String userId, Model model) {
+        if (Objects.nonNull(userId)) {
+            model.addAttribute("userId", userId);
+        }
+        return "user/user/viewUserDetail";
+    }
+
+    @GetMapping("/index/staff/manage")
+    public String manageStaff() {
+        return "user/staff/staffManage";
+    }
+
+    @GetMapping("/index/staff/add")
+    public String addStaff(String staffId, Model model) {
+        if (Objects.nonNull(staffId)) {
+            model.addAttribute("staffId", staffId);
+        }
+        return "user/staff/addStaff";
+    }
+
+    @GetMapping("/index/staff/detail")
+    public String staffDetail(String staffId, Model model) {
+        if (Objects.nonNull(staffId)) {
+            model.addAttribute("staffId", staffId);
+        }
+        return "user/staff/viewStaffDetail";
+    }
+
 
 }

@@ -1,0 +1,76 @@
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <%@include file="/assets/page/base.jsp" %>
+    <link href="<%=request.getContextPath()%>/assets/css/image.css" rel="stylesheet" type="text/css"/>
+    <link href="<%=request.getContextPath()%>/assets/lib/lightbox2/2.8.1/css/lightbox.css" rel="stylesheet"
+          type="text/css"/>
+    <title>速递员详情</title>
+</head>
+<body>
+<div class="pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-menu-add">
+
+        <div class="row cl">
+            <label class="form-label col-2">头像：</label>
+            <div class="formControls col-3">
+                <div class="picsh">
+                    <div id="headerImgDiv">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2">手机号：</label>
+            <div class="formControls col-3">
+                <span id="userAccount"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">姓名：</label>
+            <div class="formControls col-3">
+                <span id="driverName"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">在线状态：</label>
+            <div class="formControls col-3">
+                <span id="onLineStatus"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">系统评分：</label>
+            <div class="formControls col-3">
+                <span id="platformRating"></span>
+            </div>
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2">用户评分：</label>
+            <div class="formControls col-3">
+                <span id="userRating"></span>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-9 col-offset-3">
+                <input class="btn btn-primary radius" type="submit" onclick="tip.closeIframe();"
+                       value="&nbsp;&nbsp;关闭&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="<%=request.getContextPath()%>/user/driver/js/viewDriverDetail.js"></script>
+<script type="text/javascript" src="<%=request.getContextPath()%>/assets/js/DateFormat.js"></script>
+<script type="text/javascript"
+        src="<%=request.getContextPath()%>/assets/lib/lightbox2/2.8.1/js/lightbox.min.js"></script>
+</body>
+</html>

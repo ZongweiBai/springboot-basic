@@ -8,12 +8,15 @@
     <link href="lib/Hui-iconfont/1.0.1/iconfont.css" th:href="@{/lib/Hui-iconfont/1.0.1/iconfont.css}" rel="stylesheet" type="text/css"/>
     <link href="lib/layer/skin/layer.css" th:href="@{/lib/layer/skin/layer.css}" rel="stylesheet" type="text/css"/>
     <script th:inline="javascript">
+        var adminGrade = -1;
         /*<![CDATA[*/
         contextPath = /*[[@{/}]]*/ ''
-        session = /*[[${session.xx}]]*/
-        yy = /*[[${yy}]]*/
+        ADMIN_USER_SESSION = /*[[${session.ADMIN_USER_SESSION}]]*/
         /*]]>*/
-        console.info(contextPath);
+        console.debug(contextPath);
+        if (ADMIN_USER_SESSION != null) {
+            adminGrade = ADMIN_USER_SESSION.grade;
+        }
 
         /*
         var adminGrade = "<%=adminGrade%>";

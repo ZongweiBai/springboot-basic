@@ -11,8 +11,8 @@ function loadTable() {
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
-                limit: params.limit,  //页面大小
-                offset: params.offset
+                size: params.limit,  //页面大小
+                page: params.offset/params.limit
             };
             return paramsMap;
         },
