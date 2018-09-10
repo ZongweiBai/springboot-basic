@@ -1,5 +1,6 @@
 package com.baymin.springboot.store.entity;
 
+import com.baymin.springboot.store.enumconstant.CommonStatusType;
 import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import lombok.Data;
@@ -34,6 +35,9 @@ public class ServiceStaff {
     @Column(name = "MOBILE", length = 20, nullable = false)
     private String mobile;
 
+    @Column(name = "SERVICE_COUNT", precision = 4, scale = 0)
+    private Integer serviceCount;
+
     @Column(name = "ID_CARD", length = 20, nullable = false)
     private String idCard;
 
@@ -66,8 +70,11 @@ public class ServiceStaff {
     private ServiceStaffType serviceStaffType;
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Long createTime;
+    private Date createTime;
 
     @Column(name = "SERVICE_STATUS")
     private ServiceStatus serviceStatus;
+
+    @Column(name = "STAFF_STATUS")
+    private CommonStatusType staffStatus;
 }

@@ -17,13 +17,42 @@
         </encoder>
     </appender>
 
-    <logger level="DEBUG" name="root" additivity="false">
+    <root level="DEBUG">
         <appender-ref ref="EVENT-LOG"/>
-        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <logger name="org.springframework" additivity="true" level="info">
     </logger>
 
-    <logger level="DEBUG" name="com.baymin.springboot" additivity="false">
-        <appender-ref ref="EVENT-LOG"/>
+    <logger name="org.apache.axis" additivity="true" level="info">
+    </logger>
+
+    <logger name="org.apache.cxf" additivity="true" level="info">
+    </logger>
+
+    <logger name="net.sf.ehcache" additivity="true" level="error">
+    </logger>
+
+    <logger name="com.zaxxer.hikari" additivity="true" level="debug">
+    </logger>
+
+    <logger name="org.eclipse.jetty" additivity="true" level="info">
+    </logger>
+
+    <logger name="org.hibernate" additivity="true" level="info">
+    </logger>
+
+    <!-- print the start log in nohup.out-->
+    <logger name="com.baymin.springboot.SpringBootApp" additivity="true" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.springframework.boot" additivity="true" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.apache.tomcat" additivity="true" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.zaxxer" additivity="true" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
 </configuration>

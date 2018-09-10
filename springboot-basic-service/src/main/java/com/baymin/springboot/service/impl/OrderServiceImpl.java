@@ -7,22 +7,24 @@ import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
-import com.baymin.springboot.store.entity.Evaluate;
-import com.baymin.springboot.store.entity.Invoice;
-import com.baymin.springboot.store.entity.Order;
-import com.baymin.springboot.store.entity.OrderExt;
+import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.InvoiceStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 import com.baymin.springboot.store.repository.IEvaluateRepository;
+import com.baymin.springboot.store.repository.IInvoiceRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -30,9 +32,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 import static com.baymin.springboot.common.constant.RequestConstant.*;
-import static com.baymin.springboot.store.enumconstant.CareType.HOME_CARE;
-import static com.baymin.springboot.store.enumconstant.CareType.HOSPITAL_CARE;
-import static com.baymin.springboot.store.enumconstant.CareType.REHABILITATION;
+import static com.baymin.springboot.store.enumconstant.CareType.*;
 
 @Service
 @Transactional
@@ -53,13 +53,16 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IOrderRepository orderRepository;
 
+    @Autowired
+    private IInvoiceRepository invoiceRepository;
+
     @Override
     public Order saveUserOrder(UserOrderRequest request) {
         Invoice invoice = request.getInvoice();
         Order order = new Order();
 
         order.setOrderUserId(request.getOrderUserId());
-        order.setOrderTime(System.currentTimeMillis());
+        order.setOrderTime(new Date());
         order.setCareType(request.getOrderType());
         if (StringUtils.equals(RequestConstant.OFFLINE, request.getPayway())) {
             order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
@@ -154,5 +157,40 @@ public class OrderServiceImpl implements IOrderService {
         invoiceDao.save(invoice);
 
         orderRepository.updateInvoiceStatus(orderIdList, InvoiceStatus.INVOICING);
+    }
+
+    @Override
+    public Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate) {
+        QOrder qOrder = QOrder.order;
+
+        BooleanExpression predicate = qOrder.id.isNotNull();
+        if (Objects.nonNull(status)) {
+            predicate.and(qOrder.status.eq(status));
+        }
+        if (StringUtils.isNotBlank(orderId)) {
+            predicate.and(qOrder.id.eq(orderId));
+        }
+        if (Objects.nonNull(careType)) {
+            predicate.and(qOrder.careType.eq(careType));
+        }
+        if (Objects.nonNull(maxDate)) {
+            predicate.and(qOrder.orderTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            predicate.and(qOrder.orderTime.gt(minDate));
+        }
+
+        return orderRepository.findAll(predicate, pageable);
+    }
+
+    @Override
+    public Map<String, Object> getOrderDetail(String orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        List<Invoice> invoiceList = invoiceRepository.findByOrderIds(orderId);
+
+        Map<String, Object> detailMap = new HashMap<>();
+        detailMap.put("order", order);
+        detailMap.put("invoiceList", invoiceList);
+        return detailMap;
     }
 }

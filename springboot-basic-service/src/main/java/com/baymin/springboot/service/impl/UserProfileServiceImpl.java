@@ -2,8 +2,12 @@ package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.dao.IUserProfileDao;
+import com.baymin.springboot.store.entity.Address;
+import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.QUserProfile;
 import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.store.repository.IAddressRepository;
+import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IUserProfileRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.lang3.StringUtils;
@@ -13,8 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Date;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Created by Baymin on 2017/4/9.
@@ -28,6 +31,12 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
     @Autowired
     private IUserProfileRepository userProfileRepository;
+
+    @Autowired
+    private IAddressRepository addressRepository;
+
+    @Autowired
+    private IOrderRepository orderRepository;
 
     @Override
     public UserProfile findByAccount(String account) {
@@ -75,5 +84,18 @@ public class UserProfileServiceImpl implements IUserProfileService {
         }
 
         return userProfileRepository.findAll(predicate, pageable);
+    }
+
+    @Override
+    public Map<String, Object> getUserDetail(String userId) {
+        UserProfile userProfile = userProfileRepository.findById(userId).orElse(null);
+        List<Address> addressList = addressRepository.findByUserId(userId);
+        List<Order> orderList = orderRepository.findByOrderUserIdOrderByOrderTimeDesc(userId);
+
+        Map<String, Object> detailMap = new HashMap<>();
+        detailMap.put("userProfile", userProfile);
+        detailMap.put("addressList", addressList);
+        detailMap.put("orderList", orderList);
+        return detailMap;
     }
 }

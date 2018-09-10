@@ -1,5 +1,9 @@
 $(function () {
     initForm();
+
+    if (userId != null) {
+        $("#password-div").remove();
+    }
 });
 
 function initForm() {

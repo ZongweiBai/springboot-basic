@@ -11,6 +11,7 @@ import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 订单基本信息表
@@ -34,10 +35,10 @@ public class Order implements Serializable {
     private String serviceStaffId;
 
     @Column(name = "ORDER_TIME", columnDefinition = "timestamp")
-    private Long orderTime;
+    private Date orderTime;
 
     @Column(name = "CLOSE_TIME", columnDefinition = "timestamp")
-    private Long closeTime;
+    private Date closeTime;
 
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "CARE_TYPE")

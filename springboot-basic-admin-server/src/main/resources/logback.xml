@@ -5,55 +5,55 @@
             <pattern>####%d{yyyy-M-d HH:mm:ss.SSS} %t %p %m%n</pattern>
         </encoder>
     </appender>
-    <root level="INFO">
-        <appender-ref ref="STDOUT"/>
-    </root>
 
     <!-- application log -->
-    <appender name="SPRINGBOOT" class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <appender name="EVENT-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/logback/springboot_%d{yyyy-M-d}.log</FileNamePattern>
+            <FileNamePattern>/var/lib/modules/Admin-Server/log/event_log_%d{yyyy-M-d}.log</FileNamePattern>
             <MaxHistory>10</MaxHistory>
         </rollingPolicy>
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
         </encoder>
     </appender>
-    <logger level="INFO" name="com.baymin.springboot" additivity="false">
-        <appender-ref ref="SPRINGBOOT"/>
+
+    <root level="DEBUG">
+        <appender-ref ref="EVENT-LOG"/>
+    </root>
+
+    <logger name="org.springframework" additivity="true" level="info">
+    </logger>
+
+    <logger name="org.apache.axis" additivity="true" level="info">
+    </logger>
+
+    <logger name="org.apache.cxf" additivity="true" level="info">
+    </logger>
+
+    <logger name="net.sf.ehcache" additivity="true" level="error">
+    </logger>
+
+    <logger name="com.zaxxer.hikari" additivity="true" level="debug">
+    </logger>
+
+    <logger name="org.eclipse.jetty" additivity="true" level="info">
+    </logger>
+
+    <logger name="org.hibernate" additivity="true" level="info">
+    </logger>
+
+    <!-- print the start log in nohup.out-->
+    <logger name="com.baymin.springboot.SpringBootAdminApp" additivity="true" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.springframework.boot" additivity="true" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.apache.tomcat" additivity="true" level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="com.zaxxer" additivity="true" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <!-- application error log -->
-    <appender name="SPRINGBOOT_ERROR" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/logback/springboot_error_%d{yyyy-M-d}.log</FileNamePattern>
-            <MaxHistory>10</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
-        </encoder>
-        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
-            <level>ERROR</level>
-        </filter>
-    </appender>
-    <logger level="ERROR" name="com.baymin.springboot.exception" additivity="false">
-        <appender-ref ref="SPRINGBOOT_ERROR"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
-
-    <!-- api access log -->
-    <appender name="API_ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>logs/logback/api_access_%d{yyyy-M-d}.log</FileNamePattern>
-            <MaxHistory>10</MaxHistory>
-        </rollingPolicy>
-        <encoder>
-            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
-        </encoder>
-    </appender>
-    <logger level="DEBUG" name="com.baymin.springboot" additivity="false">
-        <appender-ref ref="API_ACCESS"/>
-        <appender-ref ref="STDOUT"/>
-    </logger>
 </configuration>
