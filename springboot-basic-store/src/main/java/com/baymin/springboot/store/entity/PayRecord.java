@@ -62,12 +62,12 @@ public class PayRecord implements Serializable {
      * 创建日期
      */
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Long createTime;
+    private Date createTime;
     /**
      * 支付完成日期
      */
     @Column(name = "FINISH_TIME", columnDefinition = "timestamp")
-    private Long finishTime;
+    private Date finishTime;
     /**
      * 订单ID
      */

@@ -4,8 +4,9 @@ import com.baymin.springboot.service.IStaffService;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.QServiceStaff;
 import com.baymin.springboot.store.entity.ServiceStaff;
-import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.store.enumconstant.CommonStatusType;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
+import com.baymin.springboot.store.enumconstant.ServiceStaffType;
+import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IServiceStaffRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -32,10 +33,10 @@ public class StaffServiceImpl implements IStaffService {
     private IOrderRepository orderRepository;
 
     @Override
-    public Page<UserProfile> queryStaffForPage(Pageable pageable, String userName, String account, String sex) {
+    public Page<ServiceStaff> queryStaffForPage(Pageable pageable, String userName, String account, String sex) {
         QServiceStaff qStaff = QServiceStaff.serviceStaff;
 
-        BooleanExpression predicate = qStaff.staffStatus.eq(CommonStatusType.NORMAL);
+        BooleanExpression predicate = qStaff.staffStatus.eq(CommonStatus.NORMAL);
         if (StringUtils.isNotBlank(userName)) {
             predicate.and(qStaff.userName.eq(userName));
         }
@@ -57,7 +58,7 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setServiceCount(oldData.getServiceCount());
             serviceStaff.setStaffStatus(oldData.getStaffStatus());
         } else {
-            serviceStaff.setStaffStatus(CommonStatusType.NORMAL);
+            serviceStaff.setStaffStatus(CommonStatus.NORMAL);
             serviceStaff.setCreateTime(new Date());
         }
         serviceStaffRepository.save(serviceStaff);
@@ -80,7 +81,12 @@ public class StaffServiceImpl implements IStaffService {
     }
 
     @Override
-    public void updateStaffStatus(String staffId, CommonStatusType statusType) {
+    public void updateStaffStatus(String staffId, CommonStatus statusType) {
         serviceStaffRepository.updateStaffStatus(staffId, statusType);
+    }
+
+    @Override
+    public List<ServiceStaff> queryStaffByType(ServiceStaffType serviceStaffType) {
+        return serviceStaffRepository.findFreeStaff(serviceStaffType, ServiceStatus.FREE, CommonStatus.NORMAL);
     }
 }

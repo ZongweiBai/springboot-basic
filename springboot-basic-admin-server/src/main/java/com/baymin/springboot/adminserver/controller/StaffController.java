@@ -4,20 +4,18 @@ import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.service.IStaffService;
 import com.baymin.springboot.store.entity.Admin;
 import com.baymin.springboot.store.entity.ServiceStaff;
-import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.store.enumconstant.CommonStatusType;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
+import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -34,9 +32,21 @@ public class StaffController {
         Map<String, Object> resultMap = new HashMap<>();
 
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<UserProfile> queryResult = staffService.queryStaffForPage(pageable, userName, account, sex);
+        Page<ServiceStaff> queryResult = staffService.queryStaffForPage(pageable, userName, account, sex);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @GetMapping(value = "queryStaffByType")
+    public Map<String, Object> queryStaffByType(ServiceStaffType serviceStaffType,
+                                                HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<ServiceStaff> staffList = staffService.queryStaffByType(serviceStaffType);
+        resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        resultMap.put(WebConstant.ROWS, staffList);
         return resultMap;
     }
 
@@ -93,7 +103,7 @@ public class StaffController {
     public Map<String, Object> deleteStaff(String staffId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            staffService.updateStaffStatus(staffId, CommonStatusType.DELETE);
+            staffService.updateStaffStatus(staffId, CommonStatus.DELETE);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

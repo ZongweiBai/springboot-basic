@@ -5,6 +5,7 @@ import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
+import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,4 +29,8 @@ public interface IOrderService {
     Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate);
 
     Map<String,Object> getOrderDetail(String orderId);
+
+    void assignOrderStaff(String orderId, String staffId);
+
+    void offlinePay(String orderId, PayWay payWay);
 }

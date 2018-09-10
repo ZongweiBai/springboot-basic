@@ -1,15 +1,16 @@
 package com.baymin.springboot.service;
 
 import com.baymin.springboot.store.entity.ServiceStaff;
-import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.store.enumconstant.CommonStatusType;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
+import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
 import java.util.Map;
 
 public interface IStaffService {
-    Page<UserProfile> queryStaffForPage(Pageable pageable, String userName, String account, String sex);
+    Page<ServiceStaff> queryStaffForPage(Pageable pageable, String userName, String account, String sex);
 
     void saveStaff(ServiceStaff serviceStaff);
 
@@ -17,5 +18,7 @@ public interface IStaffService {
 
     Map<String,Object> getStaffDetail(String staffId);
 
-    void updateStaffStatus(String staffId, CommonStatusType statusType);
+    void updateStaffStatus(String staffId, CommonStatus statusType);
+
+    List<ServiceStaff> queryStaffByType(ServiceStaffType serviceStaffType);
 }

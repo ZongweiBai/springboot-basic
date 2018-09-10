@@ -5,16 +5,16 @@ import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
 /**
  * 共用状态类型
  */
-public enum CommonStatusType implements IBaseDbEnum {
+public enum CommonDealStatus implements IBaseDbEnum {
 
-    NORMAL("正常", 1),
-    FORBIDDEN("禁用", 0),
-    DELETE("已删除", -99);
+    APPLY("已申请", 0),
+    AGREE("已同意", 1),
+    REJECT("已驳回", -1);
 
     private String name;
     private int index;
 
-    CommonStatusType(String name, int index) {
+    CommonDealStatus(String name, int index) {
         this.name = name;
         this.index = index;
     }

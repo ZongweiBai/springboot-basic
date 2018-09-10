@@ -7,15 +7,13 @@ import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
+import com.baymin.springboot.store.enumconstant.PayWay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -45,13 +43,43 @@ public class OrderController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "viewOrderDetail", method = RequestMethod.GET)
+    @GetMapping(value = "viewOrderDetail")
     public Map<String, Object> viewOrderDetail(String orderId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             Map<String, Object> detailMap = orderService.getOrderDetail(orderId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, detailMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "assignOrderStaff")
+    public Map<String, Object> assignOrderStaff(String orderId, String staffId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            orderService.assignOrderStaff(orderId, staffId);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "offlinePay")
+    public Map<String, Object> offlinePay(String orderId, PayWay payWay, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            orderService.offlinePay(orderId, payWay);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);

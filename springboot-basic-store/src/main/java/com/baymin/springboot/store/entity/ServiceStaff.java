@@ -1,6 +1,6 @@
 package com.baymin.springboot.store.entity;
 
-import com.baymin.springboot.store.enumconstant.CommonStatusType;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import lombok.Data;
@@ -76,5 +76,5 @@ public class ServiceStaff {
     private ServiceStatus serviceStatus;
 
     @Column(name = "STAFF_STATUS")
-    private CommonStatusType staffStatus;
+    private CommonStatus staffStatus;
 }

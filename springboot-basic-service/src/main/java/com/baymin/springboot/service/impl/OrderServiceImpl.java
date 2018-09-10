@@ -8,14 +8,9 @@ import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
-import com.baymin.springboot.store.enumconstant.CareType;
-import com.baymin.springboot.store.enumconstant.InvoiceStatus;
-import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.enumconstant.PayWay;
+import com.baymin.springboot.store.enumconstant.*;
 import com.baymin.springboot.store.payload.UserOrderRequest;
-import com.baymin.springboot.store.repository.IEvaluateRepository;
-import com.baymin.springboot.store.repository.IInvoiceRepository;
-import com.baymin.springboot.store.repository.IOrderRepository;
+import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections4.CollectionUtils;
@@ -55,6 +50,12 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     private IInvoiceRepository invoiceRepository;
+
+    @Autowired
+    private IServiceStaffRepository serviceStaffRepository;
+
+    @Autowired
+    private IPayRecordRepository payRecordRepository;
 
     @Override
     public Order saveUserOrder(UserOrderRequest request) {
@@ -192,5 +193,43 @@ public class OrderServiceImpl implements IOrderService {
         detailMap.put("order", order);
         detailMap.put("invoiceList", invoiceList);
         return detailMap;
+    }
+
+    @Override
+    public void assignOrderStaff(String orderId, String staffId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        ServiceStaff staff = serviceStaffRepository.findById(staffId).orElse(null);
+        if (Objects.isNull(order) || Objects.isNull(staff)) {
+            return;
+        }
+        order.setServiceStaffId(staffId);
+        order.setStatus(OrderStatus.ORDER_ASSIGN);
+        orderRepository.save(order);
+
+        staff.setServiceCount(staff.getServiceCount() + 1);
+        staff.setServiceStatus(ServiceStatus.IN_SERVICE);
+        serviceStaffRepository.save(staff);
+    }
+
+    @Override
+    public void offlinePay(String orderId, PayWay payWay) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (Objects.isNull(order)) {
+            return;
+        }
+        order.setStatus(OrderStatus.ORDER_PAYED);
+        order.setPayWay(payWay);
+        orderRepository.save(order);
+
+        PayRecord payRecord = new PayRecord();
+        payRecord.setCreateTime(new Date());
+        payRecord.setFinishTime(new Date());
+        payRecord.setOrderId(orderId);
+        payRecord.setPayerUserId(order.getOrderUserId());
+        payRecord.setPayFee(order.getTotalFee());
+        payRecord.setPayResult(true);
+        payRecord.setPayWay(payWay);
+        payRecord.setResultDesc("线下支付");
+        payRecordRepository.save(payRecord);
     }
 }
