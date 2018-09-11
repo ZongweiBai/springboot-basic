@@ -3,6 +3,7 @@ package com.baymin.springboot.service;
 import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
+import com.baymin.springboot.store.entity.OrderStaffChange;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
@@ -33,4 +34,6 @@ public interface IOrderService {
     void assignOrderStaff(String orderId, String staffId);
 
     void offlinePay(String orderId, PayWay payWay);
+
+    void staffChangeRequest(OrderStaffChange staffChange);
 }

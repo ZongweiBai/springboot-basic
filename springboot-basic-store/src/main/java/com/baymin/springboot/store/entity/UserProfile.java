@@ -52,6 +52,9 @@ public class UserProfile implements Serializable {
     @Column(name = "REGISTER_TIME", columnDefinition = "timestamp")
     private Date registerTime;
 
+    @Column(name = "LAST_LOGIN_TIME", columnDefinition = "timestamp")
+    private Date lastLoginTime;
+
     @Column(name = "ORDER_COUNT", precision = 4, scale = 0)
     private Integer orderCount;
 }

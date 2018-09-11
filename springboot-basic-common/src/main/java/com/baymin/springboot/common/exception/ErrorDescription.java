@@ -11,7 +11,7 @@ public class ErrorDescription {
     public static final String SERVER_ERROR = "服务器异常";
     public static final String TOKEN_INVALID = "Token非法";
     public static final String TOKEN_EXPIRED = "Token已过期";
-    public static final String ORDER_INFO_NOT_CORRECT = "订单信息不正确";
+    public static final String ORDER_INFO_NOT_CORRECT = "订单信息不正确或状态不支持";
     public static final String USER_NOT_EXIST = "用户不存在";
     public static final String USER_EXIST = "用户已存在";
     public static final String NOT_MEET_CONDITION = "不满足评价条件";

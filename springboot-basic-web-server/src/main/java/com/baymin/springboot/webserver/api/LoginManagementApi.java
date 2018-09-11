@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 
@@ -74,6 +75,9 @@ public class LoginManagementApi {
         }
 
         try {
+            userProfile.setLastLoginTime(new Date());
+            userProfileService.saveUserProfile(userProfile);
+
             String subject = JwtUtil.generalSubject(userProfile.getId(), Constant.JWTAPI.JWT_TOKEN);
             String accessToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_TTL);
             subject = JwtUtil.generalSubject(userProfile.getId(), Constant.JWTAPI.JWT_REFRESH_TOKEN);
@@ -110,6 +114,10 @@ public class LoginManagementApi {
             if (userProfile == null) {
                 throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
             }
+
+            userProfile.setLastLoginTime(new Date());
+            userProfileService.saveUserProfile(userProfile);
+
             String subject = JwtUtil.generalSubject(userProfile.getId(), Constant.JWTAPI.JWT_TOKEN);
             String accessToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_TTL);
             TokenVo tokenVo = new TokenVo();

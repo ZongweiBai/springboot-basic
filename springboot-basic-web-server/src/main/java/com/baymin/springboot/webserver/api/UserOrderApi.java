@@ -7,6 +7,7 @@ import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
+import com.baymin.springboot.store.entity.OrderStaffChange;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -102,6 +103,15 @@ public class UserOrderApi {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
         orderService.saveInvoiceRequest(invoice);
+    }
+
+    @ApiOperation(value = "申请更换照护人")
+    @PostMapping("/staffchange")
+    public void staffChangeRequest(@RequestBody OrderStaffChange staffChange) {
+        if (Objects.isNull(staffChange)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        orderService.staffChangeRequest(staffChange);
     }
 
 }

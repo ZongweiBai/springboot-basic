@@ -19,8 +19,10 @@ public interface IOrderRepository extends PagingAndSortingRepository<Order, Stri
     List<Order> findInvoicedOrder(@Param("orderIds") List<String> orderIdList, @Param("notInvoiced") InvoiceStatus notInvoiced);
 
     @Modifying
-    @Query("update Order set invoiceStatus = :invoiceStatus where id in :orderIds")
-    void updateInvoiceStatus(@Param("orderIds") List<String> orderIdList, @Param("invoiceStatus") InvoiceStatus invoiceStatus);
+    @Query("update Order set invoiceStatus = :invoiceStatus, invoiceId = :invoiceId where id = :orderId")
+    void updateInvoiceStatus(@Param("orderId") String orderId,
+                             @Param("invoiceStatus") InvoiceStatus invoiceStatus,
+                             @Param("invoiceId") String invoiceId);
 
     List<Order> findByOrderUserIdOrderByOrderTimeDesc(String userId);
 

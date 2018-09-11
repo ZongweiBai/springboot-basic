@@ -40,9 +40,6 @@ public class Invoice {
     @Column(name = "INVOICE_FEE", precision=10, scale=2)
     private Double invoiceFee;
 
-    @Column(name = "ORDER_IDS", length = 256)
-    private String orderIds;
-
     @Column(name = "DEAL_STATUS")
     private Boolean dealStatus;
 
@@ -58,4 +55,6 @@ public class Invoice {
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
     private Date DEAL_Time;
 
+    @Transient
+    private String orderIds;
 }

@@ -65,6 +65,9 @@ public class Order implements Serializable {
     @Column(name = "INVOICE_STATUS")
     private InvoiceStatus invoiceStatus;
 
+    @Column(name = "INVOICE_ID", length = 32)
+    private String invoiceId;
+
     /**
      * 乐观锁
      */

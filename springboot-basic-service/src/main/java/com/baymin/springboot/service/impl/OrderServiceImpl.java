@@ -27,6 +27,7 @@ import javax.transaction.Transactional;
 import java.util.*;
 
 import static com.baymin.springboot.common.constant.RequestConstant.*;
+import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
 import static com.baymin.springboot.store.enumconstant.CareType.*;
 
 @Service
@@ -56,6 +57,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     private IPayRecordRepository payRecordRepository;
+
+    @Autowired
+    private IOrderStaffChangeRepository orderStaffChangeRepository;
 
     @Override
     public Order saveUserOrder(UserOrderRequest request) {
@@ -120,7 +124,6 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.nonNull(invoice)) {
             invoice.setCreateTime(new Date());
             invoice.setDealStatus(false);
-            invoice.setOrderIds(order.getId());
             invoiceDao.save(invoice);
         }
 
@@ -157,7 +160,9 @@ public class OrderServiceImpl implements IOrderService {
         invoice.setDealStatus(false);
         invoiceDao.save(invoice);
 
-        orderRepository.updateInvoiceStatus(orderIdList, InvoiceStatus.INVOICING);
+        for (String orderId : orderIdList) {
+            orderRepository.updateInvoiceStatus(orderId, InvoiceStatus.INVOICING, invoice.getId());
+        }
     }
 
     @Override
@@ -186,12 +191,17 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public Map<String, Object> getOrderDetail(String orderId) {
-        Order order = orderRepository.findById(orderId).orElse(null);
-        List<Invoice> invoiceList = invoiceRepository.findByOrderIds(orderId);
-
         Map<String, Object> detailMap = new HashMap<>();
+        Order order = orderRepository.findById(orderId).orElse(null);
         detailMap.put("order", order);
-        detailMap.put("invoiceList", invoiceList);
+
+        if (StringUtils.isNotBlank(order.getInvoiceId())) {
+            Invoice invoice = invoiceRepository.findById(order.getInvoiceId()).orElse(null);
+            if (Objects.nonNull(invoice)) {
+                detailMap.put("invoice", invoice);
+            }
+        }
+
         return detailMap;
     }
 
@@ -231,5 +241,18 @@ public class OrderServiceImpl implements IOrderService {
         payRecord.setPayWay(payWay);
         payRecord.setResultDesc("线下支付");
         payRecordRepository.save(payRecord);
+    }
+
+    @Override
+    public void staffChangeRequest(OrderStaffChange staffChange) {
+        Order order = orderRepository.findById(staffChange.getOrderId()).orElse(null);
+        if (Objects.isNull(order) || order.getStatus() != OrderStatus.ORDER_PROCESSING) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
+        }
+
+        staffChange.setCreateTime(new Date());
+        staffChange.setDealStatus(CommonDealStatus.APPLY);
+        staffChange.setOldStaffId(order.getServiceStaffId());
+        orderStaffChangeRepository.save(staffChange);
     }
 }
