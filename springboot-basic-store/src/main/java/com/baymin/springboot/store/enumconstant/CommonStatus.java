@@ -9,6 +9,8 @@ public enum CommonStatus implements IBaseDbEnum {
 
     NORMAL("正常", 1),
     FORBIDDEN("禁用", 0),
+    UPCART("上架", 10),
+    DOWNCART("下架", 11),
     DELETE("已删除", -99);
 
     private String name;

@@ -1,6 +1,6 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE HTML>
-<html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta name="renderer" content="webkit|ie-comp|ie-stand">
@@ -8,10 +8,10 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
-    <%@include file="/assets/page/base.jsp" %>
-    <link href="<%=request.getContextPath()%>/assets/css/image.css" rel="stylesheet" type="text/css"/>
-    <link href="<%=request.getContextPath()%>/assets/lib/lightbox2/2.8.1/css/lightbox.css" rel="stylesheet"
+    <link href="css/image.css" th:href="@{/css/image.css}" rel="stylesheet" type="text/css"/>
+    <link href="lib/lightbox2/2.8.1/css/lightbox.css" th:href="@{/lib/lightbox2/2.8.1/css/lightbox.css}" rel="stylesheet"
           type="text/css"/>
+    <head th:include="common/base">
     <title>速递员详情</title>
 </head>
 <body>
@@ -68,9 +68,14 @@
     </form>
 </div>
 
-<script type="text/javascript" src="<%=request.getContextPath()%>/user/driver/js/viewDriverDetail.js"></script>
-<script type="text/javascript" src="<%=request.getContextPath()%>/assets/js/DateFormat.js"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var userId = [[${userId}]];
+    /*]]>*/
+</script>
+<script type="text/javascript" src="js/user/staff/viewStaffDetail.js" th:src="@{/js/user/staff/viewStaffDetail.js}"></script>
+<script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
 <script type="text/javascript"
-        src="<%=request.getContextPath()%>/assets/lib/lightbox2/2.8.1/js/lightbox.min.js"></script>
+        src="lib/lightbox2/2.8.1/js/lightbox.min.js" th:src="@{/lib/lightbox2/2.8.1/js/lightbox.min.js}"></script>
 </body>
 </html>

@@ -5,18 +5,19 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/user/driverController/queryDriverForPage",
+        url: contextPath + "/staff/queryStaffForPage",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
                 limit: params.limit,  //页面大小
-                offset: params.offset,
+                offset: params.offset/params.limit,
                 sort: params.sort,
                 order: params.order,
-                driverName: $("#driverName").val(),
-                statusType: $("#statusType").val()
+                userName: $("#userName").val(),
+                mobile: $("#mobile").val(),
+                sex: $("#sex").val()
             };
             return paramsMap;
         },
@@ -27,61 +28,37 @@ function loadTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
-                field: 'driverName',
+                field: 'userName',
                 title: '姓名',
                 align: 'center'
             },
             {
-                field: 'account',
-                title: '手机号',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    return value.account;
-                }
+                field: 'mobile',
+                title: '手机号码',
+                align: 'center'
             },
             {
-                field: 'platformRating',
-                title: '等级',
+                field: 'serviceCount',
+                title: '服务次数',
                 align: 'center'
+            },
+            {
+                field: 'experience',
+                title: '护理经验',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    return value + "年";
+                }
+
             },
             {
                 field: 'userRating',
-                title: '用户评分',
+                title: '优先服务类型',
                 align: 'center'
             },
             {
-                field: 'statusType',
-                title: '状态',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == 'NORMAL') {
-                        return "正常";
-                    } else if (value == 'FORBIDDEN') {
-                        return "禁用";
-                    } else {
-                        return "-";
-                    }
-                }
-
-            },
-            {
-                field: 'onLineStatus',
-                title: '在线状态',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == 'ONLINE') {
-                        return "在线";
-                    } else if (value == 'OFFLINE') {
-                        return "离线";
-                    } else {
-                        return "-";
-                    }
-                }
-
-            },
-            {
-                field: 'registerDate',
-                title: '创建时间',
+                field: 'createTime',
+                title: '注册时间',
                 align: 'center',
                 formatter: function (value, row, index) {
                     return getFormatDateByLong(value, "yyyy-MM-dd hh:mm:ss");
@@ -114,25 +91,25 @@ function loadTable() {
  * 查看详情
  * @param driverId
  */
-function viewDriverInfo(driverId) {
-    tip.openIframe("速递员详情", contextPath + '/user/staff/viewDriverDetail.html?driverId=' + driverId);
+function viewDriverInfo(staffId) {
+    tip.openIframe("护工详情", contextPath + 'index/staff/detail?staffId=' + staffId);
 }
 
 /**
  * 编辑
  */
-function editDriverInfo(driverId) {
-    tip.openIframe("编辑", contextPath + '/user/staff/driverAdd.html?driverId=' + driverId);
+function editDriverInfo(staffId) {
+    tip.openIframe("编辑", contextPath + 'index/staff/add?staffId=' + staffId);
 }
 
 /**
  * 删除
  */
 function deleteDriverInfo(driverId) {
-    tip.confirm("确定要删除快递员吗？删除后无法恢复！",function () {
+    tip.confirm("确定要删除吗？删除后无法恢复！",function () {
         $.ajax({
             type: "POST",
-            url: contextPath + "/user/driverController/deleteDriver",
+            url: contextPath + "/staff/deleteStaff",
             data: {
                 "driverId": driverId
             },
@@ -151,7 +128,7 @@ function deleteDriverInfo(driverId) {
  * 新增
  */
 function addDriver() {
-    tip.openIframe("新增", contextPath + '/user/staff/driverAdd.html');
+    tip.openIframe("新增", contextPath + 'index/staff/add');
 }
 
 var refreshData = function () {

@@ -5,17 +5,17 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/service/queryServiceForPage",
+        url: contextPath + "/item/queryItemForPage",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
                 size: params.limit,  //页面大小
-                page: params.offset,
+                page: params.offset/params.limit,
                 sort: params.sort,
                 order: params.order,
-                serviceType: $("#basicServiceType").val()
+                basicItemType: $("#basicItemType").val()
             };
             return paramsMap;
         },
@@ -26,7 +26,7 @@ function loadTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
-                field: 'basicServiceType',
+                field: 'basicItemType',
                 title: '服务分类',
                 align: 'center',
                 formatter: function (value, row, index) {
@@ -38,16 +38,32 @@ function loadTable() {
                         return "活动照护";
                     } else if (value == 'HOME') {
                         return "生活服务";
+                    } else {
+                        return "";
                     }
                 }
             },
             {
-                field: 'serviceName',
+                field: 'itemName',
                 title: '服务项目',
                 align: 'center'
             },
             {
-                field: 'serviceFee',
+                field: 'status',
+                title: '状态',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == 'UPCART') {
+                        return "上架";
+                    } else if (value == 'DOWNCART') {
+                        return "下架";
+                    } else {
+                        return "";
+                    }
+                }
+            },
+            {
+                field: 'itemFee',
                 title: '服务价格',
                 align: 'center'
             },
@@ -79,13 +95,13 @@ function loadTable() {
  * 新增
  */
 function addRole() {
-    tip.openIframe("新增服务项目", contextPath + 'index/service/basic/add');
+    tip.openIframe("新增服务项目", contextPath + 'index/item/basic/add');
 }
 
 /**
  * 编辑
  * @param serviceId
  */
-function editRole(serviceId) {
-    tip.openIframe("编辑服务项目", contextPath + 'index/service/basic/add?serviceId=' + serviceId);
+function editRole(itemId) {
+    tip.openIframe("编辑服务项目", contextPath + 'index/item/basic/add?itemId=' + itemId);
 }
