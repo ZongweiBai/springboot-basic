@@ -3,7 +3,6 @@ package com.baymin.springboot.service.impl;
 import com.baymin.springboot.service.IBasicItemService;
 import com.baymin.springboot.store.entity.BasicItem;
 import com.baymin.springboot.store.entity.QBasicItem;
-import com.baymin.springboot.store.entity.QBasicServiceFee;
 import com.baymin.springboot.store.enumconstant.BasicItemType;
 import com.baymin.springboot.store.repository.IBasicItemRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;

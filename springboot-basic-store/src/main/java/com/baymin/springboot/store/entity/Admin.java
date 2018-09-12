@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
-import org.springframework.util.StringUtils;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -53,10 +52,22 @@ public class Admin implements Serializable {
      */
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
+
+    @Column(name = "LAST_LOGIN_TIME", columnDefinition = "timestamp")
+    private Date lastLoginTime;
     /**
      * 手机号码
      */
     @Column(name = "MOBILE", length = 11)
     private String mobile;
+
+    @Column(name = "EMAIL", length = 32)
+    private String email;
+
+    @Column(name = "ORG_ID", length = 32)
+    private String orgId;
+
+    @Column(name = "ADMIN_NOTE", length = 256)
+    private String adminNote;
 
 }

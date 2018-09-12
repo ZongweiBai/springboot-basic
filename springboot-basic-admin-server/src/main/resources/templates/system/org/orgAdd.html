@@ -15,37 +15,24 @@
 <div class="pd-20">
     <form action="" method="post" class="form form-horizontal" id="form-menu-add">
         <div class="row cl">
-            <label class="form-label col-12"><span class="c-red">注：系统帐号的默认密码为888888</span></label>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>用户账号：</label>
+            <label class="form-label col-2"><span class="c-red">*</span>机构名称：</label>
             <div class="formControls col-8">
-                <input type="text" class="input-text" value="" placeholder="" id="account" name="account"
-                       datatype="*2-16" nullmsg="用户账号不能为空">
+                <input type="text" class="input-text" value="" placeholder="" id="orgName" name="orgName"
+                       datatype="*2-16" nullmsg="机构名称不能为空">
             </div>
             <div class="col-2"></div>
         </div>
         
         <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>手机号码：</label>
+            <label class="form-label col-2"><span class="c-red">*</span>职能描述：</label>
             <div class="formControls col-8">
-                <input type="text" class="input-text" value="" placeholder="" id="mobile" name="mobile" maxlength="11"
-                       datatype="m" nullmsg="手机号码不能为空" errormsg="手机号码格式错误">
+                <textarea type="text" class="input-text" value="" style="height: 100px;" placeholder="" id="orgDesc" name="orgDesc" maxlength="11"
+                          datatype="*" nullmsg="职能描述不能为空"></textarea>
             </div>
             <div class="col-2"></div>
         </div>
 
-        <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>所属角色：</label>
-            <div class="formControls col-8">
-                <select class="select input-text" name="roleId" id="roleId" datatype="*" size="1" nullmsg="所属角色不能为空">
-                    <option value="">请选择所属角色</option>
-                </select>
-            </div>
-            <div class="col-2"></div>
-        </div>
-
-        <input type="hidden" id="userId" name="id" value=""/>
+        <input type="hidden" id="orgId" name="id" value=""/>
 
         <div class="row cl">
             <div class="col-9 col-offset-3">

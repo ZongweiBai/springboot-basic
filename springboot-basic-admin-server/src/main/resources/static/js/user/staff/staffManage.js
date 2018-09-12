@@ -52,7 +52,7 @@ function loadTable() {
 
             },
             {
-                field: 'userRating',
+                field: 'firstSkill',
                 title: '优先服务类型',
                 align: 'center'
             },
@@ -69,16 +69,9 @@ function loadTable() {
                 title: '操作',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    var content = '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewDriverInfo(\'' + value + '\')" title="详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
-                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editDriverInfo(\'' + value + '\')" title="编辑"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
-                    var statusType = row.statusType;
-                    if (statusType == 'NORMAL') {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="toggleDriverStatus(\'' + value + '\', \'1\')" title="禁用"><i style="font-size: 18px;" class="Hui-iconfont">&#xe631;</i></a>&nbsp;';
-                    } else {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="toggleDriverStatus(\'' + value + '\', \'0\')" title="启用"><i style="font-size: 18px;" class="Hui-iconfont">&#xe615;</i></a>&nbsp;';
-                    }
-                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="modifyPassword(\'' + value + '\')" title="修改密码"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63f;</i></a>&nbsp;';
-                    // content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="deleteDriverInfo(\'' + value + '\')" title="删除"><i style="font-size: 18px;" class="Hui-iconfont">&#xe609;</i></a>&nbsp;';
+                    var content = '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewDetailInfo(\'' + value + '\')" title="详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
+                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editStaffInfo(\'' + value + '\')" title="编辑"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
+                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="deleteStaffInfo(\'' + value + '\')" title="删除"><i style="font-size: 18px;" class="Hui-iconfont">&#xe609;</i></a>&nbsp;';
                     return content;
                 }
             }
@@ -91,27 +84,27 @@ function loadTable() {
  * 查看详情
  * @param driverId
  */
-function viewDriverInfo(staffId) {
+function viewDetailInfo(staffId) {
     tip.openIframe("护工详情", contextPath + 'index/staff/detail?staffId=' + staffId);
 }
 
 /**
  * 编辑
  */
-function editDriverInfo(staffId) {
+function editStaffInfo(staffId) {
     tip.openIframe("编辑", contextPath + 'index/staff/add?staffId=' + staffId);
 }
 
 /**
  * 删除
  */
-function deleteDriverInfo(driverId) {
+function deleteStaffInfo(staffId) {
     tip.confirm("确定要删除吗？删除后无法恢复！",function () {
         $.ajax({
-            type: "POST",
+            type: "GET",
             url: contextPath + "/staff/deleteStaff",
             data: {
-                "driverId": driverId
+                "staffId": staffId
             },
             success: function (data) {
                 if (data.result == 200) {

@@ -1,11 +1,9 @@
-var driverId = getQueryString("driverId");
-
 $(function () {
 
     initForm();
 
-    if (!isEmpty(driverId)) {
-        loadDriverInfoById(driverId)
+    if (!isEmpty(staffId)) {
+        loadStaffById(staffId)
     }
 
 });
@@ -16,7 +14,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/user/driverController/saveDriverInfo",
+                url: contextPath + "/staff/saveStaff",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -146,12 +144,12 @@ function removeFileImg(obj, fileName, type) {
     $(obj).parent("span").remove();
 }
 
-function loadDriverInfoById(driverId) {
+function loadStaffById(staffId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/user/driverController/getDriverById",
+        url: contextPath + "/staff/getStaffById",
         data: {
-            "driverId": driverId
+            "staffId": staffId
         },
         beforeSend: function () {
             tip.showLoading();
@@ -161,19 +159,28 @@ function loadDriverInfoById(driverId) {
             if (data.result == 200) {
                 var info = data.info;
                 $("#id").val(info.id);
-                $("#platformRating").val(info.platformRating);
-                $("#driverName").val(info.driverName);
-                $("#account").val(info.account.account);
-                $("#account").attr("readonly", true);
-                $("#passwordDiv").remove();
-                if (!isEmpty(info.headImg)) {
-                    fillImageUpload(info.headImg, 1);
-                }
+                $("#userName").val(info.userName);
+                $("#mobile").val(info.mobile);
+                $("input[name='sex'][value='"+info.sex+"']").attr("checked",true);
+                $("#experience").val(info.experience);
+                $("#height").val(info.height);
+                $("#weight").val(info.weight);
+                $("#nationality").val(info.nationality);
+                $("#birthplace").val(info.birthplace);
+                $("#localism").val(info.localism);
+                $("#mandarin").val(info.mandarin);
+                $("#localtion").val(info.localtion);
+                $("#firstSkill").val(info.firstSkill);
+                $("#specialty").val(info.specialty);
+                $("#idCard").val(info.idCard);
+                $("#healthCardId").val(info.healthCardId);
+                $("#pensionCardId").val(info.pensionCardId);
+                $("#healthCareCardId").val(info.healthCareCardId);
             }
         },
         error: function () {
             tip.hideLoading();
-            tip.alertError("加载速递员信息失败");
+            tip.alertError("加载信息失败");
         }
     });
 }

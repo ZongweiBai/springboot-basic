@@ -1,12 +1,10 @@
 $(function () {
 
-    loadRoleData();
-
     initForm();
 
-    if (!isEmpty(userId)) {
-        $("#userId").val(userId);
-        loadUserData(userId);
+    if (!isEmpty(orgId)) {
+        $("#orgId").val(orgId);
+        loadUserData(orgId);
     }
 
 });
@@ -17,7 +15,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/system/saveAdmin",
+                url: contextPath + "/system/saveOrg",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -43,47 +41,14 @@ function initForm() {
 }
 
 /**
- * 加载角色信息
- * @param roleId
+ * 加载信息
  */
-function loadRoleData() {
+function loadUserData(orgId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/system/getAllRoleList",
-        data: {},
-        beforeSend: function () {
-            tip.showLoading();
-        },
-        success: function (data) {
-            tip.hideLoading();
-            if (data.result == 200) {
-                var rows = data.rows;
-                var content = '<option value="">请选择所属角色</option>';
-                for (var i = 0; i < rows.length; i++) {
-                    var roleObj = rows[i];
-                    content += '<option value="' + roleObj.id + '">' + roleObj.roleName + '</option>';
-                }
-                $("#roleId").html(content);
-            } else {
-                tip.alertError("加载角色信息失败");
-            }
-        },
-        error: function () {
-            tip.hideLoading();
-            tip.alertError("加载角色信息失败");
-        }
-    });
-}
-
-/**
- * 加载用户信息
- */
-function loadUserData(userId) {
-    $.ajax({
-        type: "GET",
-        url: contextPath + "/system/getAdminById",
+        url: contextPath + "/system/getOrgById",
         data: {
-            "userId": userId,
+            "orgId": orgId,
         },
         beforeSend: function () {
             tip.showLoading();
@@ -93,9 +58,8 @@ function loadUserData(userId) {
             if (data.result == 200) {
                 var info = data.info;
                 if (!isEmpty(info)) {
-                    $("#account").val(info.account);
-                    $("#mobile").val(info.mobile);
-                    $("#roleId").val(info.roleId);
+                    $("#orgName").val(info.orgName);
+                    $("#orgDesc").html(info.orgDesc);
                 }
             } else {
                 tip.alertError("加载角色信息失败");

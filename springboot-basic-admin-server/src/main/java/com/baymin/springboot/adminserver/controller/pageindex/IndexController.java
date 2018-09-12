@@ -49,7 +49,9 @@ public class IndexController {
         return "nologin";
     }
 
-    /**===========================菜单入口================================*/
+    /**
+     * ===========================菜单入口================================
+     */
     @GetMapping("/index/sysmenu/add")
     public String addSysMenu(String menuId, Model model) {
         if (Objects.nonNull(menuId)) {
@@ -63,7 +65,9 @@ public class IndexController {
         return "system/sysMenu/sysMenuManage";
     }
 
-    /**===========================角色入口================================*/
+    /**
+     * ===========================角色入口================================
+     */
     @GetMapping("/index/sysrole/add")
     public String addSysRole(String roleId, Model model) {
         if (Objects.nonNull(roleId)) {
@@ -77,7 +81,9 @@ public class IndexController {
         return "system/sysRole/sysRoleManage";
     }
 
-    /**===========================系统用户入口================================*/
+    /**
+     * ===========================系统用户入口================================
+     */
     @GetMapping("/index/sysuser/add")
     public String addSysUser(String userId, Model model) {
         if (Objects.nonNull(userId)) {
@@ -91,7 +97,9 @@ public class IndexController {
         return "system/sysUser/sysUserManage";
     }
 
-    /**===========================机构管理入口================================*/
+    /**
+     * ===========================机构管理入口================================
+     */
     @GetMapping("/index/org/add")
     public String addSysOrg(String orgId, Model model) {
         if (Objects.nonNull(orgId)) {
@@ -105,7 +113,9 @@ public class IndexController {
         return "system/org/orgManage";
     }
 
-    /**===========================收费项目库入口================================*/
+    /**
+     * ===========================收费项目库入口================================
+     */
     @GetMapping("/index/item/basic/manage")
     public String manageBasicService() {
         return "service/basic/serviceManage";
@@ -119,7 +129,9 @@ public class IndexController {
         return "service/basic/serviceAdd";
     }
 
-    /**===========================普通用户入口================================*/
+    /**
+     * ===========================普通用户入口================================
+     */
     @GetMapping("/index/userprofile/manage")
     public String manageUserProfile() {
         return "user/user/userManage";
@@ -141,7 +153,9 @@ public class IndexController {
         return "user/user/viewUserDetail";
     }
 
-    /**===========================护工/护士管理入口================================*/
+    /**
+     * ===========================护工/护士管理入口================================
+     */
     @GetMapping("/index/staff/manage")
     public String manageStaff() {
         return "user/staff/staffManage";
@@ -163,5 +177,52 @@ public class IndexController {
         return "user/staff/viewStaffDetail";
     }
 
+    /**
+     * ===========================订单管理入口================================
+     */
+    @GetMapping("/index/order/manage")
+    public String manageOrder() {
+        return "order/orderManage";
+    }
+
+    @GetMapping("/index/order/assign")
+    public String orderAssign(String orderId, Model model) {
+        if (Objects.nonNull(orderId)) {
+            model.addAttribute("orderId", orderId);
+        }
+        return "order/orderAssign";
+    }
+
+    @GetMapping("/index/order/refund")
+    public String orderRefund(String orderId, Model model) {
+        if (Objects.nonNull(orderId)) {
+            model.addAttribute("orderId", orderId);
+        }
+        return "order/orderRefund";
+    }
+
+    @GetMapping("/index/order/staffchange")
+    public String orderStaffChange(String orderId, Model model) {
+        if (Objects.nonNull(orderId)) {
+            model.addAttribute("orderId", orderId);
+        }
+        return "order/staffChange";
+    }
+
+    @GetMapping("/index/order/offlinePay")
+    public String orderOfflinePay(String orderId, Model model) {
+        if (Objects.nonNull(orderId)) {
+            model.addAttribute("orderId", orderId);
+        }
+        return "order/offlinePay";
+    }
+
+    @GetMapping("/index/order/detail")
+    public String orderDetail(String orderId, Model model) {
+        if (Objects.nonNull(orderId)) {
+            model.addAttribute("orderId", orderId);
+        }
+        return "order/viewOrderDetail";
+    }
 
 }

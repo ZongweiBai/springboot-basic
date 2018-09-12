@@ -19,49 +19,95 @@
     <form action="" method="post" class="form form-horizontal" id="form-menu-add">
 
         <div class="row cl">
-            <label class="form-label col-2">头像：</label>
-            <div class="formControls col-3">
-                <div class="picsh">
-                    <div id="headerImgDiv">
-                    </div>
-                </div>
-            </div>
+            <table class="table table-border table-bordered table-bg table-hover table-sort">
+                <thead>
+                <tr class="text-c">
+                    <th colspan="8"><h2><b>基本信息</b></h2></th>
+                </tr>
+                <tr class="text-c">
+                    <th>姓名</th>
+                    <th>性别</th>
+                    <th>护理经验</th>
+                    <th>身高</th>
+                    <th>体重</th>
+                    <th>民族</th>
+                    <th>籍贯</th>
+                    <th>方言</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="text-c">
+                    <td id="userName"></td>
+                    <td id="sex"></td>
+                    <td id="experience"></td>
+                    <td id="height"></td>
+                    <td id="weight"></td>
+                    <td id="nationality"></td>
+                    <td id="birthplace"></td>
+                    <td id="localism"></td>
+                </tr>
+                </tbody>
+
+                <tr class="text-c">
+                    <th>普通话</th>
+                    <th>护理城市</th>
+                    <th>优先服务类型</th>
+                    <th>护理特长</th>
+                    <th>身份证</th>
+                    <th>健康证</th>
+                    <th>养老护理员职业资格证</th>
+                    <th>医疗照护职业资格证</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="text-c">
+                    <td id="mandarin"></td>
+                    <td id="localtion"></td>
+                    <td id="firstSkill"></td>
+                    <td id="specialty"></td>
+                    <td id="idCard"></td>
+                    <td id="healthCardId"></td>
+                    <td id="pensionCardId"></td>
+                    <td id="healthCareCardId"></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-2">手机号：</label>
-            <div class="formControls col-3">
-                <span id="userAccount"></span>
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-2">姓名：</label>
-            <div class="formControls col-3">
-                <span id="driverName"></span>
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-2">在线状态：</label>
-            <div class="formControls col-3">
-                <span id="onLineStatus"></span>
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-2">系统评分：</label>
-            <div class="formControls col-3">
-                <span id="platformRating"></span>
-            </div>
-        </div>
-        <div class="row cl">
-            <label class="form-label col-2">用户评分：</label>
-            <div class="formControls col-3">
-                <span id="userRating"></span>
-            </div>
+            <table class="table table-border table-bordered table-bg table-hover table-sort">
+                <thead>
+                <tr class="text-c">
+                    <th colspan="8"><h2><b>订单记录</b></h2></th>
+                </tr>
+                <tr class="text-c">
+                    <th>订单号</th>
+                    <th>订单类型</th>
+                    <th>下单时间</th>
+                    <th>订单金额</th>
+                    <th>订单金额</th>
+                    <th>支付方式</th>
+                    <th>订单状态</th>
+                    <th>订单来源</th>
+                </tr>
+                </thead>
+                <tbody id="orderTBody">
+                <tr class="text-c">
+                    <td id="orderId"></td>
+                    <td id="careType"></td>
+                    <td id="orderTime"></td>
+                    <td id="totalFee"></td>
+                    <td id="payWay"></td>
+                    <td id="status"></td>
+                    <td id="orderSource"></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
 
         <div class="row cl">
-            <div class="col-9 col-offset-3">
-                <input class="btn btn-primary radius" type="submit" onclick="tip.closeIframe();"
+            <div style="text-align: center;">
+                <input class="btn btn-primary radius" onclick="tip.closeIframe();" type="submit"
                        value="&nbsp;&nbsp;关闭&nbsp;&nbsp;">
             </div>
         </div>
@@ -70,7 +116,7 @@
 
 <script th:inline="javascript">
     /*<![CDATA[*/
-    var userId = [[${userId}]];
+    var staffId = [[${staffId}]];
     /*]]>*/
 </script>
 <script type="text/javascript" src="js/user/staff/viewStaffDetail.js" th:src="@{/js/user/staff/viewStaffDetail.js}"></script>

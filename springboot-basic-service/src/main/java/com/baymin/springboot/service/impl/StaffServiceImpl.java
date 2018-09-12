@@ -9,6 +9,7 @@ import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IServiceStaffRepository;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,20 +35,21 @@ public class StaffServiceImpl implements IStaffService {
 
     @Override
     public Page<ServiceStaff> queryStaffForPage(Pageable pageable, String userName, String account, String sex) {
+        BooleanBuilder builder = new BooleanBuilder();
         QServiceStaff qStaff = QServiceStaff.serviceStaff;
 
-        BooleanExpression predicate = qStaff.staffStatus.eq(CommonStatus.NORMAL);
+        builder.and(qStaff.staffStatus.eq(CommonStatus.NORMAL));
         if (StringUtils.isNotBlank(userName)) {
-            predicate.and(qStaff.userName.eq(userName));
+            builder.and(qStaff.userName.eq(userName));
         }
         if (StringUtils.isNotBlank(account)) {
-            predicate.and(qStaff.mobile.eq(account));
+            builder.and(qStaff.mobile.eq(account));
         }
         if (StringUtils.isNotBlank(sex)) {
-            predicate.and(qStaff.sex.eq(sex));
+            builder.and(qStaff.sex.eq(sex));
         }
 
-        return serviceStaffRepository.findAll(predicate, pageable);
+        return serviceStaffRepository.findAll(builder, pageable);
     }
 
     @Override

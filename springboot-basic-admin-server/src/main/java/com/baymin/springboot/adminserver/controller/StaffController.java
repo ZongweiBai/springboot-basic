@@ -27,12 +27,12 @@ public class StaffController {
 
     @ResponseBody
     @PostMapping(value = "queryStaffForPage")
-    public Map<String, Object> queryStaffForPage(Pageable pageable, String userName, String account, String sex,
+    public Map<String, Object> queryStaffForPage(Pageable pageable, String userName, String mobile, String sex,
                                                 HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<ServiceStaff> queryResult = staffService.queryStaffForPage(pageable, userName, account, sex);
+        Page<ServiceStaff> queryResult = staffService.queryStaffForPage(pageable, userName, mobile, sex);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
