@@ -25,7 +25,7 @@ public class UserProfile implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "ACCOUNT", nullable = false, unique = true, updatable = false, length = 32)
+    @Column(name = "ACCOUNT", nullable = false, unique = true, length = 32)
     private String account;
 
     @Column(name = "SEX", length = 2, nullable = false)
@@ -57,4 +57,10 @@ public class UserProfile implements Serializable {
 
     @Column(name = "ORDER_COUNT", precision = 4, scale = 0)
     private Integer orderCount;
+
+    @Column(name = "BIRTHDAY", columnDefinition = "timestamp")
+    private Date birthday;
+
+    @Transient
+    private String birthdayStr;
 }

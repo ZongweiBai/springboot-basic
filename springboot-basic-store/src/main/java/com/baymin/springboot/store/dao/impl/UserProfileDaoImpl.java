@@ -47,12 +47,4 @@ public class UserProfileDaoImpl implements IUserProfileDao {
         return userProfileRepository.findByAccount(account);
     }
 
-    @Override
-    public UserProfile findById(String userId) {
-        QUserProfile qUserProfile = QUserProfile.userProfile;
-        JPAQuery<UserProfile> jpaQuery = queryFactory.select(qUserProfile)
-                .where(qUserProfile.id.eq(userId));
-
-        return jpaQuery.fetchOne();
-    }
 }

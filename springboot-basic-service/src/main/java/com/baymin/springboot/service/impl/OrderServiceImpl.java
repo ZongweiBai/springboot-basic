@@ -72,6 +72,7 @@ public class OrderServiceImpl implements IOrderService {
         if (StringUtils.equals(RequestConstant.OFFLINE, request.getPayway())) {
             order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
         }
+        order.setOrderSource("WECHAT");
         // TODO need to calculate total fee
         order.setTotalFee(0.0);
         order.setVersion(0);

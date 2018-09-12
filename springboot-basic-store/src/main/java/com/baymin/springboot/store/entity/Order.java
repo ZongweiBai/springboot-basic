@@ -44,6 +44,12 @@ public class Order implements Serializable {
     @Column(name = "CARE_TYPE")
     private CareType careType;
 
+    /**
+     * 订单来源  WECHAT/PC
+     */
+    @Column(name = "ORDER_SOURCE", length = 10)
+    private String orderSource;
+
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "STATUS", length = 2)
     private OrderStatus status;

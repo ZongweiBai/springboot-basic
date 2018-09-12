@@ -43,7 +43,7 @@ public class AfterSalesController {
     }
 
     @ResponseBody
-    @PostMapping(value = "queryOrderForPage")
+    @PostMapping(value = "queryEvaluateForPage")
     public Map<String, Object> queryEvaluatePage(Pageable pageable, Integer grade, String orderId,
                                                     String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();

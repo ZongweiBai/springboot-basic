@@ -47,6 +47,18 @@ function loadTable() {
                 align: 'center'
             },
             {
+                field: 'sex',
+                title: '微信昵称',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == "M") {
+                        return "女";
+                    } else {
+                        return "男";
+                    }
+                }
+            },
+            {
                 field: 'orderCount',
                 title: '下单次数',
                 align: 'center'
@@ -66,7 +78,7 @@ function loadTable() {
                 formatter: function (value, row, index) {
                     var content = ''
                     content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewUserInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
-                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editUserInfo(\'' + value + '\')" title="编辑"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6ca;</i></a>&nbsp;';
+                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editUserInfo(\'' + value + '\')" title="编辑"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
                     return content;
                 }
             }

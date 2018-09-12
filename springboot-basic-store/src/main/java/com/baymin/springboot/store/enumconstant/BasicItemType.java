@@ -5,7 +5,7 @@ import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
 /**
  * 基础收费项目类型
  */
-public enum BasicServiceType implements IBaseDbEnum {
+public enum BasicItemType implements IBaseDbEnum {
 
     BASIC("基础护理", 1),
     MEDICAL("医疗照护", 2),
@@ -15,7 +15,7 @@ public enum BasicServiceType implements IBaseDbEnum {
     private String name;
     private int index;
 
-    BasicServiceType(String name, int index) {
+    BasicItemType(String name, int index) {
         this.name = name;
         this.index = index;
     }

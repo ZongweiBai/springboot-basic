@@ -1,0 +1,197 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script type="text/javascript" src="lib/My97DatePicker/WdatePicker.js" th:src="@{/lib/My97DatePicker/WdatePicker.js}"></script>
+    <head th:include="common/base">
+    <title>新增护工</title>
+</head>
+<body>
+<div class="pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-menu-add">
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>姓名：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="userName" name="userName"
+                       datatype="*2-16" nullmsg="姓名不能为空" >
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>手机号码：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="mobile" name="mobile"
+                       datatype="m" nullmsg="手机号码不能为空" >
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>性别：</label>
+            <div class="formControls col-5">
+                <div class="radio-box">
+                    <input type="radio" value="M" id="sex-M" name="sex">
+                    <label for="sex-M">女</label>
+                </div>
+                <div class="radio-box">
+                    <input type="radio" value="F" id="sex-F" name="sex" checked>
+                    <label for="sex-F">男</label>
+                </div>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>护理经验：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="experience" name="experience"
+                       datatype="n" nullmsg="护理经验不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>身高：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="height" name="height"
+                       datatype="n" nullmsg="身高不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>体重：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="weight" name="weight"
+                       datatype="n" nullmsg="体重不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl" id="passwordDiv">
+            <label class="form-label col-3"><span class="c-red">*</span>民族：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="nationality" name="nationality"
+                       datatype="*2-16" nullmsg="民族不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>籍贯：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="birthplace" name="birthplace"
+                       datatype="*" nullmsg="籍贯不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>方言：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="localism" name="localism">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>普通话：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="mandarin" name="mandarin"
+                       datatype="*" nullmsg="普通话不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>护理城市：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="localtion" name="localtion"
+                       datatype="*" nullmsg="护理城市不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>优先服务类型：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="firstSkill" name="firstSkill"
+                       datatype="*" nullmsg="优先服务类型不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>护理特长：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="specialty" name="specialty"
+                       datatype="*" nullmsg="护理特长不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>身份证：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="idCard" name="idCard"
+                       datatype="*" nullmsg="身份证不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>健康证：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="healthCardId" name="healthCardId"
+                       datatype="*" nullmsg="健康证不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>养老护理员职业资格证：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="pensionCardId" name="pensionCardId"
+                       datatype="*" nullmsg="养老护理员职业资格证不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>医疗照护职业资格证：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="healthCareCardId" name="healthCareCardId"
+                       datatype="*" nullmsg="医疗照护职业资格证不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <input type="hidden" id="id" name="id" value=""/>
+
+        <div class="row cl">
+            <div class="col-9 col-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+
+<img id="preview" src="" style="display: none;">
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var staffId = [[${staffId}]];
+    /*]]>*/
+</script>
+<script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
+<script type="text/javascript" src="js/user/staff/addStaff.js" th:src="@{/js/user/staff/addStaff.js}"></script>
+<script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
+</body>
+</html>

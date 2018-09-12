@@ -1,10 +1,10 @@
 package com.baymin.springboot.adminserver.controller;
 
 import com.baymin.springboot.adminserver.constant.WebConstant;
-import com.baymin.springboot.service.IBasicServiceService;
+import com.baymin.springboot.service.IBasicItemService;
 import com.baymin.springboot.store.entity.Admin;
-import com.baymin.springboot.store.entity.BasicServiceFee;
-import com.baymin.springboot.store.enumconstant.BasicServiceType;
+import com.baymin.springboot.store.entity.BasicItem;
+import com.baymin.springboot.store.enumconstant.BasicItemType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,31 +20,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping("service")
-public class ServiceController {
+@RequestMapping("item")
+public class BasicItemController {
 
     @Autowired
-    private IBasicServiceService basicServiceService;
+    private IBasicItemService basicItemService;
 
     @ResponseBody
-    @PostMapping(value = "queryServiceForPage")
-    public Map<String, Object> queryServiceForPage(Pageable pageable, BasicServiceType serviceType, HttpServletRequest request) {
+    @PostMapping(value = "queryItemForPage")
+    public Map<String, Object> queryItemForPage(Pageable pageable, BasicItemType basicItemType, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<BasicServiceFee> sysMenuQueryResult = basicServiceService.queryServiceForPage(pageable, serviceType);
-        resultMap.put(WebConstant.TOTAL, sysMenuQueryResult.getTotalElements());
-        resultMap.put(WebConstant.ROWS, sysMenuQueryResult.getContent());
+        Page<BasicItem> queryResult = basicItemService.queryItemForPage(pageable, basicItemType);
+        resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
+        resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
     }
 
     @ResponseBody
-    @RequestMapping(value = "saveService", method = RequestMethod.POST)
-    public Map<String, Object> saveService(BasicServiceFee basicServiceFee, HttpServletRequest request) {
+    @RequestMapping(value = "saveItem", method = RequestMethod.POST)
+    public Map<String, Object> saveItem(BasicItem basicItem, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
         try {
-            basicServiceService.saveService(basicServiceFee);
+            basicItemService.saveItem(basicItem);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,13 +55,13 @@ public class ServiceController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "getServiceById", method = RequestMethod.GET)
-    public Map<String, Object> getMenuByRoleId(String serviceId, HttpServletRequest request) {
+    @RequestMapping(value = "getItemById", method = RequestMethod.GET)
+    public Map<String, Object> getItemById(String itemId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            BasicServiceFee basicServiceFee = basicServiceService.getServiceFeeById(serviceId);
+            BasicItem basicItem = basicItemService.getItemById(itemId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
-            resultMap.put(WebConstant.INFO, basicServiceFee);
+            resultMap.put(WebConstant.INFO, basicItem);
         } catch (Exception e) {
             e.printStackTrace();
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);

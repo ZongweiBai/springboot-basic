@@ -11,5 +11,4 @@ public interface IUserProfileDao {
 
     UserProfile findByAccount(String account);
 
-    UserProfile findById(String userId);
 }

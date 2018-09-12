@@ -2,9 +2,9 @@ $(function () {
 
     initForm();
 
-    if (!isEmpty(serviceId)) {
-        $("#serviceId").val(serviceId);
-        loadRoleData(serviceId);
+    if (!isEmpty(itemId)) {
+        $("#itemId").val(itemId);
+        loadRoleData(itemId);
     }
 
 });
@@ -15,7 +15,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/service/saveService",
+                url: contextPath + "/item/saveItem",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -43,12 +43,12 @@ function initForm() {
 /**
  * 加载信息
  */
-function loadRoleData(serviceId) {
+function loadRoleData(itemId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/service/getServiceById",
+        url: contextPath + "/item/getItemById",
         data: {
-            "serviceId": serviceId
+            "itemId": itemId
         },
         beforeSend: function () {
             tip.showLoading();
@@ -57,9 +57,10 @@ function loadRoleData(serviceId) {
             tip.hideLoading();
             if (data.result == 200) {
                 var info = data.info;
-                $("#basicServiceType").val(info.basicServiceType);
-                $("#serviceName").val(info.serviceName);
-                $("#serviceFee").val(info.serviceFee);
+                $("#basicItemType").val(info.basicItemType);
+                $("#itemName").val(info.itemName);
+                $("#itemFee").val(info.itemFee);
+                $("#status").val(info.status);
                 $("#description").html(info.description);
             } else {
                 tip.alertError("加载信息失败");

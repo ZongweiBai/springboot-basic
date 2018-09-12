@@ -1,6 +1,7 @@
 package com.baymin.springboot.store.entity;
 
-import com.baymin.springboot.store.enumconstant.BasicServiceType;
+import com.baymin.springboot.store.enumconstant.BasicItemType;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,8 +18,8 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "T_BASIC_SERVICE_FEE")
-public class BasicServiceFee {
+@Table(name = "T_BASIC_ITEM")
+public class BasicItem {
 
     @Id
     @Column(name = "ID", length = 32)
@@ -27,14 +28,18 @@ public class BasicServiceFee {
     private String id;
 
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
-    @Column(name = "BASIC_SERVICE_TYPE")
-    private BasicServiceType basicServiceType;
+    @Column(name = "BASIC_ITEM_TYPE")
+    private BasicItemType basicItemType;
 
-    @Column(name = "SERVICE_NAME", length = 64)
-    private String serviceName;
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "STATUS")
+    private CommonStatus status;
 
-    @Column(name = "SERVICE_FEE", precision = 10, scale = 2)
-    private Double serviceFee;
+    @Column(name = "ITEM_NAME", length = 64)
+    private String itemName;
+
+    @Column(name = "ITEM_FEE", precision = 10, scale = 2)
+    private Double itemFee;
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;

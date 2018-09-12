@@ -17,6 +17,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -45,12 +47,23 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
     @Override
     public void saveUserProfile(UserProfile userProfile) {
+        if (StringUtils.isNotBlank(userProfile.getBirthdayStr())) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+            try {
+                userProfile.setBirthday(format.parse(userProfile.getBirthdayStr()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }
+
         if (StringUtils.isNotBlank(userProfile.getId())) {
             UserProfile oldData = userProfileRepository.findById(userProfile.getId()).orElse(null);
             userProfile.setRegisterTime(oldData.getRegisterTime());
             userProfile.setIdpId(oldData.getIdpId());
             userProfile.setIdpNickName(oldData.getIdpNickName());
             userProfile.setOrderCount(oldData.getOrderCount());
+            userProfile.setPassword(oldData.getPassword());
+            userProfile.setPayPassword(oldData.getPayPassword());
         } else {
             userProfile.setRegisterTime(new Date());
         }
@@ -59,7 +72,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
     @Override
     public UserProfile findById(String userId) {
-        return userProfileDao.findById(userId);
+        return userProfileRepository.findById(userId).orElse(null);
     }
 
     @Override

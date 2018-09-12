@@ -49,6 +49,7 @@ public class IndexController {
         return "nologin";
     }
 
+    /**===========================菜单入口================================*/
     @GetMapping("/index/sysmenu/add")
     public String addSysMenu(String menuId, Model model) {
         if (Objects.nonNull(menuId)) {
@@ -62,6 +63,7 @@ public class IndexController {
         return "system/sysMenu/sysMenuManage";
     }
 
+    /**===========================角色入口================================*/
     @GetMapping("/index/sysrole/add")
     public String addSysRole(String roleId, Model model) {
         if (Objects.nonNull(roleId)) {
@@ -75,6 +77,7 @@ public class IndexController {
         return "system/sysRole/sysRoleManage";
     }
 
+    /**===========================系统用户入口================================*/
     @GetMapping("/index/sysuser/add")
     public String addSysUser(String userId, Model model) {
         if (Objects.nonNull(userId)) {
@@ -88,19 +91,21 @@ public class IndexController {
         return "system/sysUser/sysUserManage";
     }
 
-    @GetMapping("/index/service/basic/manage")
+    /**===========================收费项目库入口================================*/
+    @GetMapping("/index/item/basic/manage")
     public String manageBasicService() {
         return "service/basic/serviceManage";
     }
 
-    @GetMapping("/index/service/basic/add")
-    public String addBasicService(String serviceId, Model model) {
-        if (Objects.nonNull(serviceId)) {
-            model.addAttribute("serviceId", serviceId);
+    @GetMapping("/index/item/basic/add")
+    public String addBasicService(String itemId, Model model) {
+        if (Objects.nonNull(itemId)) {
+            model.addAttribute("itemId", itemId);
         }
         return "service/basic/serviceAdd";
     }
 
+    /**===========================普通用户入口================================*/
     @GetMapping("/index/userprofile/manage")
     public String manageUserProfile() {
         return "user/user/userManage";
@@ -122,6 +127,7 @@ public class IndexController {
         return "user/user/viewUserDetail";
     }
 
+    /**===========================护工/护士管理入口================================*/
     @GetMapping("/index/staff/manage")
     public String manageStaff() {
         return "user/staff/staffManage";

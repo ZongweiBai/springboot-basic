@@ -8,6 +8,7 @@
     <meta name="viewport"
           content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
     <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script type="text/javascript" src="lib/My97DatePicker/WdatePicker.js" th:src="@{/lib/My97DatePicker/WdatePicker.js}"></script>
     <head th:include="common/base">
     <title>新增用户</title>
 </head>
@@ -45,6 +46,15 @@
             </div>
             <div class="col-2"></div>
         </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>生日：</label>
+            <div class="formControls col-8">
+                <input type="text" class="input-text Wdate" value="" placeholder="" id="birthdayStr" name="birthdayStr" onfocus="WdatePicker({maxDate:'#F{\'%y-%M-%d\'}'})">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
         <div class="row cl" id="password-div">
             <label class="form-label col-2"><span class="c-red">*</span>用户密码：</label>
             <div class="formControls col-8">
@@ -69,5 +79,6 @@
 </script>
 <script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
 <script type="text/javascript" src="js/user/user/addUser.js" th:src="@{/js/user/user/addUser.js}"></script>
+<script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
 </body>
 </html>
