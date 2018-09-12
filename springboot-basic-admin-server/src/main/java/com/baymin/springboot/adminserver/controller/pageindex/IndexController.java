@@ -91,6 +91,20 @@ public class IndexController {
         return "system/sysUser/sysUserManage";
     }
 
+    /**===========================机构管理入口================================*/
+    @GetMapping("/index/org/add")
+    public String addSysOrg(String orgId, Model model) {
+        if (Objects.nonNull(orgId)) {
+            model.addAttribute("orgId", orgId);
+        }
+        return "system/org/orgAdd";
+    }
+
+    @GetMapping("/index/org/manage")
+    public String manageOrg() {
+        return "system/org/orgManage";
+    }
+
     /**===========================收费项目库入口================================*/
     @GetMapping("/index/item/basic/manage")
     public String manageBasicService() {

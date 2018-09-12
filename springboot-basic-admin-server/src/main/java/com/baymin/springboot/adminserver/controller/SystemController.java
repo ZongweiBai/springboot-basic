@@ -3,6 +3,7 @@ package com.baymin.springboot.adminserver.controller;
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.service.IAdminService;
 import com.baymin.springboot.service.IMenuService;
+import com.baymin.springboot.service.IOrganizationService;
 import com.baymin.springboot.store.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,9 @@ public class SystemController {
 
     @Autowired
     private IMenuService menuService;
+
+    @Autowired
+    private IOrganizationService organizationService;
 
     @PostMapping("/login")
     @ResponseBody
@@ -501,5 +505,67 @@ public class SystemController {
 //        return resultMap;
 //    }
 
+    /**************************************
+     * 系统机构管理
+     ******************************************************/
+    @ResponseBody
+    @RequestMapping(value = "queryOrgForPage", method = RequestMethod.POST)
+    public Map<String, Object> queryOrgForPage(Pageable pageable, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        LinkedHashMap<String, String> order = new LinkedHashMap<>();
+        order.put("createTime", "desc");
+        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
+        Page<Organization> queryResult = organizationService.queryOrgForPage(pageable);
+        resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
+        resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getOrgById", method = RequestMethod.GET)
+    public Map<String, Object> getOrgById(String orgId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Organization org = organizationService.getOrgById(orgId);
+        if (org == null) {
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "没有该信息");
+        } else {
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.INFO, org);
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getAllOrg", method = RequestMethod.GET)
+    public Map<String, Object> getAllOrg(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<Organization> org = organizationService.getAllOrg();
+        if (org == null) {
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "没有该信息");
+        } else {
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.ROWS, org);
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "saveOrg", method = RequestMethod.POST)
+    public Map<String, Object> saveOrg(Organization organization, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
+        try {
+            organizationService.saveOrg(organization);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "保存失败");
+        }
+        return resultMap;
+    }
 
 }
