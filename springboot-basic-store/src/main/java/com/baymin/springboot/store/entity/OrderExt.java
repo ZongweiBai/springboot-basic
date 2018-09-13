@@ -36,10 +36,10 @@ public class OrderExt implements Serializable {
     private Map<String, Object> patientInfo;
 
     @Column(name = "SERVICE_START_TIME", columnDefinition = "timestamp")
-    private Long serviceStartTime;
+    private Date serviceStartTime;
 
     @Column(name = "SERVICE_END_TIME", columnDefinition = "timestamp")
-    private Long serviceEndDate;
+    private Date serviceEndDate;
 
     @Column(name = "SERVICE_DURATION", precision = 10, scale = 2)
     private Double serviceDuration;

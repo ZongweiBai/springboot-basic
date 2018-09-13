@@ -12,6 +12,7 @@ import com.baymin.springboot.store.enumconstant.*;
 import com.baymin.springboot.store.payload.UserOrderRequest;
 import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +62,12 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IOrderStaffChangeRepository orderStaffChangeRepository;
 
+    @Autowired
+    private IUserProfileRepository userProfileRepository;
+
+    @Autowired
+    private IOrderExtRepository orderExtRepository;
+
     @Override
     public Order saveUserOrder(UserOrderRequest request) {
         Invoice invoice = request.getInvoice();
@@ -89,8 +96,8 @@ public class OrderServiceImpl implements IOrderService {
         orderExt.setServiceAddress(request.getServiceAddress());
         orderExt.setServiceDuration(request.getServiceDuration());
         orderExt.setServiceNumber(request.getServiceNumber());
-        orderExt.setServiceStartTime(request.getServiceStartDate());
-        orderExt.setServiceEndDate(request.getServiceEndDate());
+        orderExt.setServiceStartTime(new Date(request.getServiceStartDate()));
+        orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
         Map<String, Object> extension = request.getExtension();
         if (Objects.nonNull(extension)) {
             Map<String, Object> patientInfo = new HashMap<>();
@@ -167,27 +174,35 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate) {
+    public Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource) {
+        BooleanBuilder builder = new BooleanBuilder();
         QOrder qOrder = QOrder.order;
 
-        BooleanExpression predicate = qOrder.id.isNotNull();
         if (Objects.nonNull(status)) {
-            predicate.and(qOrder.status.eq(status));
+            builder.and(qOrder.status.eq(status));
         }
         if (StringUtils.isNotBlank(orderId)) {
-            predicate.and(qOrder.id.eq(orderId));
+            builder.and(qOrder.id.eq(orderId));
         }
         if (Objects.nonNull(careType)) {
-            predicate.and(qOrder.careType.eq(careType));
+            builder.and(qOrder.careType.eq(careType));
         }
         if (Objects.nonNull(maxDate)) {
-            predicate.and(qOrder.orderTime.lt(maxDate));
+            builder.and(qOrder.orderTime.lt(maxDate));
         }
         if (Objects.nonNull(minDate)) {
-            predicate.and(qOrder.orderTime.gt(minDate));
+            builder.and(qOrder.orderTime.gt(minDate));
+        }
+        if (StringUtils.equals("T", payStatus)) {
+            builder.and(qOrder.payTime.isNotNull());
+        } else if (StringUtils.equals("F", payStatus)) {
+            builder.and(qOrder.payTime.isNull());
+        }
+        if (StringUtils.isNotBlank(orderSource)) {
+            builder.and(qOrder.orderSource.eq(orderSource));
         }
 
-        return orderRepository.findAll(predicate, pageable);
+        return orderRepository.findAll(builder, pageable);
     }
 
     @Override
@@ -195,6 +210,12 @@ public class OrderServiceImpl implements IOrderService {
         Map<String, Object> detailMap = new HashMap<>();
         Order order = orderRepository.findById(orderId).orElse(null);
         detailMap.put("order", order);
+
+        UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
+        detailMap.put("user", userProfile);
+
+        OrderExt orderExt = orderExtRepository.findByOrderId(orderId);
+        detailMap.put("orderExt", orderExt);
 
         if (StringUtils.isNotBlank(order.getInvoiceId())) {
             Invoice invoice = invoiceRepository.findById(order.getInvoiceId()).orElse(null);

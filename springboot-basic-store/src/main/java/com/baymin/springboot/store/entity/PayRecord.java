@@ -81,7 +81,12 @@ public class PayRecord implements Serializable {
     /**
      * 在线支付订单号(交易订单号)
      */
-    @Column(name = "TRANSACTION_ID", length = 32)
+    @Column(name = "TRANSACTION_ID", length = 64)
     private String transactionId;
+    /**
+     * 线下支付凭证号
+     */
+    @Column(name = "OFFLINE_TRANSACTION_ID", length = 64)
+    private String offlineTransactionId;
 
 }

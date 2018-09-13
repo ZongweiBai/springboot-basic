@@ -40,8 +40,9 @@ public class UserOrderApiTest extends AbstractTest {
         orderRequest.setServiceEndDate(System.currentTimeMillis());
 
         RestAssured.given().contentType("application/json")
+                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJJX0FNX1JPQk9UIiwiaWF0IjoxNTM2ODUwMDc2LCJzdWIiOiJ7XCJ0b2tlblR5cGVcIjpcImFjY2Vzc190b2tlblwiLFwidXNlcklkXCI6XCJmZjgwODE4MTY1YmQ2MWY4MDE2NWJkNjJhM2Q5MDAwMFwifSIsImV4cCI6MTUzNjg1MzY3Nn0.YSOMwsGsCC4AqhlhkxFnwJzgqN-cCPGy0R0tCLQ1eofKJ7SJVEJhqYg_W4DWpTPwYddRlQ41TGUa0phORYOEfA")
                 .body(orderRequest).log().all()
-                .post("/order/user/")
+                .post("/api/order/")
                 .then().log().all().statusCode(200);
     }
 

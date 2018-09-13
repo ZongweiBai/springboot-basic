@@ -27,7 +27,7 @@ public interface IOrderService {
 
     void saveInvoiceRequest(Invoice invoice);
 
-    Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate);
+    Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource);
 
     Map<String,Object> getOrderDetail(String orderId);
 

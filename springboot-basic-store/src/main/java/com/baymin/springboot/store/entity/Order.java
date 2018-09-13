@@ -64,6 +64,9 @@ public class Order implements Serializable {
     @Column(name = "PAY_WAY")
     private PayWay payWay;
 
+    @Column(name = "PAY_TIME", columnDefinition = "timestamp")
+    private Date payTime;
+
     /**
      * 发票状态
      */

@@ -30,13 +30,14 @@ public class OrderController {
     @ResponseBody
     @PostMapping(value = "queryOrderForPage")
     public Map<String, Object> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType,
-                                                 String datemin, String datemax, HttpServletRequest request) {
+                                                 String datemin, String datemax, String payStatus, String orderSource,
+                                                 HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "orderTime"));
-        Page<Order> queryResult = orderService.queryOrderForPage(pageable, status, orderId, careType, maxDate, minDate);
+        Page<Order> queryResult = orderService.queryOrderForPage(pageable, status, orderId, careType, maxDate, minDate, payStatus, orderSource);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

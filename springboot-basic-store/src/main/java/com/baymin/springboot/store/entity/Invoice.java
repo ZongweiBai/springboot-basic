@@ -34,6 +34,9 @@ public class Invoice {
     @Column(name = "HEADER_TYPE", length = 2)
     private String headerType;
 
+    @Column(name = "INVOICE_HEADER", length = 128)
+    private String invoiceHeader;
+
     @Column(name = "TAX_NO", length = 32)
     private String taxNo;
 
@@ -54,6 +57,15 @@ public class Invoice {
      */
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
     private Date DEAL_Time;
+
+    @Column(name = "RECIPIENT", length = 32)
+    private String recipient;
+
+    @Column(name = "RECIPIENT_MOBILE", length = 32)
+    private String recipientMobile;
+
+    @Column(name = "RECIPIENT_ADDRESS", length = 32)
+    private String recipientAddress;
 
     @Transient
     private String orderIds;

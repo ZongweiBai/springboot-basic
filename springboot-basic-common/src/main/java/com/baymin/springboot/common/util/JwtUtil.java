@@ -24,7 +24,7 @@ public class JwtUtil {
      */
     public static SecretKey generalKey() {
         String stringKey = "BDUBO" + Constant.JWTAPI.JWT_SECRET;
-        byte[] encodedKey = Base64.getDecoder().decode(stringKey);
+        byte[] encodedKey = Base64.getEncoder().encode(stringKey.getBytes());
         SecretKey key = new SecretKeySpec(encodedKey, 0, encodedKey.length, "AES");
         return key;
     }

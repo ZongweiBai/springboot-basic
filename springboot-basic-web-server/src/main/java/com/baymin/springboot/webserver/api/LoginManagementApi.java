@@ -69,7 +69,7 @@ public class LoginManagementApi {
             }
         } else {
             userProfile = userProfileService.findByAccount(userAccount);
-            if (Objects.isNull(userProfile) || StringUtils.equals(password, userProfile.getPassword())) {
+            if (Objects.isNull(userProfile) || !StringUtils.equals(password, userProfile.getPassword())) {
                 throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_PASSWORD));
             }
         }
