@@ -13,7 +13,6 @@ import com.baymin.springboot.store.payload.UserOrderRequest;
 import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,8 +22,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.*;
 
 import static com.baymin.springboot.common.constant.RequestConstant.*;
@@ -149,6 +148,18 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public Map<String, Object> getOrderBasic(String orderId) {
+        Map<String, Object> detailMap = new HashMap<>();
+        Order order = orderRepository.findById(orderId).orElse(null);
+        detailMap.put("order", order);
+
+        OrderExt orderExt = orderExtRepository.findByOrderId(orderId);
+        detailMap.put("orderExt", orderExt);
+
+        return detailMap;
+    }
+
+    @Override
     public void orderEvaluate(Evaluate evaluate) {
         evaluate.setCreateTime(new Date());
         evaluateRepository.save(evaluate);
@@ -238,29 +249,25 @@ public class OrderServiceImpl implements IOrderService {
         order.setStatus(OrderStatus.ORDER_ASSIGN);
         orderRepository.save(order);
 
-        staff.setServiceCount(staff.getServiceCount() + 1);
-        staff.setServiceStatus(ServiceStatus.IN_SERVICE);
         serviceStaffRepository.save(staff);
     }
 
     @Override
-    public void offlinePay(String orderId, PayWay payWay) {
-        Order order = orderRepository.findById(orderId).orElse(null);
+    public void offlinePay(PayRecord payRecord) {
+        Order order = orderRepository.findById(payRecord.getOrderId()).orElse(null);
         if (Objects.isNull(order)) {
             return;
         }
         order.setStatus(OrderStatus.ORDER_PAYED);
-        order.setPayWay(payWay);
+        order.setPayWay(payRecord.getPayWay());
+        order.setPayTime(new Date());
         orderRepository.save(order);
 
-        PayRecord payRecord = new PayRecord();
         payRecord.setCreateTime(new Date());
         payRecord.setFinishTime(new Date());
-        payRecord.setOrderId(orderId);
         payRecord.setPayerUserId(order.getOrderUserId());
         payRecord.setPayFee(order.getTotalFee());
         payRecord.setPayResult(true);
-        payRecord.setPayWay(payWay);
         payRecord.setResultDesc("线下支付");
         payRecordRepository.save(payRecord);
     }
@@ -278,5 +285,23 @@ public class OrderServiceImpl implements IOrderService {
         }
         staffChange.setOldStaffId(order.getServiceStaffId());
         orderStaffChangeRepository.save(staffChange);
+    }
+
+    @Override
+    public void serviceStart(String orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (Objects.isNull(order) || order.getStatus() != OrderStatus.ORDER_ASSIGN) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
+        }
+        ServiceStaff serviceStaff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+        if (Objects.isNull(serviceStaff)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
+        }
+
+        order.setStatus(OrderStatus.ORDER_PROCESSING);
+        orderRepository.save(order);
+
+        serviceStaff.setServiceStatus(ServiceStatus.IN_SERVICE);
+        serviceStaffRepository.save(serviceStaff);
     }
 }

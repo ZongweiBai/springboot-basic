@@ -10,14 +10,13 @@ import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IServiceStaffRepository;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.transaction.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,9 +58,12 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setCreateTime(oldData.getCreateTime());
             serviceStaff.setServiceCount(oldData.getServiceCount());
             serviceStaff.setStaffStatus(oldData.getStaffStatus());
+            serviceStaff.setServiceStatus(oldData.getServiceStatus());
         } else {
             serviceStaff.setStaffStatus(CommonStatus.NORMAL);
             serviceStaff.setCreateTime(new Date());
+            serviceStaff.setServiceStatus(ServiceStatus.FREE);
+            serviceStaff.setServiceCount(0);
         }
         serviceStaffRepository.save(serviceStaff);
     }

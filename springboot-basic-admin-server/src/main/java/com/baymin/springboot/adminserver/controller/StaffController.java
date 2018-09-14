@@ -40,11 +40,11 @@ public class StaffController {
 
     @ResponseBody
     @GetMapping(value = "queryStaffByType")
-    public Map<String, Object> queryStaffByType(ServiceStaffType serviceStaffType,
+    public Map<String, Object> queryStaffByType(String serviceStaffType,
                                                 HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        List<ServiceStaff> staffList = staffService.queryStaffByType(serviceStaffType);
+        List<ServiceStaff> staffList = staffService.queryStaffByType(ServiceStaffType.valueOf(serviceStaffType));
         resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         resultMap.put(WebConstant.ROWS, staffList);
         return resultMap;

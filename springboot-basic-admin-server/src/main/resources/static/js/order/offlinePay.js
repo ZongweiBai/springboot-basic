@@ -1,10 +1,7 @@
 $(function () {
     initForm();
 
-    if (userId != null) {
-        $("#password-div").remove();
-        loadData(userId);
-    }
+    loadData(orderId);
 });
 
 function initForm() {
@@ -13,7 +10,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/user/saveUser",
+                url: contextPath + "/order/offlinePay",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -41,12 +38,12 @@ function initForm() {
 /**
  * 加载信息
  */
-function loadData(userId) {
+function loadData(orderId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/user/getUserById",
+        url: contextPath + "/order/getOrderBasic",
         data: {
-            "userId": userId
+            "orderId": orderId
         },
         beforeSend: function () {
             tip.showLoading();
@@ -55,11 +52,13 @@ function loadData(userId) {
             tip.hideLoading();
             if (data.result == 200) {
                 var info = data.info;
-                $("#userId").val(info.id);
-                $("#nickName").val(info.nickName);
-                $("#account").val(info.account);
-                $("#birthdayStr").val(getSmpFormatDateByLong(info.birthday, "yyyy-MM-dd"));
-                $("input[name='sex'][value='"+info.sex+"']").attr("checked",true);
+                var order = info.order;
+                var orderExt = info.orderExt;
+                $("#id").val(order.id);
+                $("#orderId").html(order.id);
+                $("#orderTime").html(order.orderTime);
+                $("#orderFeeDisplay").html(order.totalFee);
+                $("#serviceDuration").html(orderExt.serviceDuration);
             } else {
                 tip.alertError("加载信息失败");
             }

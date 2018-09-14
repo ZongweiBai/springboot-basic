@@ -1,10 +1,7 @@
 $(function () {
     initForm();
 
-    if (userId != null) {
-        $("#password-div").remove();
-        loadData(userId);
-    }
+    loadData(orderId);
 });
 
 function initForm() {
@@ -13,8 +10,11 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/user/saveUser",
-                data: $('#form-menu-add').serialize(),
+                url: contextPath + "/order/assignOrderStaff",
+                data: {
+                    "orderId": $("#orderId").html(),
+                    "staffId": $("#serviceStaffId").val()
+                },
                 beforeSend: function () {
                     tip.showLoading();
                 },
@@ -41,12 +41,12 @@ function initForm() {
 /**
  * 加载信息
  */
-function loadData(userId) {
+function loadData(orderId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/user/getUserById",
+        url: contextPath + "/order/getOrderBasic",
         data: {
-            "userId": userId
+            "orderId": orderId
         },
         beforeSend: function () {
             tip.showLoading();
@@ -55,11 +55,9 @@ function loadData(userId) {
             tip.hideLoading();
             if (data.result == 200) {
                 var info = data.info;
-                $("#userId").val(info.id);
-                $("#nickName").val(info.nickName);
-                $("#account").val(info.account);
-                $("#birthdayStr").val(getSmpFormatDateByLong(info.birthday, "yyyy-MM-dd"));
-                $("input[name='sex'][value='"+info.sex+"']").attr("checked",true);
+                var order = info.order;
+                $("#id").val(order.id);
+                $("#orderId").html(order.id);
             } else {
                 tip.alertError("加载信息失败");
             }
@@ -69,6 +67,41 @@ function loadData(userId) {
             tip.alertError("加载信息失败");
         }
     });
+}
+
+function selectStaff(staffType) {
+    if (staffType == null || staffType == "") {
+        $("#serviceStaffId").empty();
+        $("#serviceStaffId").append('<option value="">筛选</option>');
+    } else {
+        $.ajax({
+            type: "GET",
+            url: contextPath + "/staff/queryStaffByType",
+            data: {
+                "serviceStaffType": staffType
+            },
+            beforeSend: function () {
+                tip.showLoading();
+            },
+            success: function (data) {
+                tip.hideLoading();
+                if (data.result == 200) {
+                    $("#serviceStaffId").empty();
+                    var rows = data.rows;
+                    for (var i = 0; i < rows.length; i++) {
+                        var staff = rows[i];
+                        $("#serviceStaffId").append('<option value="' + staff.id + '">' + staff.userName + '-' + staff.mobile + '</option>');
+                    }
+                } else {
+                    tip.alertError("加载信息失败");
+                }
+            },
+            error: function () {
+                tip.hideLoading();
+                tip.alertError("加载信息失败");
+            }
+        });
+    }
 }
 
 

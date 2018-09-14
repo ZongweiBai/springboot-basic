@@ -7,7 +7,7 @@ import lombok.Getter;
 public enum ServiceStaffType implements IBaseDbEnum {
 
     NURSE("护士", 0),
-    WORKERS("护工", 1);
+    WORKER("护工", 1);
 
 
     private String name;

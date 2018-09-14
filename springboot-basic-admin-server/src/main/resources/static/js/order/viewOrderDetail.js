@@ -42,13 +42,13 @@ function loadDataInfo(orderId) {
                 var status = "";
                 if (order.status == "ORDER_UN_PAY") {
                     status = "已下单待付款";
-                } else if (order.status() == "ORDER_PAYED") {
+                } else if (order.status == "ORDER_PAYED") {
                     status = "已付款待指派";
-                } else if (order.status() == "ORDER_ASSIGN") {
+                } else if (order.status == "ORDER_ASSIGN") {
                     status = "已指派待服务";
-                } else if (order.status() == "ORDER_PROCESSING") {
+                } else if (order.status == "ORDER_PROCESSING") {
                     status = "服务中";
-                } else if (order.status() == "ORDER_FINISH") {
+                } else if (order.status == "ORDER_FINISH") {
                     status = "已完成";
                 }
                 $("#orderId").html(order.id);

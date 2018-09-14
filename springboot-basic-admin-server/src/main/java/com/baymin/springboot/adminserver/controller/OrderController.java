@@ -4,10 +4,7 @@ import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
-import com.baymin.springboot.store.entity.Order;
-import com.baymin.springboot.store.entity.OrderRefund;
-import com.baymin.springboot.store.entity.OrderStaffChange;
-import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
@@ -67,6 +64,22 @@ public class OrderController {
     }
 
     @ResponseBody
+    @GetMapping(value = "getOrderBasic")
+    public Map<String, Object> getOrderBasic(String orderId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Map<String, Object> detailMap = orderService.getOrderBasic(orderId);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.INFO, detailMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
     @PostMapping(value = "assignOrderStaff")
     public Map<String, Object> assignOrderStaff(String orderId, String staffId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -100,10 +113,10 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "offlinePay")
-    public Map<String, Object> offlinePay(String orderId, PayWay payWay, HttpServletRequest request) {
+    public Map<String, Object> offlinePay(PayRecord payRecord, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            orderService.offlinePay(orderId, payWay);
+            orderService.offlinePay(payRecord);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

@@ -16,11 +16,13 @@ import com.baymin.springboot.service.IRedisService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Created by Baymin on 2017/5/7.
  */
 @Service
+@Transactional
 public class RedisServiceImpl implements IRedisService {
 
     @Autowired

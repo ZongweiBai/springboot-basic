@@ -159,6 +159,7 @@ function loadStaffById(staffId) {
             if (data.result == 200) {
                 var info = data.info;
                 $("#id").val(info.id);
+                $("#serviceStaffType").val(info.serviceStaffType);
                 $("#userName").val(info.userName);
                 $("#mobile").val(info.mobile);
                 $("input[name='sex'][value='"+info.sex+"']").attr("checked",true);

@@ -167,7 +167,7 @@ function viewOrderInfo(orderId) {
  * @param orderId
  */
 function orderAssign(orderId) {
-    tip.openIframe("订单指派", contextPath + 'index/order/assign?userId=' + orderId, 650, 450, refreshData);
+    tip.openIframe("订单指派", contextPath + 'index/order/assign?orderId=' + orderId, 550, 350, refreshData);
 }
 
 /**
@@ -175,7 +175,7 @@ function orderAssign(orderId) {
  * @param orderId
  */
 function orderRefund(orderId) {
-    tip.openIframe("退款申请", contextPath + 'index/order/refund?userId=' + orderId, 550, 350, refreshData);
+    tip.openIframe("退款申请", contextPath + 'index/order/refund?orderId=' + orderId, 600, 350, refreshData);
 }
 
 /**
@@ -183,7 +183,7 @@ function orderRefund(orderId) {
  * @param orderId
  */
 function staffChange(orderId) {
-    tip.openIframe("换人", contextPath + 'index/order/staffchange?userId=' + orderId, 550, 350, refreshData);
+    tip.openIframe("换人", contextPath + 'index/order/staffchange?orderId=' + orderId, 550, 350, refreshData);
 }
 
 /**
@@ -191,7 +191,7 @@ function staffChange(orderId) {
  * @param orderId
  */
 function offlinePay(orderId) {
-    tip.openIframe("代收款", contextPath + 'index/order/offlinePay?userId=' + orderId, 600, 350, refreshData);
+    tip.openIframe("代收款", contextPath + 'index/order/offlinePay?orderId=' + orderId, 600, 350, refreshData);
 }
 
 

@@ -13,6 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -112,6 +113,18 @@ public class UserOrderApi {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
         orderService.staffChangeRequest(staffChange);
+    }
+
+    @ApiOperation(value = "护士/护工开始服务")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "orderId", value = "订单ID")
+    })
+    @PostMapping("/servicestart")
+    public void staffChangeRequest(@RequestBody Map<String, String> request) {
+        if (Objects.isNull(request) || StringUtils.isBlank(request.get("orderId"))) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        orderService.serviceStart(request.get("orderId"));
     }
 
 }
