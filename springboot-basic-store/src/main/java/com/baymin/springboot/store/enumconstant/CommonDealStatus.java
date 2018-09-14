@@ -9,6 +9,7 @@ public enum CommonDealStatus implements IBaseDbEnum {
 
     APPLY("已申请", 0),
     AGREE("已同意", 1),
+    COMPLETED("已完成", 2),
     REJECT("已驳回", -1);
 
     private String name;

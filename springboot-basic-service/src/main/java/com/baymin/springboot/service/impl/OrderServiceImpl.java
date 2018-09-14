@@ -273,7 +273,9 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         staffChange.setCreateTime(new Date());
-        staffChange.setDealStatus(CommonDealStatus.APPLY);
+        if (Objects.isNull(staffChange.getDealStatus())) {
+            staffChange.setDealStatus(CommonDealStatus.APPLY);
+        }
         staffChange.setOldStaffId(order.getServiceStaffId());
         orderStaffChangeRepository.save(staffChange);
     }

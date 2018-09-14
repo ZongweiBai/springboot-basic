@@ -2,10 +2,14 @@ package com.baymin.springboot.adminserver.controller;
 
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
+import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.entity.Order;
+import com.baymin.springboot.store.entity.OrderRefund;
+import com.baymin.springboot.store.entity.OrderStaffChange;
 import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.store.enumconstant.CareType;
+import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +30,9 @@ public class OrderController {
 
     @Autowired
     private IOrderService orderService;
+
+    @Autowired
+    private IOrderRefundService orderRefundService;
 
     @ResponseBody
     @PostMapping(value = "queryOrderForPage")
@@ -75,11 +82,46 @@ public class OrderController {
     }
 
     @ResponseBody
+    @PostMapping(value = "staffChange")
+    public Map<String, Object> staffChange(OrderStaffChange staffChange, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            staffChange.setDealTime(new Date());
+            staffChange.setDealStatus(CommonDealStatus.APPLY);
+            orderService.staffChangeRequest(staffChange);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
     @PostMapping(value = "offlinePay")
     public Map<String, Object> offlinePay(String orderId, PayWay payWay, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             orderService.offlinePay(orderId, payWay);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "orderRefund")
+    public Map<String, Object> orderRefund(OrderRefund orderRefund, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            orderRefund.setDealStatus(CommonDealStatus.AGREE);
+            orderRefund.setDealDesc("后台退款");
+            orderRefund.setRefundDesc("后台退款");
+            orderRefundService.saveOrderRefund(orderRefund);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
