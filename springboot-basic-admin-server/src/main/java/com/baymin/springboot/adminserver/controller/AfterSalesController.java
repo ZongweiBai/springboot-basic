@@ -4,6 +4,7 @@ import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IAfterSalesService;
 import com.baymin.springboot.store.entity.Evaluate;
+import com.baymin.springboot.store.entity.OrderRefund;
 import com.baymin.springboot.store.entity.OrderStaffChange;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +29,30 @@ public class AfterSalesController {
     private IAfterSalesService afterSalesService;
 
     @ResponseBody
-    @PostMapping(value = "queryOrderForPage")
-    public Map<String, Object> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus,
+    @PostMapping(value = "queryStaffchangeForPage")
+    public Map<String, Object> queryStaffchangeForPage(Pageable pageable, CommonDealStatus dealStatus, String orderId,
                                                     String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<OrderStaffChange> queryResult = afterSalesService.queryOrderChangePage(pageable, dealStatus, maxDate, minDate);
+        Page<OrderStaffChange> queryResult = afterSalesService.queryOrderChangePage(pageable, dealStatus, maxDate, minDate, orderId);
+        resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
+        resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "queryRefundForPage")
+    public Map<String, Object> queryRefundForPage(Pageable pageable, CommonDealStatus dealStatus, String orderId,
+                                                    String datemin, String datemax, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Date maxDate = DateUtil.dayEnd(datemax);
+        Date minDate = DateUtil.dayBegin(datemin);
+
+        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
+        Page<OrderRefund> queryResult = afterSalesService.queryRefundPage(pageable, dealStatus, maxDate, minDate, orderId);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

@@ -17,56 +17,79 @@
     <form action="" method="post" class="form form-horizontal" id="form-menu-add">
 
         <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>姓名：</label>
-            <div class="formControls col-8">
-                <input type="text" class="input-text" value="" placeholder="" id="nickName" name="nickName" datatype="*2-16" nullmsg="用户姓名不能为空">
+            <label class="form-label col-3">订单号：</label>
+            <div class="formControls col-7">
+                <span id="orderId"></span>
             </div>
-            <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>手机号码：</label>
-            <div class="formControls col-8">
-                <input type="text" class="input-text" value="" placeholder="" id="account" name="account" datatype="*2-16" nullmsg="手机号码不能为空">
+            <label class="form-label col-3">下单时间：</label>
+            <div class="formControls col-7">
+                <span id="orderTime"></span>
             </div>
-            <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>性别：</label>
-            <div class="formControls col-8">
-                <div class="radio-box">
-                    <input type="radio" value="M" id="sex-M" name="sex">
-                    <label for="sex-M">女</label>
-                </div>
-                <div class="radio-box">
-                    <input type="radio" value="F" id="sex-F" name="sex" checked>
-                    <label for="sex-F">男</label>
-                </div>
+            <label class="form-label col-3">订单金额：</label>
+            <div class="formControls col-7">
+                <span id="orderFeeDisplay"></span>
             </div>
-            <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>生日：</label>
-            <div class="formControls col-8">
-                <input type="text" class="input-text Wdate" value="" placeholder="" id="birthdayStr" name="birthdayStr" onfocus="WdatePicker({maxDate:'#F{\'%y-%M-%d\'}'})">
+            <label class="form-label col-3">购买数量：</label>
+            <div class="formControls col-7">
+                <span id="serviceDuration"></span>
             </div>
-            <div class="col-2"></div>
         </div>
-
-        <div class="row cl" id="password-div">
-            <label class="form-label col-2"><span class="c-red">*</span>用户密码：</label>
-            <div class="formControls col-8">
-                <input type="password" class="input-text" value="" placeholder="" id="password" name="password" datatype="*2-16" nullmsg="用户密码不能为空">
-            </div>
-            <div class="col-2"></div>
-        </div>
-
-        <input type="hidden" id="userId" name="id" value=""/>
 
         <div class="row cl">
-            <div class="col-9 col-offset-3">
+            <label class="form-label col-3"><span class="c-red">*</span>退款数量：</label>
+            <div class="formControls col-7">
+                <input type="text" class="input-text" value="" placeholder="" id="refundDuration" name="refundDuration" datatype="n">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>退款金额：</label>
+            <div class="formControls col-7">
+                <input type="text" class="input-text" value="" placeholder="" id="refundFee" name="refundFee" datatype="n">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>退款原因：</label>
+            <div class="formControls col-7">
+                <textarea type="text" style="height: 100px;" class="input-text" value="" placeholder="" id="refundDesc" name="refundDesc" datatype="*"></textarea>
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>退款人帐户名：</label>
+            <div class="formControls col-7">
+                <input type="text" class="input-text" value="" placeholder="" id="bankAccountUserName" name="bankAccountUserName" datatype="*">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>退款人开户行：</label>
+            <div class="formControls col-7">
+                <input type="text" class="input-text" value="" placeholder="" id="bankName" name="bankName" datatype="*">
+            </div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>退款人银行帐号：</label>
+            <div class="formControls col-7">
+                <input type="text" class="input-text" value="" placeholder="" id="bankAccountNumber" name="bankAccountNumber" datatype="n">
+            </div>
+        </div>
+
+        <input type="hidden" id="id" name="orderId" value=""/>
+
+        <div class="row cl">
+            <div class="col-12 col-offset-5">
                 <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
             </div>
         </div>

@@ -37,4 +37,6 @@ public interface IOrderService {
     void staffChangeRequest(OrderStaffChange staffChange);
 
     void serviceStart(String orderId);
+
+    Map<String, Object> getOrderBasicWithUserInfo(String orderId);
 }

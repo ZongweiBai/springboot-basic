@@ -160,6 +160,23 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public Map<String, Object> getOrderBasicWithUserInfo(String orderId) {
+        Map<String, Object> detailMap = new HashMap<>();
+        Order order = orderRepository.findById(orderId).orElse(null);
+        detailMap.put("order", order);
+
+        OrderExt orderExt = orderExtRepository.findByOrderId(orderId);
+        detailMap.put("orderExt", orderExt);
+
+        if (Objects.nonNull(order) && StringUtils.isNotBlank(order.getServiceStaffId())) {
+            ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+            detailMap.put("staff", staff);
+        }
+
+        return detailMap;
+    }
+
+    @Override
     public void orderEvaluate(Evaluate evaluate) {
         evaluate.setCreateTime(new Date());
         evaluateRepository.save(evaluate);
@@ -249,6 +266,7 @@ public class OrderServiceImpl implements IOrderService {
         order.setStatus(OrderStatus.ORDER_ASSIGN);
         orderRepository.save(order);
 
+        staff.setServiceStatus(ServiceStatus.ASSIGNED);
         serviceStaffRepository.save(staff);
     }
 
@@ -275,15 +293,22 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public void staffChangeRequest(OrderStaffChange staffChange) {
         Order order = orderRepository.findById(staffChange.getOrderId()).orElse(null);
-        if (Objects.isNull(order) || order.getStatus() != OrderStatus.ORDER_PROCESSING) {
+        if (Objects.isNull(order) ||
+                (order.getStatus() != OrderStatus.ORDER_PROCESSING && order.getStatus() != OrderStatus.ORDER_ASSIGN)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
 
         staffChange.setCreateTime(new Date());
         if (Objects.isNull(staffChange.getDealStatus())) {
             staffChange.setDealStatus(CommonDealStatus.APPLY);
+        } else if (staffChange.getDealStatus() == CommonDealStatus.AGREE) {
+            // 后台操作，直接成功
+            order.setServiceStaffId(staffChange.getNewStaffId());
+            orderRepository.save(order);
+
+            serviceStaffRepository.updateServiceStatus(staffChange.getOldStaffId(), ServiceStatus.FREE);
+            serviceStaffRepository.updateServiceStatus(staffChange.getNewStaffId(), ServiceStatus.ASSIGNED);
         }
-        staffChange.setOldStaffId(order.getServiceStaffId());
         orderStaffChangeRepository.save(staffChange);
     }
 

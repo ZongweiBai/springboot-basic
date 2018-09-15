@@ -1,14 +1,12 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IAfterSalesService;
-import com.baymin.springboot.store.entity.Evaluate;
-import com.baymin.springboot.store.entity.OrderStaffChange;
-import com.baymin.springboot.store.entity.QEvaluate;
-import com.baymin.springboot.store.entity.QOrderStaffChange;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.repository.IEvaluateRepository;
+import com.baymin.springboot.store.repository.IOrderRefundRepository;
 import com.baymin.springboot.store.repository.IOrderStaffChangeRepository;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -29,42 +27,69 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
     @Autowired
     private IEvaluateRepository evaluateRepository;
 
+    @Autowired
+    private IOrderRefundRepository orderRefundRepository;
+
     @Override
-    public Page<OrderStaffChange> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate) {
+    public Page<OrderStaffChange> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId) {
+        BooleanBuilder builder = new BooleanBuilder();
         QOrderStaffChange qChange = QOrderStaffChange.orderStaffChange;
 
-        BooleanExpression predicate = qChange.id.isNotNull();
+        if (Objects.nonNull(orderId)) {
+            builder.and(qChange.orderId.eq(orderId));
+        }
         if (Objects.nonNull(dealStatus)) {
-            predicate.and(qChange.dealStatus.eq(dealStatus));
+            builder.and(qChange.dealStatus.eq(dealStatus));
         }
         if (Objects.nonNull(maxDate)) {
-            predicate.and(qChange.createTime.lt(maxDate));
+            builder.and(qChange.createTime.lt(maxDate));
         }
         if (Objects.nonNull(minDate)) {
-            predicate.and(qChange.createTime.gt(minDate));
+            builder.and(qChange.createTime.gt(minDate));
         }
 
-        return orderStaffChangeRepository.findAll(predicate, pageable);
+        return orderStaffChangeRepository.findAll(builder, pageable);
     }
 
     @Override
     public Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, Date maxDate, Date minDate) {
+        BooleanBuilder builder = new BooleanBuilder();
         QEvaluate qEvaluate = QEvaluate.evaluate;
 
-        BooleanExpression predicate = qEvaluate.id.isNotNull();
         if (Objects.nonNull(grade)) {
-            predicate.and(qEvaluate.grade.eq(grade));
+            builder.and(qEvaluate.grade.eq(grade));
         }
         if (StringUtils.isNotBlank(orderId)) {
-            predicate.and(qEvaluate.orderId.eq(orderId));
+            builder.and(qEvaluate.orderId.eq(orderId));
         }
         if (Objects.nonNull(maxDate)) {
-            predicate.and(qEvaluate.createTime.lt(maxDate));
+            builder.and(qEvaluate.createTime.lt(maxDate));
         }
         if (Objects.nonNull(minDate)) {
-            predicate.and(qEvaluate.createTime.gt(minDate));
+            builder.and(qEvaluate.createTime.gt(minDate));
         }
 
-        return evaluateRepository.findAll(predicate, pageable);
+        return evaluateRepository.findAll(builder, pageable);
+    }
+
+    @Override
+    public Page<OrderRefund> queryRefundPage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QOrderRefund qRefund = QOrderRefund.orderRefund;
+
+        if (Objects.nonNull(dealStatus)) {
+            builder.and(qRefund.dealStatus.eq(dealStatus));
+        }
+        if (StringUtils.isNotBlank(orderId)) {
+            builder.and(qRefund.orderId.eq(orderId));
+        }
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qRefund.refundTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qRefund.refundTime.gt(minDate));
+        }
+
+        return orderRefundRepository.findAll(builder, pageable);
     }
 }

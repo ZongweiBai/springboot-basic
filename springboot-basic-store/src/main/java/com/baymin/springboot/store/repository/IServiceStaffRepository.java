@@ -26,4 +26,8 @@ public interface IServiceStaffRepository extends PagingAndSortingRepository<Serv
     List<ServiceStaff> findFreeStaff(@Param("staffType") ServiceStaffType serviceStaffType,
                                      @Param("serviceStatus") ServiceStatus free,
                                      @Param("staffStatus") CommonStatus staffStatus);
+
+    @Modifying
+    @Query("update ServiceStaff set serviceStatus = :status where id = :staffId")
+    void updateServiceStatus(@Param("staffId") String staffId, @Param("status") ServiceStatus status);
 }

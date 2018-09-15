@@ -77,26 +77,26 @@ function loadUserInfo(userId) {
                         }
                         var orderSource = "";
                         if (order.orderSource == "WECHAT") {
-                            payWay = "微信";
+                            orderSource = "微信";
                         } else {
-                            payWay = "PC";
+                            orderSource = "PC";
                         }
                         var status = "";
                         if (order.status == "ORDER_UN_PAY") {
-                            payWay = "已下单待付款";
-                        } else if (order.status() == "ORDER_PAYED") {
-                            payWay = "已付款待指派";
-                        } else if (order.status() == "ORDER_ASSIGN") {
-                            payWay = "已指派待服务";
-                        } else if (order.status() == "ORDER_PROCESSING") {
-                            payWay = "服务中";
-                        } else if (order.status() == "ORDER_FINISH") {
-                            payWay = "已完成";
+                            status = "已下单待付款";
+                        } else if (order.status == "ORDER_PAYED") {
+                            status = "已付款待指派";
+                        } else if (order.status == "ORDER_ASSIGN") {
+                            status = "已指派待服务";
+                        } else if (order.status == "ORDER_PROCESSING") {
+                            status = "服务中";
+                        } else if (order.status == "ORDER_FINISH") {
+                            status = "已完成";
                         }
                         orderTBody += '<tr class="text-c">';
                         orderTBody += '<td id="orderId">'+order.id+'</td>';
                         orderTBody += '<td id="careType">'+careType+'</td>';
-                        orderTBody += '<td id="orderTime">'+getFormatDateByLong(order.orderTime, true)+'</td>';
+                        orderTBody += '<td id="orderTime">'+order.orderTime+'</td>';
                         orderTBody += '<td id="totalFee">'+order.totalFee+'</td>';
                         orderTBody += '<td id="payWay">'+payWay+'</td>';
                         orderTBody += '<td id="status">'+status+'</td>';

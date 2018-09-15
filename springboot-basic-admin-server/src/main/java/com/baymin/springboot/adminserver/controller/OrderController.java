@@ -80,6 +80,22 @@ public class OrderController {
     }
 
     @ResponseBody
+    @GetMapping(value = "getOrderBasicWithUserInfo")
+    public Map<String, Object> getOrderBasicWithUserInfo(String orderId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Map<String, Object> detailMap = orderService.getOrderBasicWithUserInfo(orderId);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.INFO, detailMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
     @PostMapping(value = "assignOrderStaff")
     public Map<String, Object> assignOrderStaff(String orderId, String staffId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -100,7 +116,8 @@ public class OrderController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             staffChange.setDealTime(new Date());
-            staffChange.setDealStatus(CommonDealStatus.APPLY);
+            staffChange.setDealStatus(CommonDealStatus.AGREE);
+            staffChange.setChangeDesc("后台替换");
             orderService.staffChangeRequest(staffChange);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {

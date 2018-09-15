@@ -225,4 +225,33 @@ public class IndexController {
         return "order/viewOrderDetail";
     }
 
+    /**
+     * ===========================售后管理入口================================
+     */
+    @GetMapping("/index/aftersales/refund/manage")
+    public String manageRefund() {
+        return "aftersales/refund/refundManage";
+    }
+
+    @GetMapping("/index/aftersales/refund/detail")
+    public String refundDetail(String refundId, Model model) {
+        if (Objects.nonNull(refundId)) {
+            model.addAttribute("refundId", refundId);
+        }
+        return "aftersales/refund/viewRefundDetail";
+    }
+
+    @GetMapping("/index/aftersales/staffchange/manage")
+    public String manageStaffChange() {
+        return "aftersales/staffchange/staffchangeManage";
+    }
+
+    @GetMapping("/index/aftersales/staffchange/detail")
+    public String staffchangeDetail(String changeId, Model model) {
+        if (Objects.nonNull(changeId)) {
+            model.addAttribute("changeId", changeId);
+        }
+        return "aftersales/staffchange/viewStaffchangeDetail";
+    }
+
 }

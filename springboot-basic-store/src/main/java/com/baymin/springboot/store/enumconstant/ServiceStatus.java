@@ -8,7 +8,8 @@ import com.baymin.springboot.store.enumconstant.convert.IBaseDbEnum;
 public enum ServiceStatus implements IBaseDbEnum {
 
     FREE("空闲", 0),
-    IN_SERVICE("服务中", 1);
+    ASSIGNED("已指派", 1),
+    IN_SERVICE("服务中", 2);
 
     ServiceStatus(String name, int index) {
         this.name = name;
