@@ -1,6 +1,7 @@
 package com.baymin.springboot.service;
 
 import com.baymin.springboot.store.entity.BasicItem;
+import com.baymin.springboot.store.entity.ServiceType;
 import com.baymin.springboot.store.enumconstant.BasicItemType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,4 +13,10 @@ public interface IBasicItemService {
     void saveItem(BasicItem basicItem);
 
     BasicItem getItemById(String serviceId);
+
+    Page<ServiceType> queryServiceTypeForPage(Pageable pageable);
+
+    void saveServiceType(ServiceType serviceType);
+
+    ServiceType getServiceTypeById(String typeId);
 }

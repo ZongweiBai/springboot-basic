@@ -129,6 +129,19 @@ public class IndexController {
         return "service/basic/serviceAdd";
     }
 
+    @GetMapping("/index/type/basic/manage")
+    public String manageServiceType() {
+        return "service/type/serviceManage";
+    }
+
+    @GetMapping("/index/type/basic/add")
+    public String addServiceType(String typeId, Model model) {
+        if (Objects.nonNull(typeId)) {
+            model.addAttribute("typeId", typeId);
+        }
+        return "service/type/serviceAdd";
+    }
+
     /**
      * ===========================普通用户入口================================
      */

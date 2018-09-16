@@ -3,8 +3,10 @@ package com.baymin.springboot.service.impl;
 import com.baymin.springboot.service.IBasicItemService;
 import com.baymin.springboot.store.entity.BasicItem;
 import com.baymin.springboot.store.entity.QBasicItem;
+import com.baymin.springboot.store.entity.ServiceType;
 import com.baymin.springboot.store.enumconstant.BasicItemType;
 import com.baymin.springboot.store.repository.IBasicItemRepository;
+import com.baymin.springboot.store.repository.IServiceTypeRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class BasicItemServiceImpl implements IBasicItemService {
 
     @Autowired
     private IBasicItemRepository basicItemRepository;
+
+    @Autowired
+    private IServiceTypeRepository serviceTypeRepository;
 
     @Override
     public Page<BasicItem> queryItemForPage(Pageable pageable, BasicItemType itemType) {
@@ -48,5 +53,26 @@ public class BasicItemServiceImpl implements IBasicItemService {
     @Override
     public BasicItem getItemById(String itemId) {
         return basicItemRepository.findById(itemId).orElse(null);
+    }
+
+    @Override
+    public Page<ServiceType> queryServiceTypeForPage(Pageable pageable) {
+        return serviceTypeRepository.findAll(pageable);
+    }
+
+    @Override
+    public void saveServiceType(ServiceType serviceType) {
+        if (StringUtils.isNotBlank(serviceType.getId())) {
+            ServiceType oldData = serviceTypeRepository.findById(serviceType.getId()).orElse(null);
+            serviceType.setCreateTime(oldData.getCreateTime());
+        } else {
+            serviceType.setCreateTime(new Date());
+        }
+        serviceTypeRepository.save(serviceType);
+    }
+
+    @Override
+    public ServiceType getServiceTypeById(String typeId) {
+        return serviceTypeRepository.findById(typeId).orElse(null);
     }
 }

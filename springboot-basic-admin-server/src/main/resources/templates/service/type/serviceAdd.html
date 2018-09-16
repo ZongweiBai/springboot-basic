@@ -1,0 +1,79 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <head th:include="common/base">
+    <title>新增角色</title>
+</head>
+<body>
+<div class="pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-menu-add">
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>分类名称：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="serviceName" name="serviceName"
+                       datatype="*2-32" nullmsg="分类名称不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>分类图标：</label>
+            <div class="formControls col-5">
+                <input type="hidden" name="serviceIcon" id="serviceIcon" datatype="*" nullmsg="分类图标不能为空">
+                <div class="picsh">
+                    <div id="imgDiv">
+                    </div>
+                    <span class="pic4">
+                        <input type="file" onchange="fileSelected('1');" id="image_index_file">
+                    </span>
+                </div>
+            </div>
+            <div class="col-2"><span class="c-red">推荐尺寸：72*72</span></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>关键词：</label>
+            <div class="formControls col-5">
+                <input type="text" class="input-text" value="" placeholder="" id="keyWord" name="keyWord"
+                       datatype="*2-32" nullmsg="关键词不能为空" >
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>分类描述：</label>
+            <div class="formControls col-5">
+                <textarea style="height: 100px;" class="input-text" value="" placeholder="" id="serviceDesc" name="serviceDesc"
+                           nullmsg="分类描述不能为空" ></textarea>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <input type="hidden" id="typeId" name="id" value=""/>
+
+        <div class="row cl">
+            <div class="col-9 col-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+<img id="preview" src="" style="display: none;">
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var typeId = [[${typeId}]];
+    /*]]>*/
+</script>
+<script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
+<script type="text/javascript" src="js/service/serviceTypeAdd.js" th:src="@{/js/service/serviceTypeAdd.js}"></script>
+<script type="text/javascript" src="lib/lrz/lrz.all.bundle.js" th:src="@{/lib/lrz/lrz.all.bundle.js}"></script>
+</body>
+</html>

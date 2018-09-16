@@ -1,6 +1,7 @@
 package com.baymin.springboot.adminserver.controller;
 
 import com.baymin.springboot.adminserver.constant.WebConstant;
+import com.baymin.springboot.common.util.ImageUtil;
 import com.baymin.springboot.service.IAdminService;
 import com.baymin.springboot.service.IMenuService;
 import com.baymin.springboot.service.IOrganizationService;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -240,17 +242,17 @@ public class SystemController {
         try {
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
             String timePath = simpleDateFormat.format(new Date());
-//            //保存图片文件
-//            String filePath = Constant.FileConstant.IMG_FILE_PATH + timePath;
-//            File imageFile = new File(filePath);
-//            if (!imageFile.exists()) {
-//                imageFile.mkdirs();
-//            }
-//            String fileName = Calendar.getInstance().getTimeInMillis() + ".jpg";
-//            ImageUtil.generateImage(base64, filePath + "/" + fileName);
-//            String fileFullPath = (Constant.FileURLConstant.IMG_FILE_URL.replace(Constant.basePath, "")) + timePath + "/" + fileName;
+            //保存图片文件
+            String filePath = "/var/lib/modules/APP-Images/" + timePath;
+            File imageFile = new File(filePath);
+            if (!imageFile.exists()) {
+                imageFile.mkdirs();
+            }
+            String fileName = Calendar.getInstance().getTimeInMillis() + ".jpg";
+            ImageUtil.generateImage(base64, filePath + "/" + fileName);
+            String fileFullPath = "/images/" + timePath + "/" + fileName;
             reMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
-//            reMap.put(WebConstant.INFO, fileFullPath);
+            reMap.put(WebConstant.INFO, fileFullPath);
         } catch (Exception e) {
             e.printStackTrace();
             reMap.put(WebConstant.RESULT, WebConstant.FAULT);
