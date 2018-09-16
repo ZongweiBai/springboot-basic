@@ -46,4 +46,7 @@ public class OrderStaffChange {
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
     private Date dealTime;
 
+    @Column(name = "DEAL_DESC", length = 1024)
+    private String dealDesc;
+
 }

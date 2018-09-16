@@ -22,7 +22,7 @@
             <table class="table table-border table-bordered table-bg table-hover table-sort">
                 <thead>
                 <tr class="text-c">
-                    <th colspan="6"><h2><b>基本订单信息</b></h2></th>
+                    <th colspan="5"><h2><b>基本订单信息</b></h2></th>
                 </tr>
                 <tr class="text-c">
                     <th>订单号</th>
@@ -67,36 +67,68 @@
             <table class="table table-border table-bordered table-bg table-hover table-sort">
                 <thead>
                 <tr class="text-c">
-                    <th colspan="7"><h2><b>发票信息</b></h2></th>
+                    <th colspan="5"><h2><b>更换信息</b></h2></th>
                 </tr>
                 <tr class="text-c">
-                    <th>发票类型</th>
-                    <th>发票抬头</th>
-                    <th>税号</th>
-                    <th>发票金额</th>
-                    <th>邮寄人</th>
-                    <th>邮寄电话</th>
-                    <th>邮寄地址</th>
+                    <th>申请时间</th>
+                    <th>申请原因</th>
+                    <th>处理时间</th>
+                    <th>申请状态</th>
+                    <th>处理备注</th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr class="text-c">
-                    <td id="invoiceType"></td>
-                    <td id="invoiceHeader"></td>
-                    <td id="taxNo"></td>
-                    <td id="invoiceFee"></td>
-                    <td id="Recipient"></td>
-                    <td id="recipientMobile"></td>
-                    <td id="recipientAddress"></td>
+                    <td id="createTime"></td>
+                    <td id="changeDesc"></td>
+                    <td id="dealTime"></td>
+                    <td id="dealStatusTd"></td>
+                    <td id="dealDescTd"></td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
+        <div class="row cl" id="dealDiv">
+            <div class="row cl">
+                <label class="form-label col-2"><span class="c-red">*</span>护士/护工筛选：</label>
+                <div class="formControls col-8">
+                    <select class="select input-text" id="serviceStaffType" name="serviceStaffType"
+                            datatype="*" onchange="selectStaff(this.value)">
+                        <option value="">选择护士/护工</option>
+                        <option value="WORKER">护工</option>
+                        <option value="NURSE">护士</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row cl">
+                <label class="form-label col-2"><span class="c-red">*</span>选择护士/护工：</label>
+                <div class="formControls col-8">
+                    <select class="select input-text" id="newStaffId" name="newStaffId" datatype="*">
+                        <option value="">筛选</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="row cl">
+                <label class="form-label col-2"><span class="c-red">*</span>处理备注：</label>
+                <div class="formControls col-8">
+                    <textarea type="text" style="height: 100px;" class="input-text" value="" placeholder="" id="dealDesc" name="dealDesc" datatype="*"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="id" name="id" value=""/>
+        <input type="hidden" id="dealStatus" name="dealStatus" value="AGREE"/>
+        <input type="hidden" id="oldStaffId" name="oldStaffId" value=""/>
+
         <div class="row cl">
             <div style="text-align: center;">
+                <input id="agreeButton" class="btn btn-primary radius" onclick="applyFund();" type="submit" value="&nbsp;&nbsp;确认更换&nbsp;&nbsp;">
+                <input id="rejectButton" class="btn btn-primary radius" onclick="rejectFund();return false;" type="submit" value="&nbsp;&nbsp;拒绝更换&nbsp;&nbsp;">
                 <input class="btn btn-primary radius" onclick="tip.closeIframe();" type="submit"
-                       value="&nbsp;&nbsp;关闭&nbsp;&nbsp;">
+                       value="&nbsp;&nbsp;关闭窗口&nbsp;&nbsp;">
             </div>
         </div>
     </form>
@@ -107,6 +139,7 @@
     var changeId = [[${changeId}]];
     /*]]>*/
 </script>
+<script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
 <script type="text/javascript" src="js/aftersales/viewStaffchangeDetail.js" th:src="@{/js/aftersales/viewStaffchangeDetail.js}"></script>
 <script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
 <script type="text/javascript"

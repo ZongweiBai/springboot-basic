@@ -3,6 +3,8 @@ package com.baymin.springboot.adminserver.controller;
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IAfterSalesService;
+import com.baymin.springboot.service.IOrderRefundService;
+import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.OrderRefund;
 import com.baymin.springboot.store.entity.OrderStaffChange;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +30,12 @@ public class AfterSalesController {
 
     @Autowired
     private IAfterSalesService afterSalesService;
+
+    @Autowired
+    private IOrderService orderService;
+
+    @Autowired
+    private IOrderRefundService orderRefundService;
 
     @ResponseBody
     @PostMapping(value = "queryStaffchangeForPage")
@@ -44,6 +53,21 @@ public class AfterSalesController {
     }
 
     @ResponseBody
+    @PostMapping(value = "dealStaffChange")
+    public Map<String, Object> dealStaffChange(OrderStaffChange change, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            afterSalesService.dealStaffChange(change);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
     @PostMapping(value = "queryRefundForPage")
     public Map<String, Object> queryRefundForPage(Pageable pageable, CommonDealStatus dealStatus, String orderId,
                                                     String datemin, String datemax, HttpServletRequest request) {
@@ -55,6 +79,53 @@ public class AfterSalesController {
         Page<OrderRefund> queryResult = afterSalesService.queryRefundPage(pageable, dealStatus, maxDate, minDate, orderId);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @GetMapping(value = "getRefundInfo")
+    public Map<String, Object> getRefundInfo(String refundId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Map<String, Object> detailMap = afterSalesService.getRefundInfo(refundId);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.INFO, detailMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "dealOrderRefund")
+    public Map<String, Object> dealOrderRefund(OrderRefund refund, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            orderRefundService.saveOrderRefund(refund);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @GetMapping(value = "viewChangeDetail")
+    public Map<String, Object> viewChangeDetail(String changeId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Map<String, Object> detailMap = afterSalesService.getChangeDetail(changeId);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.INFO, detailMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
         return resultMap;
     }
 

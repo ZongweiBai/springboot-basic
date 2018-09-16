@@ -14,7 +14,7 @@ spring:
     url: jdbc:mysql://127.0.0.1:13306/family_care?useUnicode=true&characterEncoding=utf8&useSSL=false
     username: root
     password: root
-    driverClassName: com.mysql.jdbc.Driver
+    driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 50
       minimum-idle: 20

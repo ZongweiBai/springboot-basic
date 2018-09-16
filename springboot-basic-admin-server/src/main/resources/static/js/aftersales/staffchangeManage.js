@@ -34,22 +34,12 @@ function loadTable() {
                 align: 'center'
             },
             {
-                field: 'careType',
-                title: '产品名称',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == "HOSPITAL_CARE") {
-                        return "医院陪护";
-                    } else if (value == "HOME_CARE") {
-                        return "居家照护";
-                    } else if (value == "REHABILITATION") {
-                        return "康复护理";
-                    }
-                    return "";
-                }
+                field: 'orderId',
+                title: '客户ID',
+                align: 'center'
             },
             {
-                field: 'refundTime',
+                field: 'createTime',
                 title: '申请时间',
                 align: 'center',
                 formatter: function (value, row, index) {
@@ -57,17 +47,9 @@ function loadTable() {
                 }
             },
             {
-                field: 'refundDuration',
-                title: '退款数量',
+                field: 'changeDesc',
+                title: '申请原因',
                 align: 'center'
-            },
-            {
-                field: 'refundTime',
-                title: '退款金额',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    return "￥ " + value;
-                }
             },
             {
                 field: 'dealTime',
@@ -81,7 +63,7 @@ function loadTable() {
                 }
             },
             {
-                field: 'status',
+                field: 'dealStatus',
                 title: '申请状态',
                 align: 'center',
                 formatter: function (value, row, index) {
@@ -98,24 +80,22 @@ function loadTable() {
                 }
             },
             {
+                field: 'oldStaffId',
+                title: '更换前护工',
+                align: 'center'
+            },
+            {
+                field: 'newStaffId',
+                title: '更换后护工',
+                align: 'center'
+            },
+            {
                 field: 'id',
                 title: '操作',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    var status = row.status;
                     var content = ''
-                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewOrderInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
-                    if (status == "ORDER_UN_PAY") {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
-                    } else if (status == "ORDER_PAYED") {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
-                    }
-                    if (status != "ORDER_UN_PAY" && status != "ORDER_FINISH") {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderRefund(\'' + value + '\')" title="退款申请"><i style="font-size: 18px;" class="Hui-iconfont">&#xe628;</i></a>&nbsp;';
-                    }
-                    if (status == "ORDER_ASSIGN" || status == "ORDER_PROCESSING") {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="staffChange(\'' + value + '\')" title="换人"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
-                    }
+                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewStaffInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
                     return content;
                 }
             }
@@ -126,44 +106,11 @@ function loadTable() {
 
 /**
  * 查看详情
- * @param orderId
+ * @param changeId
  */
-function viewOrderInfo(orderId) {
-    tip.openIframe("订单详情", contextPath + 'index/order/detail?orderId=' + orderId);
+function viewStaffInfo(changeId) {
+    tip.openIframe("更换详情", contextPath + 'index/aftersales/staffchange/detail?changeId=' + changeId);
 }
-
-/**
- * 订单指派
- * @param orderId
- */
-function orderAssign(orderId) {
-    tip.openIframe("订单指派", contextPath + 'index/order/assign?orderId=' + orderId, 550, 350, refreshData);
-}
-
-/**
- * 退款申请
- * @param orderId
- */
-function orderRefund(orderId) {
-    tip.openIframe("退款申请", contextPath + 'index/order/refund?orderId=' + orderId, 600, 350, refreshData);
-}
-
-/**
- * 换人
- * @param orderId
- */
-function staffChange(orderId) {
-    tip.openIframe("换人", contextPath + 'index/order/staffchange?orderId=' + orderId, 550, 350, refreshData);
-}
-
-/**
- * 代收款
- * @param orderId
- */
-function offlinePay(orderId) {
-    tip.openIframe("代收款", contextPath + 'index/order/offlinePay?orderId=' + orderId, 600, 350, refreshData);
-}
-
 
 var refreshData = function () {
     $('#menuTable').bootstrapTable('refresh');

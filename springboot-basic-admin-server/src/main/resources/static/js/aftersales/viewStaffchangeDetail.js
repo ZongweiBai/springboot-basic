@@ -1,15 +1,81 @@
 $(function () {
 
-    loadDataInfo(orderId);
+    loadDataInfo(changeId);
 
 });
 
-function loadDataInfo(orderId) {
+function applyFund() {
+    $("#form-menu-add").Validform({
+        tiptype: 2,
+        callback: function (form) {
+            $.ajax({
+                type: "POST",
+                url: contextPath + "afterSales/dealStaffChange",
+                data: $('#form-menu-add').serialize(),
+                beforeSend: function () {
+                    tip.showLoading();
+                },
+                error: function () {
+                    tip.hideLoading();
+                    tip.alertError("处理失败");
+                },
+                success: function (data) {
+                    tip.hideLoading();
+                    if (data.result == "200") {
+                        tip.alertSuccess("处理成功", function () {
+                            tip.closeIframe();
+                        });
+                    } else {
+                        tip.alertError(data.message);
+                    }
+                }
+            });
+            return false;
+        }
+    });
+}
+
+function rejectFund() {
+    var dealDesc = $("#dealDesc").val();
+    if (dealDesc == "") {
+        tip.alertError("处理备注不能为空")
+        return;
+    }
+    $.ajax({
+        type: "POST",
+        url: contextPath + "afterSales/dealStaffChange",
+        data: {
+            "id": $("#id").val(),
+            "dealStatus": "REJECT",
+            "dealDesc": dealDesc
+        },
+        beforeSend: function () {
+            tip.showLoading();
+        },
+        error: function () {
+            tip.hideLoading();
+            tip.alertError("保存失败");
+        },
+        success: function (data) {
+            tip.hideLoading();
+            if (data.result == "200") {
+                tip.alertSuccess("保存成功", function () {
+                    tip.closeIframe();
+                });
+            } else {
+                tip.alertError(data.message);
+            }
+        }
+    });
+    return false;
+}
+
+function loadDataInfo(changeId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/order/viewOrderDetail",
+        url: contextPath + "afterSales/viewChangeDetail",
         data: {
-            "orderId": orderId
+            "changeId": changeId
         },
         beforeSend: function () {
             tip.showLoading();
@@ -24,6 +90,7 @@ function loadDataInfo(orderId) {
                 var order = info.order;
                 var orderExt = info.orderExt;
                 var userProfile = info.user;
+                var change = info.change;
 
                 var careType = "";
                 if (order.careType == "HOSPITAL_CARE") {
@@ -62,23 +129,68 @@ function loadDataInfo(orderId) {
                 $("#payTime").html(order.payTime);
                 $("#serviceAddress").html(orderExt.serviceAddress);
 
-                var invoice = info.invoice;
-                if (invoice != null) {
-                    if (invoice.invoiceType == "E") {
-                        $("#invoiceType").html("电子");
-                    } else {
-                        $("#invoiceType").html("纸质");
-                    }
-                    $("#invoiceHeader").html(invoice.invoiceHeader);
-                    $("#taxNo").html(invoice.taxNo);
-                    $("#invoiceFee").html(invoice.invoiceFee);
-                    $("#Recipient").html(invoice.Recipient);
-                    $("#recipientMobile").html(invoice.recipientMobile);
-                    $("#recipientAddress").html(invoice.recipientAddress);
+                var dealStatusTd= "";
+                if (change.dealStatus == "APPLY") {
+                    dealStatusTd = "已申请";
+                } else if (change.dealStatus == "AGREE") {
+                    dealStatusTd = "已同意";
+                } else if (change.dealStatus == "REJECT") {
+                    dealStatusTd = "已驳回";
+                } else if (change.dealStatus == "COMPLETED") {
+                    dealStatusTd = "已完成";
+                }
+                $("#createTime").html(change.createTime);
+                $("#changeDesc").html(change.changeDesc);
+                $("#dealTime").html(change.dealTime);
+                $("#dealStatusTd").html(dealStatusTd);
+                $("#dealDescTd").html(change.dealDesc);
+
+                $("#id").val(change.id)
+                $("#oldStaffId").val(change.oldStaffId)
+
+                if (change.dealStatus != "APPLY") {
+                    $("#dealDiv").hide();
+                    $("#agreeButton").hide();
+                    $("#rejectButton").hide();
                 }
             } else {
                 tip.alertError(data.message);
             }
         }
     });
+}
+
+function selectStaff(staffType) {
+    if (staffType == null || staffType == "") {
+        $("#serviceStaffId").empty();
+        $("#serviceStaffId").append('<option value="">筛选</option>');
+    } else {
+        $.ajax({
+            type: "GET",
+            url: contextPath + "staff/queryStaffByType",
+            data: {
+                "serviceStaffType": staffType
+            },
+            beforeSend: function () {
+                tip.showLoading();
+            },
+            success: function (data) {
+                tip.hideLoading();
+                if (data.result == 200) {
+                    $("#newStaffId").empty();
+                    var rows = data.rows;
+                    for (var i = 0; i < rows.length; i++) {
+                        var staff = rows[i];
+                        $("#newStaffId").append('<option value="' + staff.id + '">' + staff.userName + '-' + staff.mobile + '</option>');
+                    }
+                } else {
+                    tip.alertError("加载信息失败");
+                }
+            },
+            error: function () {
+                tip.hideLoading();
+                tip.alertError("加载信息失败");
+            }
+        });
+    }
 }

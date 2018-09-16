@@ -6,6 +6,7 @@ import com.baymin.springboot.store.entity.OrderRefund;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.repository.IOrderRefundRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,10 +26,22 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
 
     @Override
     public void saveOrderRefund(OrderRefund orderRefund) {
-        Order order = orderRepository.findById(orderRefund.getOrderId()).orElse(null);
-        orderRefund.setCareType(order.getCareType());
-        orderRefund.setDealTime(new Date());
-        orderRefundRepository.save(orderRefund);
+        if (StringUtils.isNotBlank(orderRefund.getId())) {
+            OrderRefund oldData = orderRefundRepository.findById(orderRefund.getId()).orElse(null);
+            oldData.setDealDesc(orderRefund.getDealDesc());
+            oldData.setDealStatus(orderRefund.getDealStatus());
+            if (orderRefund.getDealStatus() == CommonDealStatus.AGREE) {
+                oldData.setRefundDuration(orderRefund.getRefundDuration());
+                oldData.setRefundFee(orderRefund.getRefundFee());
+            }
+            orderRefundRepository.save(oldData);
+        } else {
+            Order order = orderRepository.findById(orderRefund.getOrderId()).orElse(null);
+            orderRefund.setCareType(order.getCareType());
+            orderRefund.setRefundTime(new Date());
+            orderRefund.setDealTime(new Date());
+            orderRefundRepository.save(orderRefund);
+        }
     }
 
     @Override
