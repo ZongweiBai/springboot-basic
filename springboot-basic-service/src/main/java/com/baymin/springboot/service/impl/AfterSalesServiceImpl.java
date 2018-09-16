@@ -49,6 +49,9 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
     @Autowired
     private IUserProfileRepository userProfileRepository;
 
+    @Autowired
+    private IInvoiceRepository invoiceRepository;
+
     @Override
     public Page<OrderStaffChange> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId) {
         BooleanBuilder builder = new BooleanBuilder();
@@ -113,6 +116,50 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
     }
 
     @Override
+    public Page<OrderRefund> queryRefundPageForFinance(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QOrderRefund qRefund = QOrderRefund.orderRefund;
+
+        if (Objects.nonNull(dealStatus)) {
+            builder.and(qRefund.dealStatus.eq(dealStatus));
+        } else {
+            builder.and(qRefund.dealStatus.in(CommonDealStatus.AGREE, CommonDealStatus.COMPLETED));
+        }
+        if (StringUtils.isNotBlank(orderId)) {
+            builder.and(qRefund.orderId.eq(orderId));
+        }
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qRefund.refundTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qRefund.refundTime.gt(minDate));
+        }
+
+        return orderRefundRepository.findAll(builder, pageable);
+    }
+
+    @Override
+    public Page<Invoice> queryInvoicePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QInvoice qInvoice = QInvoice.invoice;
+
+        if (Objects.nonNull(dealStatus)) {
+            builder.and(qInvoice.dealStatus.eq(dealStatus));
+        }
+        if (StringUtils.isNotBlank(orderId)) {
+            builder.and(qInvoice.orderIds.likeIgnoreCase("%"+orderId+"%"));
+        }
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qInvoice.createTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qInvoice.createTime.gt(minDate));
+        }
+
+        return invoiceRepository.findAll(builder, pageable);
+    }
+
+    @Override
     public Map<String, Object> getRefundInfo(String refundId) {
         Map<String, Object> reMap = new HashMap<>();
 
@@ -172,5 +219,10 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
         detailMap.put("orderExt", orderExt);
 
         return detailMap;
+    }
+
+    @Override
+    public void updateInvoice(String invoiceId, CommonDealStatus dealStatus) {
+        invoiceRepository.updateDealStatus(invoiceId, dealStatus, new Date());
     }
 }

@@ -254,4 +254,17 @@ public class IndexController {
         return "aftersales/staffchange/viewStaffchangeDetail";
     }
 
+    /**
+     * ===========================财务管理入口================================
+     */
+    @GetMapping("/index/finance/refund/manage")
+    public String manageFinanceRefund() {
+        return "finance/refundManage";
+    }
+
+    @GetMapping("/index/finance/invoice/manage")
+    public String manageFinanceInvoice() {
+        return "finance/invoiceManage";
+    }
+
 }

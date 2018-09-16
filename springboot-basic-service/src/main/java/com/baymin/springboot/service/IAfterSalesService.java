@@ -1,6 +1,7 @@
 package com.baymin.springboot.service;
 
 import com.baymin.springboot.store.entity.Evaluate;
+import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.OrderRefund;
 import com.baymin.springboot.store.entity.OrderStaffChange;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
@@ -22,4 +23,10 @@ public interface IAfterSalesService {
     void dealStaffChange(OrderStaffChange change);
 
     Map<String, Object> getChangeDetail(String changeId);
+
+    Page<OrderRefund> queryRefundPageForFinance(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId);
+
+    Page<Invoice> queryInvoicePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId);
+
+    void updateInvoice(String invoiceId, CommonDealStatus dealStatus);
 }

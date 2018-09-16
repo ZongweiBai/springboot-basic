@@ -130,7 +130,9 @@ public class OrderServiceImpl implements IOrderService {
 
         if (Objects.nonNull(invoice)) {
             invoice.setCreateTime(new Date());
-            invoice.setDealStatus(false);
+            invoice.setDealStatus(CommonDealStatus.APPLY);
+            invoice.setOrderIds(order.getId());
+            invoice.setInvoiceFee(order.getTotalFee());
             invoiceDao.save(invoice);
         }
 
@@ -193,7 +195,8 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         invoice.setCreateTime(new Date());
-        invoice.setDealStatus(false);
+        invoice.setDealStatus(CommonDealStatus.APPLY);
+        invoice.setInvoiceFee(orderRepository.sumTotalFeeByIds(orderIdList));
         invoiceDao.save(invoice);
 
         for (String orderId : orderIdList) {

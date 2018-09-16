@@ -1,8 +1,10 @@
 package com.baymin.springboot.store.entity;
 
+import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -43,8 +45,9 @@ public class Invoice {
     @Column(name = "INVOICE_FEE", precision=10, scale=2)
     private Double invoiceFee;
 
-    @Column(name = "DEAL_STATUS")
-    private Boolean dealStatus;
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "DEAL_STATUS", length = 2)
+    private CommonDealStatus dealStatus;
 
     /**
      * 创建日期
@@ -56,7 +59,7 @@ public class Invoice {
      * 处理日期
      */
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
-    private Date DEAL_Time;
+    private Date dealTime;
 
     @Column(name = "RECIPIENT", length = 32)
     private String recipient;
@@ -67,6 +70,6 @@ public class Invoice {
     @Column(name = "RECIPIENT_ADDRESS", length = 32)
     private String recipientAddress;
 
-    @Transient
+    @Column(name = "ORDER_IDS", length = 1024)
     private String orderIds;
 }
