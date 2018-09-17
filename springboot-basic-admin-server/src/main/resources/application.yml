@@ -46,5 +46,5 @@ spring:
         min-idle: 0
         max-wait: -1
         max-active: 8
-#logging:
-#  config: file:${IAM_IDPPROXY_CONFIG}/logback.xml
+logging:
+  config: file:${ADMIN_CONFIG}/admin_logback.xml

@@ -15,16 +15,16 @@ TARGET_PATH=/var/lib/modules/API-Server
 APP_PATH=$TARGET_PATH/webapp/$NAME.jar
 
 # JVM Args
-JVM_XMS_IDP=2048m
-JVM_XMX_IDP=2048m
-JVM_MetaspaceSize_IDP=512m
-JVM_MaxMetaspaceSize_IDP=512m
+JVM_XMS_API=2048m
+JVM_XMX_API=2048m
+JVM_MetaspaceSize_API=512m
+JVM_MaxMetaspaceSize_API=512m
 
 DEFAULT_PORT=8888
 DEFAULT_DEBUG_PORT=8798
-IAM_IDPPROXY_CONFIG=/var/lib/modules/API-Server/config
-IAM_LOG_CONFIG=/var/lib/modules/API-Server/log
-IAM_IDPPROXY_CLASSPATH=/var/lib/modules/API-Server/lib
+API_CONFIG=/var/lib/modules/API-Server/config
+API_LOG_CONFIG=/var/lib/modules/API-Server/log
+API_CLASSPATH=/var/lib/modules/API-Server/lib
 
 start() {
         echo "Starting $NAME ..."
@@ -37,8 +37,8 @@ start() {
         if [ ! -d $TARGET_PATH/static ]; then
             mkdir $TARGET_PATH/static/
         fi
-        nohup java -XX:MetaspaceSize=$JVM_MetaspaceSize_IDP -XX:MaxMetaspaceSize=$JVM_MaxMetaspaceSize_IDP -Xms$JVM_XMS_IDP -Xmx$JVM_XMX_IDP -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEFAULT_DEBUG_PORT -Dserver.port=$DEFAULT_PORT -DIAM_IDPPROXY_CONFIG=$IAM_IDPPROXY_CONFIG -DIAM_LOG_CONFIG=$IAM_LOG_CONFIG -DIAM_IDPPROXY_CLASSPATH=$IAM_IDPPROXY_CLASSPATH $APP_PATH > $TARGET_PATH/log/nohup.out 2>&1 &
-        echo "java -XX:MetaspaceSize=$JVM_MetaspaceSize_IDP -XX:MaxMetaspaceSize=$JVM_MaxMetaspaceSize_IDP -Xms$JVM_XMS_IDP -Xmx$JVM_XMX_IDP -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEFAULT_DEBUG_PORT -Dserver.port=$DEFAULT_PORT -DIAM_IDPPROXY_CONFIG=$IAM_IDPPROXY_CONFIG -DIAM_LOG_CONFIG=$IAM_LOG_CONFIG -DIAM_IDPPROXY_CLASSPATH=$IAM_IDPPROXY_CLASSPATH $APP_PATH > $TARGET_PATH/log/nohup.out 2>&1 &"
+        nohup java -XX:MetaspaceSize=$JVM_MetaspaceSize_API -XX:MaxMetaspaceSize=$JVM_MaxMetaspaceSize_API -Xms$JVM_XMS_API -Xmx$JVM_XMX_API -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEFAULT_DEBUG_PORT -Dserver.port=$DEFAULT_PORT -DAPI_CONFIG=$API_CONFIG -DAPI_LOG_CONFIG=$API_LOG_CONFIG -DAPI_CLASSPATH=$API_CLASSPATH -Dspring.config.additional-location=$API_CONFIG $APP_PATH > $TARGET_PATH/log/nohup.out 2>&1 &
+        echo "java -XX:MetaspaceSize=$JVM_MetaspaceSize_API -XX:MaxMetaspaceSize=$JVM_MaxMetaspaceSize_API -Xms$JVM_XMS_API -Xmx$JVM_XMX_API -jar -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=$DEFAULT_DEBUG_PORT -Dserver.port=$DEFAULT_PORT -DAPI_CONFIG=$API_CONFIG -DAPI_LOG_CONFIG=$API_LOG_CONFIG -DAPI_CLASSPATH=$API_CLASSPATH -Dspring.config.additional-location=$API_CONFIG $APP_PATH > $TARGET_PATH/log/nohup.out 2>&1 &"
         sleep 5
         PID=`ps -ef | grep $APP_PATH | grep java | grep -v grep | awk '{print $2}'`
         echo "$NAME started with PID $PID"

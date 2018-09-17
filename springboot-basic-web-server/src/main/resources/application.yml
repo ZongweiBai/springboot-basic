@@ -7,8 +7,8 @@ spring:
     type: com.zaxxer.hikari.HikariDataSource
     url: jdbc:mysql://127.0.0.1:13306/family_care?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: family-care
-    driverClassName: com.mysql.jdbc.Driver
+    password: root
+    driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 50
       minimum-idle: 20
@@ -44,5 +44,5 @@ spring:
     user:
       password: family_care_admin
       name: admin
-#logging:
-#  config: file:${IAM_IDPPROXY_CONFIG}/logback.xml
+logging:
+  config: file:${API_CONFIG}/api_logback.xml
