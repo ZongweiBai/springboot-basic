@@ -39,4 +39,6 @@ public interface IOrderService {
     void serviceStart(String orderId);
 
     Map<String, Object> getOrderBasicWithUserInfo(String orderId);
+
+    Order queryOrderById(String orderId);
 }

@@ -8,4 +8,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 public interface IPayRecordRepository extends PagingAndSortingRepository<PayRecord, String>,
         JpaSpecificationExecutor<PayRecord>,
         QuerydslPredicateExecutor<PayRecord> {
+    PayRecord findByTradeNo(String tradeNo);
 }

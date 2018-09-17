@@ -179,6 +179,11 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public Order queryOrderById(String orderId) {
+        return orderRepository.findById(orderId).orElse(null);
+    }
+
+    @Override
     public void orderEvaluate(Evaluate evaluate) {
         evaluate.setCreateTime(new Date());
         evaluateRepository.save(evaluate);

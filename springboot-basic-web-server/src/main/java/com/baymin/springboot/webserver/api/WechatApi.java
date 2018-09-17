@@ -1,5 +1,6 @@
 package com.baymin.springboot.webserver.api;
 
+import com.baymin.springboot.common.constant.WebConstant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
@@ -10,7 +11,11 @@ import com.baymin.springboot.pay.wechat.param.WXResCommonData;
 import com.baymin.springboot.pay.wechat.param.jsApi.JsApiOrderReqData;
 import com.baymin.springboot.pay.wechat.param.paynotify.PayNotifyReqData;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
+import com.baymin.springboot.service.IOrderService;
+import com.baymin.springboot.service.IPayRecordService;
 import com.baymin.springboot.service.IUserProfileService;
+import com.baymin.springboot.store.entity.Order;
+import com.baymin.springboot.store.entity.PayRecord;
 import com.baymin.springboot.store.entity.UserProfile;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -18,17 +23,12 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import io.swagger.annotations.Api;
-import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -37,12 +37,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
-import static com.baymin.springboot.common.exception.ErrorDescription.GET_WECHAT_OPENID_ERROR;
+import static com.baymin.springboot.common.exception.ErrorDescription.*;
 
 @Api(value = "微信相关", tags = "微信相关")
 @RestController
@@ -55,10 +54,13 @@ public class WechatApi {
     private IUserProfileService userProfileService;
 
     @Autowired
-    private PayRecordService payRecordService;
+    private IOrderService orderService;
+
+    @Autowired
+    private IPayRecordService payRecordService;
 
     @ResponseBody
-    @RequestMapping(value = "getUserOpenId", method = RequestMethod.GET)
+    @GetMapping(value = "openId")
     public void getUserOpenId(String code, String grant_type, String accountId, HttpServletResponse response) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpURLConnection connection = null;
@@ -122,75 +124,26 @@ public class WechatApi {
      */
     @ResponseBody
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public void payOrderWithWeChat(HttpServletRequest request, HttpServletResponse response) {
-        String tradeId = request.getParameter("tradeId");
+    public JsApiOrderReqData payOrderWithWeChat(HttpServletRequest request, HttpServletResponse response) {
         String orderId = request.getParameter("orderId");
-        String accountId = request.getParameter("accountId");
-        String balanceFlag = request.getParameter("balanceFlag");
-        String openId = request.getParameter("openId");
-        if ((StringUtils.isBlank(orderId) && StringUtils.isBlank(tradeId)) || StringUtils.isBlank(accountId) || StringUtils.isBlank(balanceFlag)) {
-            ResponseDataHandler.dealError(ErrorCode.INVALID_REQUEST, ErrorDescription.PARAM_NOT_ENOUGH, response);
-            return;
+        String userId = request.getParameter("userId");
+        if (StringUtils.isBlank(orderId) || StringUtils.isBlank(userId)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
 
-        List<Order> orderList = getOrders(tradeId, orderId);
-        if (CollectionUtils.isEmpty(orderList)) {
-            ResponseDataHandler.dealError(ErrorCode.NOT_FOUND, ErrorDescription.ORDER_INFO_NOT_CORRECT, response);
-            return;
+        Order order = orderService.queryOrderById(orderId);
+        if (Objects.isNull(order)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
 
-        try {
-            Map<String, Object> resultMap;
-            Account account = orderList.get(0).getBooker();
-            User user = userService.getUserWithAccountId(account.getId());
+        Map<String, Object> resultMap;
+        UserProfile user = userProfileService.findById(userId);
 
-            Double totalProductPrice = FormatOrder.getPayPriceByOrders(orderList);
-            if (totalProductPrice < 50 && balanceFlag.equals("false")) {
-                ResponseDataHandler.dealError(ErrorCode.SERVER_ERROR, "您的订单金额小于50，请使用余额支付", response);
-                return;
-            }
-
-            // 余额+微信支付
-            if (balanceFlag.equals("true")) {
-                if (user.getBalance() <= 0) {
-                    ResponseDataHandler.dealError(ErrorCode.SERVER_ERROR, "您的余额为0，请充值", response);
-                    return;
-                }
-                // 余额充足，纯余额支付
-                if (totalProductPrice <= user.getBalance()) {
-                    resultMap = payRecordService.payOrderWithBalance(user, orderList, orderId, tradeId);
-                    if (ObjectUtils.equals(WebConstant.SUCCESS, resultMap.get(WebConstant.RESULT))) {
-                        ResponseDataHandler.dealSuccess(response);
-                        return;
-                    } else {
-                        ResponseDataHandler.dealError(ErrorCode.SERVER_ERROR, resultMap.get(WebConstant.MESSAGE).toString(), response);
-                        return;
-                    }
-                }
-                // 余额不足，部分微信支付
-                else {
-                    if (StringUtils.isBlank(openId)) {
-                        ResponseDataHandler.dealError(ErrorCode.INVALID_REQUEST, ErrorDescription.PARAM_NOT_ENOUGH, response);
-                        return;
-                    }
-                    totalProductPrice = totalProductPrice - user.getBalance();
-                    resultMap = payRecordService.payOrderWithWeChat(user, orderList, WechatConfig.AppID, WechatConfig.mchID, WechatConfig.key, orderId, tradeId, openId, totalProductPrice);
-                    dealWechatOrderResponse(response, resultMap);
-                }
-            }
-            // 微信支付
-            else {
-                if (StringUtils.isBlank(openId)) {
-                    ResponseDataHandler.dealError(ErrorCode.INVALID_REQUEST, ErrorDescription.PARAM_NOT_ENOUGH, response);
-                    return;
-                }
-                resultMap = payRecordService.payOrderWithWeChat(user, orderList, WechatConfig.AppID, WechatConfig.mchID, WechatConfig.key, orderId, tradeId, openId, totalProductPrice);
-                dealWechatOrderResponse(response, resultMap);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            ResponseDataHandler.dealError(ErrorCode.SERVER_ERROR, "生成预付单失败", response);
+        if (Objects.isNull(user) || StringUtils.isBlank(user.getIdpId())) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
+        resultMap = payRecordService.payOrderWithWeChat(user, order, WechatConfig.AppID, WechatConfig.mchID, WechatConfig.key);
+        return dealWechatOrderResponse(response, resultMap);
     }
 
     @RequestMapping(value = "/pay/notify", method = RequestMethod.POST)
@@ -198,8 +151,8 @@ public class WechatApi {
     public void notifyPayResult(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取收到的报文
         BufferedReader reader = request.getReader();
-        String line = "";
-        StringBuffer inputString = new StringBuffer();
+        String line;
+        StringBuilder inputString = new StringBuilder();
         WXProtocolData protocolData = new WXProtocolData();
         try {
             while ((line = reader.readLine()) != null) {
@@ -226,19 +179,10 @@ public class WechatApi {
                 }
 
                 payRecord.setTransactionId(resData.getTransaction_id());
+                payRecordService.orderPaySuccess(payRecord);
 
-                if (payRecord.getPayFor() == PayFor.RECHARGE) {
-                    RechargeOrder rechargeOrder = rechargeOrderService.getRechargeOrderWithId(payRecord.getOrderId());
-                    if (rechargeOrder != null) {
-                        rechargeOrderService.finishRechargeOrder(rechargeOrder, payRecord);
+                returnToWechat(response, protocolData);
 
-                        returnToWechat(response, protocolData);
-                    }
-                } else {
-                    payRecordService.orderPaySuccess(payRecord);
-
-                    returnToWechat(response, protocolData);
-                }
             } else {
                 protocolData.setReturn_code(WXResCommonData.FAIL_RETURN_CODE);
                 protocolData.setReturn_msg(WXResCommonData.FAIL_RESULT_CODE);
@@ -261,27 +205,14 @@ public class WechatApi {
         response.getWriter().write(rtWeiXinStr);
     }
 
-    private void dealWechatOrderResponse(HttpServletResponse response, Map<String, Object> resultMap) {
-        if (ObjectUtils.equals(resultMap.get(WebConstant.RESULT), WebConstant.FAULT)) {
-            ResponseDataHandler.dealError(ErrorCode.SERVER_ERROR, "生成预付单失败", response);
+    private JsApiOrderReqData dealWechatOrderResponse(HttpServletResponse response, Map<String, Object> resultMap) {
+        if (StringUtils.equals(String.valueOf(resultMap.get(WebConstant.RESULT)), String.valueOf(WebConstant.FAULT))) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), WECHAT_PAY_ERROR));
         } else {
             UnifiedOrderResData resData = (UnifiedOrderResData) resultMap.get(WebConstant.INFO);
             resData.setAppid(WechatConfig.AppID);
-            ResponseDataHandler.dealSuccess(new JsApiOrderReqData(resData, WechatConfig.key), response);
+            return new JsApiOrderReqData(resData, WechatConfig.key);
         }
-    }
-
-    private List<Order> getOrders(String tradeId, String orderId) {
-        List<Order> orderList = new ArrayList<>();
-        if (StringUtils.isNotBlank(tradeId)) {
-            orderList = orderService.getOrderListByTradeId(tradeId, OrderStatus.ORDER_UN_PAY);
-        } else {
-            Order order = orderService.getOrderWithOrderId(orderId, OrderStatus.ORDER_UN_PAY);
-            if (order != null) {
-                orderList.add(order);
-            }
-        }
-        return orderList;
     }
 
 }
