@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicLong;
 public class LoggingFilter extends OncePerRequestFilter {
 
     private static final String REQ_ATTR = "reqId";
-    private AtomicLong id = new AtomicLong(1);
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, ServletException {
@@ -42,7 +41,7 @@ public class LoggingFilter extends OncePerRequestFilter {
     }
 
     private byte[] logRequest(HttpServletRequest request) {
-        long requestId = id.incrementAndGet();
+        String requestId = LoggingMessage.nextId();
         request.setAttribute(REQ_ATTR, requestId);
 
         Enumeration<String> heads = request.getHeaderNames();
