@@ -1,0 +1,14 @@
+[Unit]
+Description=Admin Server
+
+[Service]
+Type=simple
+User=root
+ExecStart=/var/lib/modules/Admin-Server/bin/Admin_Server.sh start
+ExecReload=/var/lib/modules/Admin-Server/bin/Admin_Server.sh restart
+ExecStop=/var/lib/modules/Admin-Server/bin/Admin_Server.sh stop
+RemainAfterExit=yes
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
