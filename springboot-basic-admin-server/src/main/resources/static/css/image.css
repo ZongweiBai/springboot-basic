@@ -23,7 +23,7 @@
 }
 
 .picsh .pic3 .guanbi {
-    background: rgba(0, 0, 0, 0) url("../images/close.png") no-repeat scroll 0 0 / cover ;
+    background: rgba(0, 0, 0, 0) url("../img/close.png") no-repeat scroll 0 0 / cover ;
     cursor: pointer;
     height: 26px;
     position: absolute;
@@ -33,7 +33,7 @@
 }
 
 .picsh .pic4 {
-    background: rgba(0, 0, 0, 0) url("../images/tup1.png") no-repeat scroll 0 0 / cover ;
+    background: rgba(0, 0, 0, 0) url("../img/tup1.png") no-repeat scroll 0 0 / cover ;
     height: 80px;
     width: 80px;
 }

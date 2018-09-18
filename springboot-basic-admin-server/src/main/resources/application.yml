@@ -1,7 +1,7 @@
 server:
   port: 9999
   servlet:
-    context-path: /family-care-admin
+    context-path: /admin
 spring:
   thymeleaf:
     cache: false # 开发时关闭缓存,不然没法看到实时页面
@@ -11,7 +11,7 @@ spring:
       content-type: text/html
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://127.0.0.1:13306/family_care?useUnicode=true&characterEncoding=utf8&useSSL=false
+    url: jdbc:mysql://127.0.0.1:13306/family_care?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: root
     driverClassName: com.mysql.cj.jdbc.Driver
