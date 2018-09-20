@@ -142,6 +142,19 @@ public class IndexController {
         return "service/type/serviceAdd";
     }
 
+    @GetMapping("/index/product/basic/manage")
+    public String manageServiceProduct() {
+        return "service/product/serviceManage";
+    }
+
+    @GetMapping("/index/product/basic/add")
+    public String addServiceProduct(String productId, Model model) {
+        if (Objects.nonNull(productId)) {
+            model.addAttribute("productId", productId);
+        }
+        return "service/product/serviceAdd";
+    }
+
     /**
      * ===========================普通用户入口================================
      */

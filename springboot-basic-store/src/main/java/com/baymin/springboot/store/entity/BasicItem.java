@@ -46,4 +46,7 @@ public class BasicItem {
 
     @Column(name = "DESCRIPTION", length = 2048)
     private String description;
+
+    @Transient
+    private Boolean checked = false;
 }

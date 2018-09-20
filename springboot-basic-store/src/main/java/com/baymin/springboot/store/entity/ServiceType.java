@@ -1,9 +1,11 @@
 package com.baymin.springboot.store.entity;
 
+import com.baymin.springboot.store.enumconstant.CareType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -26,6 +28,10 @@ public class ServiceType {
 
     @Column(name = "SERVICE_ICON", length = 128)
     private String serviceIcon;
+
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "CARE_TYPE")
+    private CareType careType;
 
     @Column(name = "KEYWORD", length = 32)
     private String keyWord;

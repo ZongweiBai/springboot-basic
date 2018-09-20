@@ -14,7 +14,8 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "T_RELATE_ROLE_MENU")
+@Entity
+@Table(name = "T_RELATE_ROLE_MENU")
 public class RelateRoleMenu implements Serializable {
 
     private static final long serialVersionUID = -1580351871958057802L;

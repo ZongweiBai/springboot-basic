@@ -9,7 +9,8 @@ public enum CareType implements IBaseDbEnum {
 
     HOSPITAL_CARE("医院陪护", 1),
     HOME_CARE("居家照护", 2),
-    REHABILITATION("康复护理", 3);
+    REHABILITATION("康复护理", 3),
+    LTC_INSURANCE("长期护理险", 4);
 
     private String name;
     private int index;

@@ -90,9 +90,11 @@ public class ServiceStaff {
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
 
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "SERVICE_STATUS")
     private ServiceStatus serviceStatus;
 
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "STAFF_STATUS")
     private CommonStatus staffStatus;
 }
