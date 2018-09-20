@@ -1,14 +1,13 @@
 package com.baymin.springboot.service.impl;
 
-import com.baymin.springboot.service.IMenuService;
-import com.baymin.springboot.store.entity.Admin;
-import com.baymin.springboot.store.entity.RelateRoleMenu;
-import com.baymin.springboot.store.entity.SysMenu;
-import com.baymin.springboot.store.entity.SysRole;
+import com.baymin.springboot.service.ISysManageService;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.repository.IRelateRoleMenuRepository;
+import com.baymin.springboot.store.repository.ISysDictRepository;
 import com.baymin.springboot.store.repository.ISysMenuRepository;
 import com.baymin.springboot.store.repository.ISysRoleRepository;
 import com.google.common.collect.Lists;
+import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,10 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
-public class MenuServiceImpl implements IMenuService {
+public class SysManageServiceImpl implements ISysManageService {
 
     @Autowired
     private ISysMenuRepository sysMenuRepository;
@@ -31,6 +31,9 @@ public class MenuServiceImpl implements IMenuService {
 
     @Autowired
     private ISysRoleRepository sysRoleRepository;
+
+    @Autowired
+    private ISysDictRepository sysDictRepository;
 
     @Override
     public List<SysMenu> getAllSysMenu() {
@@ -120,5 +123,37 @@ public class MenuServiceImpl implements IMenuService {
     @Override
     public List<SysMenu> getMainMenuList() {
         return sysMenuRepository.findByLevel(1);
+    }
+
+    @Override
+    public SysDict getSysDictById(String dictId) {
+        return sysDictRepository.findById(dictId).orElse(null);
+    }
+
+    @Override
+    public void saveSysDict(SysDict sysDict) {
+        if (StringUtils.isBlank(sysDict.getId())) {
+            sysDict.setCreateTime(new Date());
+        } else {
+            SysDict oldData = getSysDictById(sysDict.getId());
+            if (Objects.isNull(oldData)) {
+                sysDict.setCreateTime(new Date());
+            } else {
+                sysDict.setCreateTime(oldData.getCreateTime());
+            }
+        }
+        sysDictRepository.save(sysDict);
+    }
+
+    @Override
+    public Page<SysDict> getDictForPage(String dictName, Pageable pageable) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QSysDict qSysDict = QSysDict.sysDict;
+
+        if (StringUtils.isNotBlank(dictName)) {
+            builder.and(qSysDict.dictName.eq(dictName));
+        }
+
+        return sysDictRepository.findAll(builder, pageable);
     }
 }

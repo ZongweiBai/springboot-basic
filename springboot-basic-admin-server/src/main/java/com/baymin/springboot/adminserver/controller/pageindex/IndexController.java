@@ -293,4 +293,36 @@ public class IndexController {
         return "finance/invoiceManage";
     }
 
+    /**
+     * ===========================照护计划入口================================
+     */
+    @GetMapping("/index/careplan/manage")
+    public String manageCarePlan() {
+        return "careplan/careplanManage";
+    }
+
+    @GetMapping("/index/careplan/add")
+    public String addCareplan(String planId, Model model) {
+        if (Objects.nonNull(planId)) {
+            model.addAttribute("planId", planId);
+        }
+        return "careplan/careplanManage";
+    }
+
+    @GetMapping("/index/careplan/dict/manage")
+    public String manageCarePlanDict() {
+        return "careplan/dictManage";
+    }
+
+    @GetMapping("/index/careplan/dict/add")
+    public String addCareplanDict(String dictId, String dictName, Model model) {
+        if (Objects.nonNull(dictId)) {
+            model.addAttribute("dictId", dictId);
+        }
+        if (Objects.nonNull(dictName)) {
+            model.addAttribute("dictName", dictName);
+        }
+        return "careplan//addDict";
+    }
+
 }

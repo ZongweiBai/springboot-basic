@@ -1,15 +1,12 @@
 package com.baymin.springboot.service;
 
-import com.baymin.springboot.store.entity.Admin;
-import com.baymin.springboot.store.entity.RelateRoleMenu;
-import com.baymin.springboot.store.entity.SysMenu;
-import com.baymin.springboot.store.entity.SysRole;
+import com.baymin.springboot.store.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 
-public interface IMenuService {
+public interface ISysManageService {
     List<SysMenu> getAllSysMenu();
 
     List<RelateRoleMenu> getRelateRoleMenuByRoleId(String roleId);
@@ -30,4 +27,9 @@ public interface IMenuService {
 
     List<SysMenu> getMainMenuList();
 
+    SysDict getSysDictById(String dictId);
+
+    void saveSysDict(SysDict sysDict);
+
+    Page<SysDict> getDictForPage(String dictName, Pageable pageable);
 }

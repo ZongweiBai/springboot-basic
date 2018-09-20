@@ -3,7 +3,7 @@ package com.baymin.springboot.adminserver.controller;
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.ImageUtil;
 import com.baymin.springboot.service.IAdminService;
-import com.baymin.springboot.service.IMenuService;
+import com.baymin.springboot.service.ISysManageService;
 import com.baymin.springboot.service.IOrganizationService;
 import com.baymin.springboot.store.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
@@ -33,7 +33,7 @@ public class SystemController {
     private IAdminService adminService;
 
     @Autowired
-    private IMenuService menuService;
+    private ISysManageService sysManageService;
 
     @Autowired
     private IOrganizationService organizationService;
@@ -75,13 +75,13 @@ public class SystemController {
         }
 
         if (sysUser.getGrade() == 1) {
-            sysMenuList.addAll(menuService.getAllSysMenu());
+            sysMenuList.addAll(sysManageService.getAllSysMenu());
         } else if (sysUser.getGrade() == 2) {
             if (sysUser.getRoleId() != null) {
-                List<RelateRoleMenu> relateRoleMenus = menuService.getRelateRoleMenuByRoleId(sysUser.getRoleId());
+                List<RelateRoleMenu> relateRoleMenus = sysManageService.getRelateRoleMenuByRoleId(sysUser.getRoleId());
                 if (CollectionUtils.isNotEmpty(relateRoleMenus)) {
                     List<String> menuIdList = relateRoleMenus.stream().map(RelateRoleMenu::getMenuId).collect(Collectors.toList());
-                    sysMenuList.addAll(menuService.getSysMenuByIds(menuIdList));
+                    sysMenuList.addAll(sysManageService.getSysMenuByIds(menuIdList));
                 }
             }
         }
@@ -104,7 +104,7 @@ public class SystemController {
                 }
             }
 
-            mainSysMenuList = menuService.getSysMenuByIds(new ArrayList<>(mainMenuIdSet));
+            mainSysMenuList = sysManageService.getSysMenuByIds(new ArrayList<>(mainMenuIdSet));
 
             Map<String, List<SysMenu>> subMenuMap = new HashMap<>();
             for (SysMenu sysMenu : sysMenuList) {
@@ -273,7 +273,7 @@ public class SystemController {
         LinkedHashMap<String, String> order = new LinkedHashMap<>();
         order.put("createTime", "desc");
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<SysMenu> sysMenuQueryResult = menuService.queryMenuForPage(pageable);
+        Page<SysMenu> sysMenuQueryResult = sysManageService.queryMenuForPage(pageable);
         resultMap.put(WebConstant.TOTAL, sysMenuQueryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, sysMenuQueryResult.getContent());
         return resultMap;
@@ -283,7 +283,7 @@ public class SystemController {
     @RequestMapping(value = "getMainMenuList", method = RequestMethod.POST)
     public Map<String, Object> getMainMenuList(HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
-        List<SysMenu> sysMenuList = menuService.getMainMenuList();
+        List<SysMenu> sysMenuList = sysManageService.getMainMenuList();
         resultMap.put(WebConstant.ROWS, sysMenuList);
         resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         return resultMap;
@@ -294,7 +294,7 @@ public class SystemController {
     public Map<String, Object> getMenuById(String menuId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            SysMenu sysMenu = menuService.getMenuById(menuId);
+            SysMenu sysMenu = sysManageService.getMenuById(menuId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, sysMenu);
         } catch (Exception e) {
@@ -310,7 +310,7 @@ public class SystemController {
         Map<String, Object> resultMap = new HashMap<>();
         Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
         try {
-            menuService.saveMenu(sysMenu, sysUser);
+            sysManageService.saveMenu(sysMenu, sysUser);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -325,8 +325,8 @@ public class SystemController {
     public Map<String, Object> getMenuByRoleId(String roleId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            List<RelateRoleMenu> relateList = menuService.getRelateRoleMenuByRoleId(roleId);
-            List<SysMenu> sysMenuList = menuService.getAllSysMenu();
+            List<RelateRoleMenu> relateList = sysManageService.getRelateRoleMenuByRoleId(roleId);
+            List<SysMenu> sysMenuList = sysManageService.getAllSysMenu();
             if (relateList != null && !relateList.isEmpty()) {
                 Set<String> menuIdSet = new HashSet<>();
                 for (RelateRoleMenu relateRoleMenu : relateList) {
@@ -339,7 +339,7 @@ public class SystemController {
                 }
             }
             List<SysMenu> mainSysMenuList = formatSysMenuList(sysMenuList);
-            SysRole sysRole = menuService.getRoleById(roleId);
+            SysRole sysRole = sysManageService.getRoleById(roleId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.ROWS, mainSysMenuList);
             resultMap.put(WebConstant.INFO, sysRole);
@@ -354,7 +354,7 @@ public class SystemController {
     @ResponseBody
     @RequestMapping(value = "getAllMenu", method = RequestMethod.POST)
     public Map<String, Object> getAllMenu(HttpServletRequest request) {
-        List<SysMenu> sysMenuList = menuService.getAllSysMenu();
+        List<SysMenu> sysMenuList = sysManageService.getAllSysMenu();
         List<SysMenu> mainSysMenuList = formatSysMenuList(sysMenuList);
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
@@ -373,7 +373,7 @@ public class SystemController {
         LinkedHashMap<String, String> order = new LinkedHashMap<>();
         order.put("createTime", "desc");
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<SysRole> sysRoleQueryResult = menuService.queryRoleForPage(pageable);
+        Page<SysRole> sysRoleQueryResult = sysManageService.queryRoleForPage(pageable);
         resultMap.put(WebConstant.TOTAL, sysRoleQueryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, sysRoleQueryResult.getContent());
         return resultMap;
@@ -388,10 +388,10 @@ public class SystemController {
             if (StringUtils.isBlank(sysRole.getId())) {
                 sysRole.setCreateTime(new Date());
             } else {
-                SysRole oldSysRole = menuService.getRoleById(sysRole.getId());
+                SysRole oldSysRole = sysManageService.getRoleById(sysRole.getId());
                 sysRole.setCreateTime(oldSysRole.getCreateTime());
             }
-            menuService.saveRole(sysRole);
+            sysManageService.saveRole(sysRole);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();
@@ -408,7 +408,7 @@ public class SystemController {
         LinkedHashMap<String, String> order = new LinkedHashMap<>();
         order.put("createTime", "desc");
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<SysRole> sysRoles = menuService.queryRoleForPage(pageable);
+        Page<SysRole> sysRoles = sysManageService.queryRoleForPage(pageable);
         resultMap.put(WebConstant.ROWS, sysRoles.getContent());
         resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         return resultMap;
@@ -466,46 +466,47 @@ public class SystemController {
     /**************************************
      * 系统字典管理
      ******************************************************/
-//    @ResponseBody
-//    @RequestMapping(value = "queryDictForPage", method = RequestMethod.POST)
-//    public Map<String, Object> queryDictForPage(Integer limit, Integer offset) {
-//        Map<String, Object> resultMap = new HashMap<>();
-//
-//        QueryResult<SysDict> sysMenuQueryResult = sysManageService.getDictScrollData(offset, limit);
-//        resultMap.put(WebConstant.TOTAL, sysMenuQueryResult.getTotalRecord());
-//        resultMap.put(WebConstant.ROWS, sysMenuQueryResult.getList());
-//        return resultMap;
-//    }
-//
-//    @ResponseBody
-//    @RequestMapping(value = "getDictById", method = RequestMethod.GET)
-//    public Map<String, Object> geDictById(Integer dictId) {
-//        Map<String, Object> resultMap = new HashMap<>();
-//        SysDict sysDict = sysManageService.getSysDictById(dictId);
-//        if (sysDict == null) {
-//            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
-//            resultMap.put(WebConstant.MESSAGE, "没有该字典");
-//        } else {
-//            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
-//            resultMap.put(WebConstant.INFO, sysDict);
-//        }
-//        return resultMap;
-//    }
-//
-//    @ResponseBody
-//    @RequestMapping(value = "saveSysDict", method = RequestMethod.POST)
-//    public Map<String, Object> saveSysDict(SysDict sysDict) {
-//        Map<String, Object> resultMap = new HashMap<>();
-//        try {
-//            sysManageService.saveSysDict(sysDict);
-//            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
-//            resultMap.put(WebConstant.MESSAGE, "保存失败");
-//        }
-//        return resultMap;
-//    }
+    @ResponseBody
+    @RequestMapping(value = "queryDictForPage", method = RequestMethod.POST)
+    public Map<String, Object> queryDictForPage(String dictName, Pageable pageable) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
+        Page<SysDict> queryResult = sysManageService.getDictForPage(dictName, pageable);
+        resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
+        resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getDictById", method = RequestMethod.GET)
+    public Map<String, Object> geDictById(String dictId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        SysDict sysDict = sysManageService.getSysDictById(dictId);
+        if (sysDict == null) {
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "没有该字典");
+        } else {
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.INFO, sysDict);
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "saveSysDict", method = RequestMethod.POST)
+    public Map<String, Object> saveSysDict(SysDict sysDict) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            sysManageService.saveSysDict(sysDict);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "保存失败");
+        }
+        return resultMap;
+    }
 
     /**************************************
      * 系统机构管理

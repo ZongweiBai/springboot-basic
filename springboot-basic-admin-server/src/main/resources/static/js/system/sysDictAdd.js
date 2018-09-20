@@ -60,7 +60,7 @@ function loadDictData(dictId) {
             if (data.result == 200) {
                 var info = data.info;
                 if (!isEmpty(info)) {
-                    $("#codeName").val(info.codeName);
+                    $("#dictName").val(info.codeName);
                     $("#codeKey").val(info.codeKey);
                     $("#codeValue").val(info.codeValue);
                 }

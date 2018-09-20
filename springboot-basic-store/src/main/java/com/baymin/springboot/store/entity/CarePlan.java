@@ -1,25 +1,21 @@
 package com.baymin.springboot.store.entity;
 
+import com.baymin.springboot.store.enumconstant.CommonStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 系统字典表
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "T_SYS_DICT")
-public class SysDict implements Serializable {
-
-    private static final long serialVersionUID = 3686269078770784906L;
+@Table(name = "T_CARE_PLAN")
+public class CarePlan {
 
     @Id
     @Column(name = "ID", length = 32)
@@ -27,16 +23,20 @@ public class SysDict implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "DICT_NAME", length = 20)
-    private String dictName;        // 字典名
+    @Column(name = "TYPE_ID", length = 32)
+    private String typeId;
 
-    @Column(name = "CODE_KEY", length = 20)
-    private String codeKey;         // 字典key
+    @Column(name = "CASE_ID", length = 32)
+    private String caseId;
 
-    @Column(name = "CODE_VALUE", length = 20)
-    private String codeValue;       // 字典值
+    @Column(name = "PLAN_DESC", length = 2048)
+    private String planDesc;
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Date createTime;        // 创建时间
+    private Date createTime;
+
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "STATUS")
+    private CommonStatus status;
 
 }
