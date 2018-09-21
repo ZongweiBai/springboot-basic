@@ -310,7 +310,10 @@ public class IndexController {
     }
 
     @GetMapping("/index/careplan/dict/manage")
-    public String manageCarePlanDict() {
+    public String manageCarePlanDict(String dictName, Model model) {
+        if (Objects.nonNull(dictName)) {
+            model.addAttribute("dictName", dictName);
+        }
         return "careplan/dictManage";
     }
 
@@ -322,7 +325,7 @@ public class IndexController {
         if (Objects.nonNull(dictName)) {
             model.addAttribute("dictName", dictName);
         }
-        return "careplan//addDict";
+        return "careplan/addDict";
     }
 
 }

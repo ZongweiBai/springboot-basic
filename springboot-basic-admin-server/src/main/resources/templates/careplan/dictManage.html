@@ -15,25 +15,25 @@
 <title>订单管理</title>
 </head>
 <body>
-<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 照护计划库 <span class="c-gray en">&gt;</span> 照护计划管理</nav>
+<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 照护计划库 <span class="c-gray en">&gt;</span>
+	<span th:if="${dictName=='CARE_PLAN_TYPE'}" th:utext="类型管理"></span>
+	<span th:if="${dictName=='CARE_PLAN_CASE'}" th:utext="适应症管理"></span>
+</nav>
 <div class="pd-20">
 
 	<form id="menuForm" name="menuForm" onsubmit="$('#menuTable').bootstrapTable('refresh');return false;" method="post">
 		<div style="margin-top: 10px;margin-bottom: 10px;">
-			订单号：
-            <input type="text" class="input-text" style="width:120px" placeholder="输入订单号" id="orderId" name="orderId">
-			处理状态:
-			<select class="input-text" style="width: 120px;" id="dealStatus">
-				<option value="">选择处理状态</option>
-				<option value="AGREE">未退款</option>
-				<option value="COMPLETED">已退款</option>
-			</select>
-			申请时间：
-			<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" class="input-text Wdate" style="width:120px;">
-			-
-			<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})" id="datemax" class="input-text Wdate" style="width:120px;">
+			<span th:if="${dictName=='CARE_PLAN_TYPE'}" th:utext="类型名称"></span>
+			<span th:if="${dictName=='CARE_PLAN_CASE'}" th:utext="适应症"></span>：
+            <input type="text" class="input-text" style="width:120px" placeholder="" id="codeValue" name="codeValue">
+            <input type="hidden" name="dictName" id="dictName" th:value="${dictName}" >
 
 			<button type="submit" class="btn btn-success" id="" name=""><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>搜索</button>
+			<span class="r">
+				<a href="javascript:;" onclick="addDict();" class="btn btn-primary radius">
+					<i style="font-size: 18px;" class="Hui-iconfont">&#xe600;</i> 新增
+				</a>
+			</span>
 		</div>
 	</form>
 
@@ -41,10 +41,15 @@
 
 	</table>
 </div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var dictName = [[${dictName}]];
+    /*]]>*/
+</script>
 <script type="text/javascript" src="lib/layui/layui.js" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>
 <script type="text/javascript" src="lib/bootstrap-table/bootstrap-table.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table.min.js}"></script>
 <script type="text/javascript" src="lib/bootstrap-table/bootstrap-table-zh-CN.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
-<script type="text/javascript" src="js/finance/refundManage.js" th:src="@{/js/finance/refundManage.js}"></script>
+<script type="text/javascript" src="js/careplan/dictManage.js" th:src="@{/js/careplan/dictManage.js}"></script>
 </body>
 </html>

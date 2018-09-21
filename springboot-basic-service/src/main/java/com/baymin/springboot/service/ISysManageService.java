@@ -31,5 +31,7 @@ public interface ISysManageService {
 
     void saveSysDict(SysDict sysDict);
 
-    Page<SysDict> getDictForPage(String dictName, Pageable pageable);
+    Page<SysDict> getDictForPage(String dictName, String codeValue, Pageable pageable);
+
+    void deleteSysDict(String dictId);
 }

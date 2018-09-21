@@ -468,11 +468,11 @@ public class SystemController {
      ******************************************************/
     @ResponseBody
     @RequestMapping(value = "queryDictForPage", method = RequestMethod.POST)
-    public Map<String, Object> queryDictForPage(String dictName, Pageable pageable) {
+    public Map<String, Object> queryDictForPage(String dictName, String codeValue, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
 
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<SysDict> queryResult = sysManageService.getDictForPage(dictName, pageable);
+        Page<SysDict> queryResult = sysManageService.getDictForPage(dictName, codeValue, pageable);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -504,6 +504,21 @@ public class SystemController {
             e.printStackTrace();
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "保存失败");
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "deleteSysDict", method = RequestMethod.GET)
+    public Map<String, Object> deleteSysDict(String dictId) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            sysManageService.deleteSysDict(dictId);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "删除失败");
         }
         return resultMap;
     }

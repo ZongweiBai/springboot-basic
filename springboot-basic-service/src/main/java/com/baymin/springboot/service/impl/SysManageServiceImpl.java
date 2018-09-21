@@ -146,14 +146,22 @@ public class SysManageServiceImpl implements ISysManageService {
     }
 
     @Override
-    public Page<SysDict> getDictForPage(String dictName, Pageable pageable) {
+    public Page<SysDict> getDictForPage(String dictName, String codeValue, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
         QSysDict qSysDict = QSysDict.sysDict;
 
         if (StringUtils.isNotBlank(dictName)) {
             builder.and(qSysDict.dictName.eq(dictName));
         }
+        if (StringUtils.isNotBlank(codeValue)) {
+            builder.and(qSysDict.codeValue.eq(codeValue));
+        }
 
         return sysDictRepository.findAll(builder, pageable);
+    }
+
+    @Override
+    public void deleteSysDict(String dictId) {
+        sysDictRepository.deleteById(dictId);
     }
 }
