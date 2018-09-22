@@ -523,6 +523,16 @@ public class SystemController {
         return resultMap;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "getSysDictByDictName", method = RequestMethod.GET)
+    public Map<String, Object> getSysDictByDictName(String dictName) {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<SysDict> sysDicts = sysManageService.getSysDictByDictName(dictName);
+        resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        resultMap.put(WebConstant.ROWS, sysDicts);
+        return resultMap;
+    }
+
     /**************************************
      * 系统机构管理
      ******************************************************/

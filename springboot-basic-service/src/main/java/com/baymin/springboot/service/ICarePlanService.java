@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface ICarePlanService {
-    Page<CarePlan> queryCarePlanForPage(String typeId, String caseId, Pageable pageable);
+    Page<CarePlan> queryCarePlanForPage(String typeId, String caseId, String planDesc, Pageable pageable);
 
     void saveCarePlan(CarePlan carePlan);
 

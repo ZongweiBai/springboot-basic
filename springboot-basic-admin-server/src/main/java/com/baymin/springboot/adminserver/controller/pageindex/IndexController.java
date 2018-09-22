@@ -306,7 +306,7 @@ public class IndexController {
         if (Objects.nonNull(planId)) {
             model.addAttribute("planId", planId);
         }
-        return "careplan/careplanManage";
+        return "careplan/addCareplan";
     }
 
     @GetMapping("/index/careplan/dict/manage")

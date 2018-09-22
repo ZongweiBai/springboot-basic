@@ -164,4 +164,9 @@ public class SysManageServiceImpl implements ISysManageService {
     public void deleteSysDict(String dictId) {
         sysDictRepository.deleteById(dictId);
     }
+
+    @Override
+    public List<SysDict> getSysDictByDictName(String dictName) {
+        return sysDictRepository.findByDictName(dictName);
+    }
 }

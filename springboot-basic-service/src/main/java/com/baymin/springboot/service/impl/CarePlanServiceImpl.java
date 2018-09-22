@@ -6,6 +6,7 @@ import com.baymin.springboot.store.entity.QCarePlan;
 import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.repository.ICarePlanRepository;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,7 +25,7 @@ public class CarePlanServiceImpl implements ICarePlanService {
     private ICarePlanRepository carePlanRepository;
 
     @Override
-    public Page<CarePlan> queryCarePlanForPage(String typeId, String caseId, Pageable pageable) {
+    public Page<CarePlan> queryCarePlanForPage(String typeId, String caseId, String planDesc, Pageable pageable) {
         BooleanBuilder builder = new BooleanBuilder();
         QCarePlan qCarePlan = QCarePlan.carePlan;
 
@@ -33,6 +34,9 @@ public class CarePlanServiceImpl implements ICarePlanService {
         }
         if (StringUtils.isNotBlank(caseId)) {
             builder.and(qCarePlan.caseId.eq(caseId));
+        }
+        if (StringUtils.isNotBlank(planDesc)) {
+            builder.and(qCarePlan.planDesc.likeIgnoreCase(Expressions.asString("%").concat(planDesc).concat("%")));
         }
         builder.and(qCarePlan.status.eq(CommonStatus.NORMAL));
         return carePlanRepository.findAll(builder, pageable);

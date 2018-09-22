@@ -39,4 +39,10 @@ public class CarePlan {
     @Column(name = "STATUS")
     private CommonStatus status;
 
+    @Transient
+    private SysDict typeDict;
+
+    @Transient
+    private SysDict caseDict;
+
 }

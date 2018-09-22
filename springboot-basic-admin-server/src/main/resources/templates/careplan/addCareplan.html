@@ -1,0 +1,65 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <head th:include="common/base">
+    <title>新增字典</title>
+</head>
+<body>
+<div class="pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-menu-add">
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>类型：</label>
+            <div class="formControls col-5">
+                <select class="input-text" id="typeId" name="typeId"
+                        datatype="*" >
+                    <option value="">请选择类型</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>适应症：</label>
+            <div class="formControls col-5">
+                <select class="input-text" id="caseId" name="caseId"
+                        datatype="*" >
+                    <option value="">请选择适应症</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>服务明细内容：</label>
+            <div class="formControls col-5">
+                <textarea style="height: 120px;" type="text" class="input-text" value="" placeholder="" id="planDesc" name="planDesc"
+                          datatype="*2-2048" nullmsg="服务明细内容不能为空"></textarea>
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <input type="hidden" id="planId" name="id" />
+
+        <div class="row cl">
+            <div class="col-9 col-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var planId = [[${planId}]];
+    /*]]>*/
+</script>
+<script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
+<script type="text/javascript" src="js/careplan/careplanAdd.js" th:src="@{/js/careplan/careplanAdd.js}"></script>
+</body>
+</html>

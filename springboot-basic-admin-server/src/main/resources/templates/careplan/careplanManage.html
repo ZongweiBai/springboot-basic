@@ -20,20 +20,23 @@
 
 	<form id="menuForm" name="menuForm" onsubmit="$('#menuTable').bootstrapTable('refresh');return false;" method="post">
 		<div style="margin-top: 10px;margin-bottom: 10px;">
-			订单号：
-            <input type="text" class="input-text" style="width:120px" placeholder="输入订单号" id="orderId" name="orderId">
-			处理状态:
-			<select class="input-text" style="width: 120px;" id="dealStatus">
-				<option value="">选择处理状态</option>
-				<option value="AGREE">未退款</option>
-				<option value="COMPLETED">已退款</option>
+			类型：
+			<select class="input-text" style="width: 120px;" id="typeId">
+				<option value="">选择适应症</option>
 			</select>
-			申请时间：
-			<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" class="input-text Wdate" style="width:120px;">
-			-
-			<input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})" id="datemax" class="input-text Wdate" style="width:120px;">
+			适应症:
+			<select class="input-text" style="width: 120px;" id="caseId">
+				<option value="">选择适应症</option>
+			</select>
+			关键字：
+			<input type="text" class="input-text" style="width:120px" placeholder="输入关键字" id="planDesc" name="planDesc">
 
 			<button type="submit" class="btn btn-success" id="" name=""><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>搜索</button>
+			<span class="r">
+				<a href="javascript:;" onclick="addDict();" class="btn btn-primary radius">
+					<i style="font-size: 18px;" class="Hui-iconfont">&#xe600;</i> 新增
+				</a>
+			</span>
 		</div>
 	</form>
 
@@ -45,6 +48,6 @@
 <script type="text/javascript" src="lib/bootstrap-table/bootstrap-table.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table.min.js}"></script>
 <script type="text/javascript" src="lib/bootstrap-table/bootstrap-table-zh-CN.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
-<script type="text/javascript" src="js/finance/refundManage.js" th:src="@{/js/finance/refundManage.js}"></script>
+<script type="text/javascript" src="js/careplan/careplanManage.js" th:src="@{/js/careplan/careplanManage.js}"></script>
 </body>
 </html>
