@@ -3,8 +3,7 @@ package com.baymin.springboot.service;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.enumconstant.PayWay;
-import com.baymin.springboot.store.payload.UserOrderRequest;
+import com.baymin.springboot.store.payload.request.UserOrderRequest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

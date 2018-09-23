@@ -34,6 +34,9 @@ public class Order implements Serializable {
     @Column(name = "SERVICE_STAFF_ID", length = 32)
     private String serviceStaffId;
 
+    @Column(name = "serviceProductId", length = 32)
+    private String serviceProductId;
+
     @Column(name = "ORDER_TIME", columnDefinition = "timestamp")
     private Date orderTime;
 

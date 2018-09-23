@@ -4,12 +4,13 @@ import com.baymin.springboot.common.constant.RequestConstant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
+import com.baymin.springboot.common.util.BigDecimalUtil;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.*;
-import com.baymin.springboot.store.payload.UserOrderRequest;
+import com.baymin.springboot.store.payload.request.UserOrderRequest;
 import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
@@ -25,10 +26,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.baymin.springboot.common.constant.RequestConstant.*;
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
-import static com.baymin.springboot.store.enumconstant.CareType.*;
+import static com.baymin.springboot.store.enumconstant.CareType.HOME_CARE;
+import static com.baymin.springboot.store.enumconstant.CareType.HOSPITAL_CARE;
 
 @Service
 @Transactional
@@ -67,6 +69,9 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IOrderExtRepository orderExtRepository;
 
+    @Autowired
+    private IServiceProductRepository serviceProductRepository;
+
     @Override
     public Order saveUserOrder(UserOrderRequest request) {
         Invoice invoice = request.getInvoice();
@@ -79,8 +84,10 @@ public class OrderServiceImpl implements IOrderService {
             order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
         }
         order.setOrderSource("WECHAT");
-        // TODO need to calculate total fee
-        order.setTotalFee(0.0);
+        order.setServiceProductId(request.getProductId());
+
+        double totalFee = calculateTotalFee(request);
+        order.setTotalFee(totalFee);
         order.setVersion(0);
         if (Objects.isNull(request.getInvoice())) {
             order.setInvoiceStatus(InvoiceStatus.NOT_INVOICED);
@@ -97,35 +104,18 @@ public class OrderServiceImpl implements IOrderService {
         orderExt.setServiceNumber(request.getServiceNumber());
         orderExt.setServiceStartTime(new Date(request.getServiceStartDate()));
         orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
-        Map<String, Object> extension = request.getExtension();
-        if (Objects.nonNull(extension)) {
-            Map<String, Object> patientInfo = new HashMap<>();
-            if (HOSPITAL_CARE == request.getOrderType() || HOME_CARE == request.getOrderType()) {
-                if (extension.containsKey(DISEASES)) {
-                    patientInfo.put(DISEASES, extension.get(DISEASES));
-                }
-                if (extension.containsKey(SELF_CARE)) {
-                    patientInfo.put(SELF_CARE, extension.get(SELF_CARE));
-                }
-                if (extension.containsKey(EATING)) {
-                    patientInfo.put(EATING, extension.get(EATING));
-                }
-                if (extension.containsKey(CATHETER_CARE)) {
-                    patientInfo.put(CATHETER_CARE, extension.get(CATHETER_CARE));
-                }
-                if (extension.containsKey(ASSIST_WITH_MEDICATION)) {
-                    patientInfo.put(ASSIST_WITH_MEDICATION, extension.get(ASSIST_WITH_MEDICATION));
-                }
-            } else if (REHABILITATION == request.getOrderType()) {
-                if (extension.containsKey(REHABILITATION_TYPE)) {
-                    patientInfo.put(REHABILITATION_TYPE, extension.get(REHABILITATION_TYPE));
-                }
-            }
 
-            if (!patientInfo.isEmpty()) {
-                orderExt.setPatientInfo(patientInfo);
+        if (HOSPITAL_CARE == request.getOrderType() || HOME_CARE == request.getOrderType()) {
+            Map<String, Object> patientInfo = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(request.getQuestions())) {
+                Map<String, List<Question>> questionMap = request.getQuestions().stream().collect(Collectors.groupingBy(Question::getQuestionType));
+                if (!questionMap.isEmpty()) {
+                    questionMap.forEach((key, value) -> patientInfo.put(key, value));
+                    orderExt.setPatientInfo(patientInfo);
+                }
             }
         }
+
         order = orderDao.saveUserOrder(order, orderExt);
 
         if (Objects.nonNull(invoice)) {
@@ -137,6 +127,31 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         return order;
+    }
+
+    private Double calculateTotalFee(UserOrderRequest request) {
+        double totalFee = 0.0;
+        ServiceProduct product = serviceProductRepository.findById(request.getProductId()).orElse(null);
+        if (Objects.nonNull(product)) {
+            totalFee = BigDecimalUtil.mul(product.getProductPrice(), request.getServiceDuration());
+        }
+        if (HOSPITAL_CARE == request.getOrderType() || HOME_CARE == request.getOrderType()) {
+            if (CollectionUtils.isNotEmpty(request.getBasicItems())) {
+                List<String> productItems = Arrays.asList(product.getBasicItems().split(","));
+                List<BasicItem> billingItems = new ArrayList<>();
+                for (BasicItem basicItem : request.getBasicItems()) {
+                    if (!productItems.contains(basicItem.getId())) {
+                        billingItems.add(basicItem);
+                    }
+                }
+
+                if (CollectionUtils.isNotEmpty(billingItems)) {
+                    double itemTotalFee = billingItems.stream().map(BasicItem::getItemFee).reduce(0.0, BigDecimalUtil::add);
+                    totalFee = BigDecimalUtil.add(totalFee, itemTotalFee);
+                }
+            }
+        }
+        return totalFee;
     }
 
     @Override

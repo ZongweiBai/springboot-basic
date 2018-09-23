@@ -36,8 +36,11 @@ public class Question {
     @Column(name = "ITEM_DESC", length = 100)
     private String itemDesc;
 
-    @Column(name = "CARE_PRICE", precision = 10, scale = 2)
-    private Double carePrice;
+    @Column(name = "ITEM_ICON", length = 256)
+    private String itemIcon;
+
+    @Column(name = "MULTI_CHOICE")
+    private Boolean multiChoice = false;
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;

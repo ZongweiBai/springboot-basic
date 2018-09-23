@@ -32,4 +32,6 @@ public interface IBasicItemService {
     List<BasicItem> getAllUpcartItems();
 
     List<ServiceType> getAllServiceType();
+
+    List<ServiceProduct> getServiceProductByTypeId(String serviceTypeId);
 }

@@ -1,4 +1,4 @@
-package com.baymin.springboot.webserver.request;
+package com.baymin.springboot.store.payload.request;
 
 import lombok.Data;
 

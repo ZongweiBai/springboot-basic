@@ -139,4 +139,9 @@ public class BasicItemServiceImpl implements IBasicItemService {
         iterable.forEach(list::add);
         return list;
     }
+
+    @Override
+    public List<ServiceProduct> getServiceProductByTypeId(String serviceTypeId) {
+        return serviceProductRepository.findByTypeId(serviceTypeId);
+    }
 }

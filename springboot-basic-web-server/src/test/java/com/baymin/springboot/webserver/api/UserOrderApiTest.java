@@ -3,7 +3,7 @@ package com.baymin.springboot.webserver.api;
 import com.baymin.springboot.common.constant.RequestConstant;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.enumconstant.CareType;
-import com.baymin.springboot.store.payload.UserOrderRequest;
+import com.baymin.springboot.store.payload.request.UserOrderRequest;
 import io.restassured.RestAssured;
 import org.junit.Test;
 

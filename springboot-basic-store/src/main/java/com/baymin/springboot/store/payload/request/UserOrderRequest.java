@@ -1,9 +1,12 @@
-package com.baymin.springboot.store.payload;
+package com.baymin.springboot.store.payload.request;
 
+import com.baymin.springboot.store.entity.BasicItem;
 import com.baymin.springboot.store.entity.Invoice;
+import com.baymin.springboot.store.entity.Question;
 import com.baymin.springboot.store.enumconstant.CareType;
 import lombok.Data;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -30,6 +33,12 @@ public class UserOrderRequest {
     private String contactMobile;
 
     private String serviceAddress;
+
+    private String productId;
+
+    private List<BasicItem> basicItems;
+
+    private List<Question> questions;
 
     private Map<String, Object> extension;
 

@@ -8,7 +8,7 @@ import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.OrderStaffChange;
-import com.baymin.springboot.store.payload.UserOrderRequest;
+import com.baymin.springboot.store.payload.request.UserOrderRequest;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
