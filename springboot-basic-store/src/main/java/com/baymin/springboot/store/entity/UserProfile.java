@@ -14,7 +14,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @Entity
-@Table(name = "T_USER_PROFILE", uniqueConstraints = {@UniqueConstraint(columnNames = "ACCOUNT")})
+@Table(name = "T_USER_PROFILE")
 public class UserProfile implements Serializable {
 
     private static final long serialVersionUID = 5349710843525977410L;
@@ -25,7 +25,7 @@ public class UserProfile implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "ACCOUNT", nullable = false, unique = true, length = 32)
+    @Column(name = "ACCOUNT", nullable = true, unique = false, length = 32)
     private String account;
 
     @Column(name = "SEX", length = 2, nullable = false)

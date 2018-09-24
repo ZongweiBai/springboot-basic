@@ -1,15 +1,21 @@
 package com.baymin.springboot.webserver.api;
 
+import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.constant.WebConstant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
+import com.baymin.springboot.common.model.TokenVo;
+import com.baymin.springboot.common.util.HttpClientUtil;
+import com.baymin.springboot.common.util.JwtUtil;
 import com.baymin.springboot.pay.wechat.WechatConfig;
 import com.baymin.springboot.pay.wechat.param.Util;
 import com.baymin.springboot.pay.wechat.param.WXProtocolData;
 import com.baymin.springboot.pay.wechat.param.WXResCommonData;
 import com.baymin.springboot.pay.wechat.param.jsApi.JsApiOrderReqData;
 import com.baymin.springboot.pay.wechat.param.paynotify.PayNotifyReqData;
+import com.baymin.springboot.pay.wechat.param.pojo.TokenResponse;
+import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.service.IPayRecordService;
@@ -17,12 +23,13 @@ import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.PayRecord;
 import com.baymin.springboot.store.entity.UserProfile;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.baymin.springboot.store.payload.PayRequestVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,14 +41,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.*;
+import static com.baymin.springboot.pay.wechat.WechatConfig.WECHAT_WEB_ACCESS_TOKEN_URL;
+import static com.baymin.springboot.pay.wechat.WechatConfig.WECHAT_WEB_USER_INFO_URL;
 
 @Api(value = "微信相关", tags = "微信相关")
 @RestController
@@ -59,78 +66,82 @@ public class WechatApi {
     @Autowired
     private IPayRecordService payRecordService;
 
+    @ApiOperation(value = "根据code获取用户openId并注册用户")
     @ResponseBody
-    @GetMapping(value = "openId")
-    public void getUserOpenId(String code, String grant_type, String accountId, HttpServletResponse response) {
+    @GetMapping(value = "/openId")
+    public TokenVo getUserOpenId(String code, String accountId, HttpServletResponse response) {
         Map<String, Object> resultMap = new HashMap<>();
-        HttpURLConnection connection = null;
-        BufferedReader bufferReader = null;
         try {
-            StringBuffer urlAddr = new StringBuffer("https://api.weixin.qq.com/sns/oauth2/access_token");
-            urlAddr.append("?appid=").append(WechatConfig.AppID);
-            urlAddr.append("&secret=").append(WechatConfig.AppSecret);
-            urlAddr.append("&code=").append(code);
-            urlAddr.append("&grant_type=").append(grant_type);
-            URL url = new URL(urlAddr.toString());    // 把字符串转换为URL请求地址
-            connection = (HttpURLConnection) url.openConnection();// 打开连接
-            connection.connect();// 连接会话
-            // 获取输入流
-            bufferReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-            String line;
-            StringBuilder sb = new StringBuilder();
-            while ((line = bufferReader.readLine()) != null) {// 循环读取流
-                sb.append(line);
-            }
-            String openIdInfo = sb.toString();
-            resultMap.put("result", 500);
-            if (StringUtils.isBlank(openIdInfo)) {
+            String urlAddr = String.format(WECHAT_WEB_ACCESS_TOKEN_URL, WechatConfig.AppID, WechatConfig.AppSecret, code);
+            String accessTokenResponse = HttpClientUtil.sendGet(urlAddr, null);
+            if (StringUtils.isBlank(accessTokenResponse)) {
                 throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), GET_WECHAT_OPENID_ERROR));
             } else {
                 ObjectMapper objectMapper = new ObjectMapper();
-                Map<String, Object> resultObject = objectMapper.readValue(openIdInfo, new TypeReference<Map<String, Object>>() {
-                });
-                Object openid = resultObject.get("openid");
-                if (openid == null) {
+                TokenResponse tokenResponse = objectMapper.readValue(accessTokenResponse, TokenResponse.class);
+                if (tokenResponse.getOpenid() == null) {
                     throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), GET_WECHAT_OPENID_ERROR));
                 } else {
-                    if (StringUtils.isNotBlank(accountId)) {
-                        UserProfile user = userProfileService.findById(accountId);
-                        if (user != null) {
-                            user.setIdpId(openid.toString());
-                            userProfileService.saveUserProfile(user);
-                        }
+                    UserInfoResponse userInfoResponse = null;
+                    String userInfoUrl = String.format(WECHAT_WEB_USER_INFO_URL, tokenResponse.getAccessToken(), tokenResponse.getOpenid());
+                    String userInfo = HttpClientUtil.sendGet(userInfoUrl, null);
+                    if (StringUtils.isNotBlank(userInfo)) {
+                        userInfoResponse = objectMapper.readValue(userInfo, UserInfoResponse.class);
                     }
+
+                    UserProfile user;
+                    if (StringUtils.isNotBlank(accountId)) {
+                        user = userProfileService.findById(accountId);
+                    } else {
+                        user = userProfileService.findByIdpId(tokenResponse.getOpenid());
+                    }
+
+                    if (Objects.isNull(user)) {
+                        user = new UserProfile();
+                        user.setOrderCount(0);
+                        user.setRegisterTime(new Date());
+                    }
+                    user.setIdpId(tokenResponse.getOpenid());
+                    if (Objects.nonNull(userInfoResponse)) {
+                        user.setIdpNickName(userInfoResponse.getNickname());
+                        user.setNickName(userInfoResponse.getNickname());
+                    }
+
+                    user = userProfileService.saveUserProfile(user);
+                    String subject = JwtUtil.generalSubject(user.getId(), Constant.JWTAPI.JWT_TOKEN);
+                    String accessToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_TTL);
+                    subject = JwtUtil.generalSubject(user.getId(), Constant.JWTAPI.JWT_REFRESH_TOKEN);
+                    String refreshToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_REFRESH_TTL);
+
+                    TokenVo tokenVo = new TokenVo();
+                    tokenVo.setUserId(user.getId());
+                    tokenVo.setAccessToken(accessToken);
+                    tokenVo.setRefreshToken(refreshToken);
+                    tokenVo.setExpiresIn(Constant.JWTAPI.JWT_TTL / 1000);
+                    tokenVo.setTokenType("bearer");
+                    return tokenVo;
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), GET_WECHAT_OPENID_ERROR));
-        } finally {
-            try {
-                if (bufferReader != null) {
-                    bufferReader.close();// 关闭流
-                }
-                if (connection != null) {
-                    connection.disconnect();// 断开连接
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
     }
 
     /**
      * 使用微信支付商品费用
      */
+    @ApiOperation(value = "微信支付预下单")
     @ResponseBody
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
-    public JsApiOrderReqData payOrderWithWeChat(HttpServletRequest request, HttpServletResponse response) {
-        String orderId = request.getParameter("orderId");
-        String userId = request.getParameter("userId");
-        if (StringUtils.isBlank(orderId) || StringUtils.isBlank(userId)) {
+    public JsApiOrderReqData payOrderWithWeChat(@RequestBody PayRequestVo requestVo, HttpServletResponse response) {
+        if (Objects.isNull(requestVo) || StringUtils.isBlank(requestVo.getOrderId())
+                || StringUtils.isBlank(requestVo.getUserId())) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
 
+        String orderId = requestVo.getOrderId();
+        String userId = requestVo.getUserId();
         Order order = orderService.queryOrderById(orderId);
         if (Objects.isNull(order)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
@@ -146,6 +157,7 @@ public class WechatApi {
         return dealWechatOrderResponse(response, resultMap);
     }
 
+    @ApiOperation(value = "微信支付回调接口")
     @RequestMapping(value = "/pay/notify", method = RequestMethod.POST)
     @ResponseBody
     public void notifyPayResult(HttpServletRequest request, HttpServletResponse response) throws Exception {

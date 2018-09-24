@@ -1,4 +1,4 @@
-package com.baymin.springboot.store.payload.request;
+package com.baymin.springboot.store.payload;
 
 import com.baymin.springboot.store.entity.BasicItem;
 import com.baymin.springboot.store.entity.Invoice;
@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-public class UserOrderRequest {
+public class UserOrderVo {
 
     private String orderUserId;
 

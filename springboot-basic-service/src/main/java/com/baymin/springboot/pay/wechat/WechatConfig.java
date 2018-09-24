@@ -11,13 +11,25 @@ public class WechatConfig {
     public static String mchID = "1493923352";
     public static String key = "L8R3HmFAJLY4LJNiZb14Y8Gh0qMEhp5g";
 
+    // 微信openID的code获取
+    public static String WECHAT_OPENID_CODE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=";
+    // 微信网页授权access_token获取
+    public static String WECHAT_WEB_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";
+    // 微信网页授权获取用户基本信息
+    public static String WECHAT_WEB_USER_INFO_URL = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";
+
+    // 微信基础access_token获取
+    public static String WECHAT_BASIC_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
+    // 微信发送模板消息
+    public static String WECHAT_SEND_MODEL_MSG_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";
+
     // 微信支付的域名配置
     public static String wechatPayHost = "http://www.dgyygg.cn/web/";
     // 机器IP
     public static String ip = "120.79.8.35";
     // 提供给微信回调URL
     public static String notifyUrl = "http://www.dgyygg.cn/web/wechatNotifyController/notifyPayResult";
-    // 微信openID的code获取
-    public static String WECHAT_OPENID_CODE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=";
+
+    public static String TEMPLATE_MSG_ORDER_FINISHED = "Dyvp3-Ff0cnail_CDSzk1fIc6-9lOkxsQE7exTJbwUE";
 
 }

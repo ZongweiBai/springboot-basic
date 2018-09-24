@@ -9,7 +9,7 @@ import com.baymin.springboot.store.entity.ServiceProduct;
 import com.baymin.springboot.store.entity.ServiceType;
 import com.baymin.springboot.store.enumconstant.BasicItemType;
 import com.baymin.springboot.store.enumconstant.CareType;
-import com.baymin.springboot.store.payload.response.ServiceProductResponse;
+import com.baymin.springboot.store.payload.ServiceProductVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
@@ -41,7 +41,7 @@ public class BasicItemApi {
     @ApiOperation(value = "根据服务项目查询产品")
     @GetMapping("/{serviceTypeId}")
     @ResponseBody
-    public List<ServiceProductResponse> queryProductByTypeId(@PathVariable("serviceTypeId") String serviceTypeId) {
+    public List<ServiceProductVo> queryProductByTypeId(@PathVariable("serviceTypeId") String serviceTypeId) {
 
         ServiceType serviceType = basicItemService.getServiceTypeById(serviceTypeId);
         if (Objects.isNull(serviceType)) {
@@ -53,10 +53,10 @@ public class BasicItemApi {
             return new ArrayList<>();
         }
 
-        List<ServiceProductResponse> productResponses = new ArrayList<>();
+        List<ServiceProductVo> productResponses = new ArrayList<>();
         for (ServiceProduct serviceProduct : productList) {
             if (serviceType.getCareType() == CareType.REHABILITATION) {
-                productResponses.add(new ServiceProductResponse(serviceProduct, null));
+                productResponses.add(new ServiceProductVo(serviceProduct, null));
             } else if (serviceType.getCareType() == CareType.HOSPITAL_CARE || serviceType.getCareType() == CareType.HOME_CARE) {
                 List<BasicItem> basicItem = basicItemService.getAllUpcartItems();
                 if (StringUtils.isNotBlank(serviceProduct.getBasicItems())) {
@@ -68,7 +68,7 @@ public class BasicItemApi {
                     }
                 }
                 Map<BasicItemType, List<BasicItem>> itemMap = basicItem.stream().collect(Collectors.groupingBy(BasicItem::getBasicItemType));
-                productResponses.add(new ServiceProductResponse(serviceProduct, itemMap));
+                productResponses.add(new ServiceProductVo(serviceProduct, itemMap));
             }
         }
         return productResponses;

@@ -14,11 +14,13 @@ public interface IUserProfileService {
 
     UserProfile findByAccount(String account);
 
-    void saveUserProfile(UserProfile userProfile);
+    UserProfile saveUserProfile(UserProfile userProfile);
 
     UserProfile findById(String userId);
 
     Page<UserProfile> queryUserForPage(Pageable pageable, String nickName, String account, String sex, Date maxDate, Date minDate);
 
     Map<String,Object> getUserDetail(String userId);
+
+    UserProfile findByIdpId(String openid);
 }

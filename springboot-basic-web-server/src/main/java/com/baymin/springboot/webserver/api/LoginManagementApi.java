@@ -9,7 +9,7 @@ import com.baymin.springboot.common.util.JwtUtil;
 import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.UserProfile;
-import com.baymin.springboot.store.payload.request.LoginRequest;
+import com.baymin.springboot.store.payload.LoginRequestVo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -48,7 +48,7 @@ public class LoginManagementApi {
     @ApiOperation(value = "登陆")
     @PostMapping("login")
     @ResponseBody
-    public TokenVo login(@RequestBody LoginRequest loginRequest) {
+    public TokenVo login(@RequestBody LoginRequestVo loginRequest) {
         String userAccount = loginRequest.getAccount();
         String smsCode = loginRequest.getSmsCode();
         String password = loginRequest.getPassword();

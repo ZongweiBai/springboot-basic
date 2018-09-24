@@ -1,4 +1,4 @@
-package com.baymin.springboot.store.payload.response;
+package com.baymin.springboot.store.payload;
 
 import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.store.entity.BasicItem;
@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @Data
-public class ServiceProductResponse {
+public class ServiceProductVo {
 
     private String productId;
 
@@ -32,7 +32,7 @@ public class ServiceProductResponse {
 
     private Map<BasicItemType, List<BasicItem>> itemMap;
 
-    public ServiceProductResponse(ServiceProduct product, Map<BasicItemType, List<BasicItem>> itemMap) {
+    public ServiceProductVo(ServiceProduct product, Map<BasicItemType, List<BasicItem>> itemMap) {
         if (Objects.isNull(product)) {
             return;
         }

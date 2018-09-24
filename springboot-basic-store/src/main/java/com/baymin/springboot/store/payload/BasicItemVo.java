@@ -1,4 +1,4 @@
-package com.baymin.springboot.store.payload.response;
+package com.baymin.springboot.store.payload;
 
 import com.baymin.springboot.store.entity.BasicItem;
 import com.baymin.springboot.store.enumconstant.BasicItemType;
@@ -7,7 +7,7 @@ import lombok.Data;
 import java.util.Objects;
 
 @Data
-public class BasicItemResponse {
+public class BasicItemVo {
 
     private String itemId;
 
@@ -21,7 +21,7 @@ public class BasicItemResponse {
 
     private Boolean checked = false;
 
-    public BasicItemResponse(BasicItem basicItem) {
+    public BasicItemVo(BasicItem basicItem) {
         if (Objects.isNull(basicItem)) {
             return;
         }

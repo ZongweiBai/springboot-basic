@@ -2,9 +2,9 @@ package com.baymin.springboot.store.dao;
 
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.OrderExt;
+import com.baymin.springboot.store.payload.OrderDetailVo;
 
 import java.util.List;
-import java.util.Map;
 
 public interface IOrderDao {
 
@@ -12,5 +12,5 @@ public interface IOrderDao {
 
     List<Order> queryUserOrder(String userId, String status, String ownerType);
 
-    Map<String, Object> queryOrderDetail(String orderId);
+    OrderDetailVo queryOrderDetail(String orderId);
 }

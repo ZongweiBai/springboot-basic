@@ -5,14 +5,17 @@ import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IQuestionService;
 import com.baymin.springboot.store.entity.Question;
+import com.baymin.springboot.store.payload.QuestionVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -33,12 +36,20 @@ public class QuestionApi {
     })
     @GetMapping("/{careType}/{questionType}")
     @ResponseBody
-    public List<Question> queryQuestions(@PathVariable String careType,
-                                             @PathVariable String questionType) {
+    public List<QuestionVo> queryQuestions(@PathVariable String careType,
+                                           @PathVariable String questionType) {
         if (Objects.isNull(careType) || Objects.isNull(questionType)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
-        return questionService.queryQuestionByType(careType, questionType);
+        List<Question> questions = questionService.queryQuestionByType(careType, questionType);
+        if (CollectionUtils.isEmpty(questions)) {
+            return null;
+        }
+        List<QuestionVo> questionVos = new ArrayList<>();
+        for (Question question : questions) {
+            questionVos.add(new QuestionVo(question));
+        }
+        return questionVos;
     }
 
 }

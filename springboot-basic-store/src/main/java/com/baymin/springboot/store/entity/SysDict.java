@@ -1,5 +1,6 @@
 package com.baymin.springboot.store.entity;
 
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -30,12 +31,14 @@ public class SysDict implements Serializable {
     @Column(name = "DICT_NAME", length = 20)
     private String dictName;        // 字典名
 
+    @ApiModelProperty(hidden = true)
     @Column(name = "CODE_KEY", length = 20)
     private String codeKey;         // 字典key
 
     @Column(name = "CODE_VALUE", length = 20)
     private String codeValue;       // 字典值
 
+    @ApiModelProperty(hidden = true)
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;        // 创建时间
 

@@ -10,7 +10,8 @@ import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.*;
-import com.baymin.springboot.store.payload.request.UserOrderRequest;
+import com.baymin.springboot.store.payload.UserOrderVo;
+import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
@@ -73,7 +74,7 @@ public class OrderServiceImpl implements IOrderService {
     private IServiceProductRepository serviceProductRepository;
 
     @Override
-    public Order saveUserOrder(UserOrderRequest request) {
+    public Order saveUserOrder(UserOrderVo request) {
         Invoice invoice = request.getInvoice();
         Order order = new Order();
 
@@ -129,7 +130,7 @@ public class OrderServiceImpl implements IOrderService {
         return order;
     }
 
-    private Double calculateTotalFee(UserOrderRequest request) {
+    private Double calculateTotalFee(UserOrderVo request) {
         double totalFee = 0.0;
         ServiceProduct product = serviceProductRepository.findById(request.getProductId()).orElse(null);
         if (Objects.nonNull(product)) {
@@ -160,7 +161,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Map<String, Object> queryOrderDetail(String orderId) {
+    public OrderDetailVo queryOrderDetail(String orderId) {
         return orderDao.queryOrderDetail(orderId);
     }
 

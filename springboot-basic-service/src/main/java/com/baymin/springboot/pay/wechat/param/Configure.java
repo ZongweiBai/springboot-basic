@@ -14,6 +14,11 @@ public class Configure {
     public static String UNIFIEDORDER_API = "https://api.mch.weixin.qq.com/pay/unifiedorder";
 
     /**
+     * 退款申请接口
+     */
+    public static String ORDER_REFUND_API = "https://api.mch.weixin.qq.com/secapi/pay/refund";
+
+    /**
      * 查询订单
      * 该接口提供所有微信支付订单的查询，商户可以通过该接口主动查询订单状态，完成下一步的业务逻辑。
      * 需要调用查询接口的情况：

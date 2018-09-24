@@ -14,4 +14,5 @@ public interface IUserProfileRepository extends PagingAndSortingRepository<UserP
 
     UserProfile findByAccount(String account);
 
+    UserProfile findByIdpId(String openid);
 }

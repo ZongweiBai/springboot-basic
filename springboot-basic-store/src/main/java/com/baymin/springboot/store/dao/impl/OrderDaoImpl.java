@@ -2,11 +2,10 @@ package com.baymin.springboot.store.dao.impl;
 
 import com.baymin.springboot.common.constant.RequestConstant;
 import com.baymin.springboot.store.dao.IOrderDao;
-import com.baymin.springboot.store.entity.Order;
-import com.baymin.springboot.store.entity.OrderExt;
-import com.baymin.springboot.store.entity.QOrder;
-import com.baymin.springboot.store.entity.QOrderExt;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
+import com.baymin.springboot.store.payload.OrderDetailVo;
+import com.baymin.springboot.store.payload.ServiceProductVo;
 import com.baymin.springboot.store.repository.IOrderExtRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -19,9 +18,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class OrderDaoImpl implements IOrderDao {
@@ -60,17 +57,26 @@ public class OrderDaoImpl implements IOrderDao {
         BooleanExpression predicate;
         if (StringUtils.equals("user", ownerType)) {
             predicate = qOrder.id.eq(userId);
+            if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
+                predicate.and(qOrder.status.eq(OrderStatus.ORDER_UN_PAY));
+            } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {
+                predicate.and(qOrder.status.eq(OrderStatus.ORDER_PAYED)
+                        .or(qOrder.status.eq(OrderStatus.ORDER_PROCESSING))
+                        .or(qOrder.status.eq(OrderStatus.ORDER_ASSIGN)));
+            } else {
+                predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
+            }
         } else {
             predicate = qOrder.serviceStaffId.eq(userId);
+            if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
+                predicate.and(qOrder.status.eq(OrderStatus.ORDER_ASSIGN));
+            } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {
+                predicate.and(qOrder.status.eq(OrderStatus.ORDER_PROCESSING));
+            } else {
+                predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
+            }
         }
-        if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
-            predicate.and(qOrder.status.eq(OrderStatus.ORDER_UN_PAY));
-        } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {
-            predicate.and(qOrder.status.eq(OrderStatus.ORDER_PAYED)
-                    .or(qOrder.status.eq(OrderStatus.ORDER_PROCESSING)));
-        } else {
-            predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
-        }
+
 
         JPAQuery<Order> jpaQuery = queryFactory.select(qOrder)
                 .from(qOrder)
@@ -80,9 +86,10 @@ public class OrderDaoImpl implements IOrderDao {
     }
 
     @Override
-    public Map<String, Object> queryOrderDetail(String orderId) {
+    public OrderDetailVo queryOrderDetail(String orderId) {
         QOrder qOrder = QOrder.order;
         QOrderExt qOrderExt = QOrderExt.orderExt;
+        QServiceProduct qProduct = QServiceProduct.serviceProduct;
 
         Order order = queryFactory.select(qOrder)
                 .from(qOrder)
@@ -94,9 +101,15 @@ public class OrderDaoImpl implements IOrderDao {
                 .where(qOrderExt.orderId.eq(orderId))
                 .fetchOne();
 
-        Map<String, Object> reMap = new HashMap<>();
-        reMap.put("order", order);
-        reMap.put("orderExt", orderExt);
-        return reMap;
+        ServiceProduct product = queryFactory.select(qProduct)
+                .from(qProduct)
+                .where(qProduct.id.eq(order.getServiceProductId()))
+                .fetchOne();
+
+        OrderDetailVo detail = new OrderDetailVo();
+        detail.setOrder(order);
+        detail.setOrderExt(orderExt);
+        detail.setServiceProduct(new ServiceProductVo(product, null));
+        return detail;
     }
 }

@@ -10,6 +10,7 @@ import com.baymin.springboot.store.repository.IAddressRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IUserProfileRepository;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,7 +47,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
     }
 
     @Override
-    public void saveUserProfile(UserProfile userProfile) {
+    public UserProfile saveUserProfile(UserProfile userProfile) {
         if (StringUtils.isNotBlank(userProfile.getBirthdayStr())) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
             try {
@@ -59,8 +60,6 @@ public class UserProfileServiceImpl implements IUserProfileService {
         if (StringUtils.isNotBlank(userProfile.getId())) {
             UserProfile oldData = userProfileRepository.findById(userProfile.getId()).orElse(null);
             userProfile.setRegisterTime(oldData.getRegisterTime());
-            userProfile.setIdpId(oldData.getIdpId());
-            userProfile.setIdpNickName(oldData.getIdpNickName());
             userProfile.setOrderCount(oldData.getOrderCount());
             userProfile.setPassword(oldData.getPassword());
             userProfile.setPayPassword(oldData.getPayPassword());
@@ -68,6 +67,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
             userProfile.setRegisterTime(new Date());
         }
         userProfileDao.save(userProfile);
+        return userProfile;
     }
 
     @Override
@@ -110,5 +110,10 @@ public class UserProfileServiceImpl implements IUserProfileService {
         detailMap.put("addressList", addressList);
         detailMap.put("orderList", orderList);
         return detailMap;
+    }
+
+    @Override
+    public UserProfile findByIdpId(String openid) {
+        return userProfileRepository.findByIdpId(openid);
     }
 }

@@ -85,7 +85,7 @@ public class DateUtil {
     /**
      * 转换时间格式
      */
-    public static Date getDate(String dateFormat,String pattern) throws Exception {
+    public static Date getDate(String dateFormat, String pattern) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         return sdf.parse(dateFormat);
     }
@@ -137,7 +137,7 @@ public class DateUtil {
      * @return
      */
     public static Date dayBegin(final String dateStr) {
-        if(StringUtils.isBlank(dateStr)) {
+        if (StringUtils.isBlank(dateStr)) {
             return null;
         }
         try {
@@ -154,7 +154,7 @@ public class DateUtil {
      * @return
      */
     public static Date dayEnd(final String dateStr) {
-        if(StringUtils.isBlank(dateStr)) {
+        if (StringUtils.isBlank(dateStr)) {
             return null;
         }
         try {
@@ -162,6 +162,25 @@ public class DateUtil {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+    public static Date monthFirst() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.MONTH, 0);
+        c.set(Calendar.DAY_OF_MONTH, 1);
+        c.set(Calendar.HOUR, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        return c.getTime();
+    }
+
+    public static Date monthLast() {
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.DAY_OF_MONTH, c.getActualMaximum(Calendar.DAY_OF_MONTH));
+        c.set(Calendar.HOUR, 23);
+        c.set(Calendar.MINUTE, 59);
+        c.set(Calendar.SECOND, 59);
+        return c.getTime();
     }
 
 }

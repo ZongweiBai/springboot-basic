@@ -1,43 +1,45 @@
 package com.baymin.springboot.store.entity;
 
-import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.Date;
 
-/**
- * 意见反馈
- */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "T_FEEDBACK")
-public class Feedback implements Serializable {
+@Table(name = "T_ORDER_CARE_PLAN")
+public class OrderCarePlan {
 
-    @ApiModelProperty(hidden = true)
     @Id
     @Column(name = "ID", length = 32)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @Column(name = "GRADE")
-    private Integer grade = 5;
+    @Column(name = "PLAN_ID", length = 32)
+    private String planId;
 
-    @Column(name = "CONTENT", length = 2048)
-    private String content;
+    @Column(name = "ORDER_ID", length = 32)
+    private String orderId;
 
-    @Column(name = "USER_ID")
-    private String userId;
+    @Column(name = "TYPE_ID", length = 32)
+    private String typeId;
 
-    @ApiModelProperty(hidden = true)
+    @Column(name = "CASE_ID", length = 32)
+    private String caseId;
+
+    @Column(name = "PLAN_DESC", length = 2048)
+    private String planDesc;
+
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
+
+    @Column(name = "STAFF_ID", length = 32)
+    private String staffId;
 
 }
