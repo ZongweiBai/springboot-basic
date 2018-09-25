@@ -15,14 +15,15 @@
 <title>订单管理</title>
 </head>
 <body>
-<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 照护计划库 <span class="c-gray en">&gt;</span> 照护计划管理</nav>
+<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 服务管理 <span class="c-gray en">&gt;</span> 问题管理</nav>
 <div class="pd-20">
 
 	<form id="menuForm" name="menuForm" onsubmit="$('#menuTable').bootstrapTable('refresh');return false;" method="post">
 		<div style="margin-top: 10px;margin-bottom: 10px;">
-			类型：
+			陪护类型：
 			<select class="input-text" style="width: 120px;" id="typeId">
-				<option value="">选择类型</option>
+				<option value="">选择适应症</option>
+				<option value="HOSPITAL_CARE">医院陪护</option>
 			</select>
 			适应症:
 			<select class="input-text" style="width: 120px;" id="caseId">

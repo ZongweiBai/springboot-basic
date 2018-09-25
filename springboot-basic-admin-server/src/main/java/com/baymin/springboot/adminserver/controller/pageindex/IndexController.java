@@ -328,4 +328,20 @@ public class IndexController {
         return "careplan/addDict";
     }
 
+    /**
+     * ===========================问题管理入口================================
+     */
+    @GetMapping("/index/question/manage")
+    public String manageQuestion() {
+        return "question/questionManage";
+    }
+
+    @GetMapping("/index/question/add")
+    public String addQuestion(String questionId, Model model) {
+        if (Objects.nonNull(questionId)) {
+            model.addAttribute("questionId", questionId);
+        }
+        return "question/addQuestion";
+    }
+
 }

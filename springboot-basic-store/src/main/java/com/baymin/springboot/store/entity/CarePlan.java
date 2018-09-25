@@ -1,6 +1,7 @@
 package com.baymin.springboot.store.entity;
 
 import com.baymin.springboot.store.enumconstant.CommonStatus;
+import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
