@@ -97,4 +97,7 @@ public class ServiceStaff {
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "STAFF_STATUS")
     private CommonStatus staffStatus;
+
+    @Column(name = "IDP_ID", length = 128)
+    private String idpId;
 }

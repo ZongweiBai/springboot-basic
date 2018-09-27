@@ -1,13 +1,10 @@
 package com.baymin.springboot.webserver.api;
 
-import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.constant.WebConstant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
-import com.baymin.springboot.common.model.TokenVo;
 import com.baymin.springboot.common.util.HttpClientUtil;
-import com.baymin.springboot.common.util.JwtUtil;
 import com.baymin.springboot.pay.wechat.WechatConfig;
 import com.baymin.springboot.pay.wechat.param.Util;
 import com.baymin.springboot.pay.wechat.param.WXProtocolData;
@@ -19,11 +16,11 @@ import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.service.IPayRecordService;
+import com.baymin.springboot.service.IStaffService;
 import com.baymin.springboot.service.IUserProfileService;
-import com.baymin.springboot.store.entity.Order;
-import com.baymin.springboot.store.entity.PayRecord;
-import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.payload.PayRequestVo;
+import com.baymin.springboot.store.payload.TokenVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
@@ -41,7 +38,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -61,15 +57,18 @@ public class WechatApi {
     private IUserProfileService userProfileService;
 
     @Autowired
+    private IStaffService staffService;
+
+    @Autowired
     private IOrderService orderService;
 
     @Autowired
     private IPayRecordService payRecordService;
 
-    @ApiOperation(value = "根据code获取用户openId并注册用户")
+    @ApiOperation(value = "根据code获取用户openId")
     @ResponseBody
     @GetMapping(value = "/openId")
-    public TokenVo getUserOpenId(String code, String accountId, HttpServletResponse response) {
+    public TokenVo getUserOpenId(String code, HttpServletResponse response) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             String urlAddr = String.format(WECHAT_WEB_ACCESS_TOKEN_URL, WechatConfig.AppID, WechatConfig.AppSecret, code);
@@ -85,45 +84,30 @@ public class WechatApi {
                     UserInfoResponse userInfoResponse = null;
                     String userInfoUrl = String.format(WECHAT_WEB_USER_INFO_URL, tokenResponse.getAccessToken(), tokenResponse.getOpenid());
                     String userInfo = HttpClientUtil.sendGet(userInfoUrl, null);
-                    if (StringUtils.isNotBlank(userInfo)) {
-                        userInfoResponse = objectMapper.readValue(userInfo, UserInfoResponse.class);
+                    if (StringUtils.isBlank(userInfo)) {
+                        throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), GET_WECHAT_OPENID_ERROR));
+                    }
+                    userInfoResponse = objectMapper.readValue(userInfo, UserInfoResponse.class);
+
+                    WechatUserInfo wechatUserInfo = userProfileService.saveWechatUserInfo(userInfoResponse);
+
+                    ServiceStaff staff = staffService.findByIdpId(wechatUserInfo.getOpenid());
+                    if (Objects.nonNull(staff)) {
+                        return userProfileService.getTokenVo(staff.getId(), "S");
                     }
 
-                    UserProfile user;
-                    if (StringUtils.isNotBlank(accountId)) {
-                        user = userProfileService.findById(accountId);
-                    } else {
-                        user = userProfileService.findByIdpId(tokenResponse.getOpenid());
+                    UserProfile userProfile = userProfileService.findByIdpId(wechatUserInfo.getOpenid());
+                    if (Objects.nonNull(userProfile)) {
+                        return userProfileService.getTokenVo(userProfile.getId(), "U");
                     }
-
-                    if (Objects.isNull(user)) {
-                        user = new UserProfile();
-                        user.setOrderCount(0);
-                        user.setRegisterTime(new Date());
-                    }
-                    user.setIdpId(tokenResponse.getOpenid());
-                    if (Objects.nonNull(userInfoResponse)) {
-                        user.setIdpNickName(userInfoResponse.getNickname());
-                        user.setNickName(userInfoResponse.getNickname());
-                    }
-
-                    user = userProfileService.saveUserProfile(user);
-                    String subject = JwtUtil.generalSubject(user.getId(), Constant.JWTAPI.JWT_TOKEN);
-                    String accessToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_TTL);
-                    subject = JwtUtil.generalSubject(user.getId(), Constant.JWTAPI.JWT_REFRESH_TOKEN);
-                    String refreshToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_REFRESH_TTL);
 
                     TokenVo tokenVo = new TokenVo();
-                    tokenVo.setUserId(user.getId());
-                    tokenVo.setAccessToken(accessToken);
-                    tokenVo.setRefreshToken(refreshToken);
-                    tokenVo.setExpiresIn(Constant.JWTAPI.JWT_TTL / 1000);
-                    tokenVo.setTokenType("bearer");
+                    tokenVo.setWechatId(wechatUserInfo.getId());
                     return tokenVo;
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("获取微信用户信息失败！", e);
             throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), GET_WECHAT_OPENID_ERROR));
         }
     }

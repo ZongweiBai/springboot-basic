@@ -1,14 +1,17 @@
 package com.baymin.springboot.service.impl;
 
+import com.baymin.springboot.common.constant.Constant;
+import com.baymin.springboot.common.util.JwtUtil;
+import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.dao.IUserProfileDao;
-import com.baymin.springboot.store.entity.Address;
-import com.baymin.springboot.store.entity.Order;
-import com.baymin.springboot.store.entity.QUserProfile;
-import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.payload.TokenVo;
 import com.baymin.springboot.store.repository.IAddressRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IUserProfileRepository;
+import com.baymin.springboot.store.repository.IWechatUserInfoRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import org.apache.catalina.User;
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +43,9 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
     @Autowired
     private IOrderRepository orderRepository;
+
+    @Autowired
+    private IWechatUserInfoRepository wechatUserInfoRepository;
 
     @Override
     public UserProfile findByAccount(String account) {
@@ -115,5 +121,46 @@ public class UserProfileServiceImpl implements IUserProfileService {
     @Override
     public UserProfile findByIdpId(String openid) {
         return userProfileRepository.findByIdpId(openid);
+    }
+
+    @Override
+    public WechatUserInfo saveWechatUserInfo(UserInfoResponse wechatResponse) {
+        WechatUserInfo oldData = wechatUserInfoRepository.findByOpenid(wechatResponse.getOpenid());
+        if (Objects.nonNull(oldData)) {
+            return oldData;
+        }
+
+        WechatUserInfo userInfo = new WechatUserInfo();
+        userInfo.setCity(wechatResponse.getCity());
+        userInfo.setCountry(wechatResponse.getCountry());
+        userInfo.setHeadimgurl(wechatResponse.getHeadimgurl());
+        userInfo.setNickname(wechatResponse.getNickname());
+        userInfo.setOpenid(wechatResponse.getOpenid());
+        userInfo.setProvince(wechatResponse.getProvince());
+        userInfo.setSex(wechatResponse.getSex());
+        userInfo.setUnionid(wechatResponse.getUnionid());
+        return wechatUserInfoRepository.save(userInfo);
+    }
+
+    @Override
+    public TokenVo getTokenVo(String userId, String userType) throws JsonProcessingException {
+        String subject = JwtUtil.generalSubject(userId, userType, Constant.JWTAPI.JWT_TOKEN);
+        String accessToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_TTL);
+        subject = JwtUtil.generalSubject(userId, userType, Constant.JWTAPI.JWT_REFRESH_TOKEN);
+        String refreshToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_REFRESH_TTL);
+
+        TokenVo tokenVo = new TokenVo();
+        tokenVo.setUserId(userId);
+        tokenVo.setAccessToken(accessToken);
+        tokenVo.setRefreshToken(refreshToken);
+        tokenVo.setExpiresIn(Constant.JWTAPI.JWT_TTL / 1000);
+        tokenVo.setUserType(userType);
+        tokenVo.setTokenType("bearer");
+        return tokenVo;
+    }
+
+    @Override
+    public WechatUserInfo getWechatUserInfoById(String wechatId) {
+        return wechatUserInfoRepository.findById(wechatId).orElse(null);
     }
 }

@@ -93,4 +93,19 @@ public class StaffServiceImpl implements IStaffService {
     public List<ServiceStaff> queryStaffByType(ServiceStaffType serviceStaffType) {
         return serviceStaffRepository.findFreeStaff(serviceStaffType, ServiceStatus.FREE, CommonStatus.NORMAL);
     }
+
+    @Override
+    public ServiceStaff findByMobile(String userAccount) {
+        return serviceStaffRepository.findByMobile(userAccount);
+    }
+
+    @Override
+    public void updateIdpId(String id, String wechatId) {
+        serviceStaffRepository.updateIdpId(id, wechatId);
+    }
+
+    @Override
+    public ServiceStaff findByIdpId(String openid) {
+        return serviceStaffRepository.findByIdpId(openid);
+    }
 }

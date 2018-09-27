@@ -1,6 +1,10 @@
 package com.baymin.springboot.service;
 
+import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.store.entity.WechatUserInfo;
+import com.baymin.springboot.store.payload.TokenVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -23,4 +27,10 @@ public interface IUserProfileService {
     Map<String,Object> getUserDetail(String userId);
 
     UserProfile findByIdpId(String openid);
+
+    WechatUserInfo saveWechatUserInfo(UserInfoResponse userInfoResponse);
+
+    TokenVo getTokenVo(String userId, String userType) throws JsonProcessingException;
+
+    WechatUserInfo getWechatUserInfoById(String wechatId);
 }

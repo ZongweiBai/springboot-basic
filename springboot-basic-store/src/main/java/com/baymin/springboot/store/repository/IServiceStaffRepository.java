@@ -30,4 +30,12 @@ public interface IServiceStaffRepository extends PagingAndSortingRepository<Serv
     @Modifying
     @Query("update ServiceStaff set serviceStatus = :status where id = :staffId")
     void updateServiceStatus(@Param("staffId") String staffId, @Param("status") ServiceStatus status);
+
+    ServiceStaff findByMobile(String userAccount);
+
+    @Modifying
+    @Query("update ServiceStaff set idpId = :idpId where id = :id")
+    void updateIdpId(@Param("id") String id, @Param("idpId") String wechatId);
+
+    ServiceStaff findByIdpId(String openid);
 }

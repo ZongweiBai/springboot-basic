@@ -1,17 +1,22 @@
 package com.baymin.springboot.store.payload;
 
 import com.baymin.springboot.store.entity.StaffIncome;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@ApiModel(description = "护士/护工收入汇总信息")
 @Data
 public class StaffIncomeInfoVo {
 
+    @ApiModelProperty(notes = "总收入")
     private Double totalIncome;
 
+    @ApiModelProperty(notes = "当月收入")
     private Double monthlyIncome;
 
     private List<StaffIncomeVo> incomeVoList;

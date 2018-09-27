@@ -39,6 +39,9 @@ public class Question {
     @Column(name = "ITEM_ICON", length = 256)
     private String itemIcon;
 
+    @Column(name = "ITEM_ICON_SELECTED", length = 256)
+    private String itemIconSelected;
+
     @Column(name = "MULTI_CHOICE")
     private Boolean multiChoice = false;
 

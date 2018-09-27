@@ -74,10 +74,11 @@ public class JwtUtil {
     /**
      * 生成subject信息
      */
-    public static String generalSubject(String userId, String tokenType) throws JsonProcessingException {
+    public static String generalSubject(String userId, String userType, String tokenType) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, Object> accountMap = new HashMap<>();
         accountMap.put("userId", userId);
+        accountMap.put("userType", userType);
         accountMap.put("tokenType", tokenType);
         return objectMapper.writeValueAsString(accountMap);
     }

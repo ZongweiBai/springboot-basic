@@ -105,12 +105,12 @@ public class StaffApi {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "orderId", value = "订单ID")
     })
-    @PostMapping("/servicestart")
-    public void staffChangeRequest(@RequestBody Map<String, String> request) {
-        if (Objects.isNull(request) || StringUtils.isBlank(request.get("orderId"))) {
+    @PutMapping("/servicestart/{orderId}")
+    public void staffChangeRequest(@PathVariable String orderId) {
+        if (Objects.isNull(orderId) || StringUtils.isBlank(orderId)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
-        orderService.serviceStart(request.get("orderId"));
+        orderService.serviceStart(orderId);
     }
 
     @ApiOperation(value = "查询系统默认的照护计划")

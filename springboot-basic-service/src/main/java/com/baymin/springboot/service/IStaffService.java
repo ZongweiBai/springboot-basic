@@ -21,4 +21,10 @@ public interface IStaffService {
     void updateStaffStatus(String staffId, CommonStatus statusType);
 
     List<ServiceStaff> queryStaffByType(ServiceStaffType serviceStaffType);
+
+    ServiceStaff findByMobile(String userAccount);
+
+    void updateIdpId(String id, String wechatId);
+
+    ServiceStaff findByIdpId(String openid);
 }

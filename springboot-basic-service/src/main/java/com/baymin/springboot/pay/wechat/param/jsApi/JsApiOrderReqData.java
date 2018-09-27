@@ -3,6 +3,8 @@ package com.baymin.springboot.pay.wechat.param.jsApi;
 import com.baymin.springboot.pay.wechat.param.RandomStringGenerator;
 import com.baymin.springboot.pay.wechat.param.Signature;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -16,6 +18,7 @@ import java.util.Map;
  * @date: 2016年1月21日 下午5:04:55
  * @version V1.0
  */
+@ApiModel(description = "微信JS支付所需信息")
 public class JsApiOrderReqData {
 
 	private String appId;
