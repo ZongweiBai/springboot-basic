@@ -24,7 +24,6 @@ public class UserOrderApiTest extends AbstractTest {
         patientInfo.put(RequestConstant.EATING, "鼻伺喂食");
         patientInfo.put(RequestConstant.ASSIST_WITH_MEDICATION, "输液看护, 胰岛素注射");
         patientInfo.put(RequestConstant.CATHETER_CARE, "伤口引流管, 负压引流管");
-        orderRequest.setExtension(patientInfo);
 
         Invoice invoice = new Invoice();
         invoice.setHeaderType("C");

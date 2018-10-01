@@ -15,37 +15,82 @@
 <div class="pd-20">
     <form action="" method="post" class="form form-horizontal" id="form-menu-add">
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>类型：</label>
+            <label class="form-label col-3"><span class="c-red">*</span>陪护类型：</label>
             <div class="formControls col-5">
-                <select class="input-text" id="typeId" name="typeId"
+                <select class="input-text" id="careType" name="careType"
                         datatype="*" >
-                    <option value="">请选择类型</option>
+                    <option value="">选择陪护类型</option>
+                    <option value="HOSPITAL_CARE">医院陪护</option>
+                    <option value="HOME_CARE">居家照护</option>
                 </select>
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>适应症：</label>
+            <label class="form-label col-3"><span class="c-red">*</span>问题类型：</label>
             <div class="formControls col-5">
-                <select class="input-text" id="caseId" name="caseId"
+                <select class="input-text" id="questionType" name="questionType"
                         datatype="*" >
-                    <option value="">请选择适应症</option>
+                    <option value="">选择问题类型</option>
+                    <option value="DISEASES">问题1</option>
+                    <option value="SELF_CARE">问题2</option>
+                    <option value="EATING">问题3</option>
+                    <option value="CATHETER_CARE">问题4</option>
+                    <option value="ASSIST_WITH_MEDICATION">问题5</option>
                 </select>
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>服务明细内容：</label>
+            <label class="form-label col-3"><span class="c-red">*</span>问题选项：</label>
             <div class="formControls col-5">
-                <textarea style="height: 120px;" type="text" class="input-text" value="" placeholder="" id="planDesc" name="planDesc"
-                          datatype="*2-2048" nullmsg="服务明细内容不能为空"></textarea>
+                <input type="text" class="input-text" value="" placeholder="" id="itemName" name="itemName"
+                       datatype="*2-64" nullmsg="问题选项不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>选项描述：</label>
+            <div class="formControls col-5">
+                <textarea style="height: 120px;" type="text" class="input-text" value="" placeholder="" id="itemDesc" name="itemDesc"></textarea>
             </div>
             <div class="col-4"></div>
         </div>
 
-        <input type="hidden" id="planId" name="id" />
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>未选中图标：</label>
+            <div class="formControls col-5">
+                <input type="hidden" name="itemIcon" id="itemIcon" datatype="*" nullmsg="未选中图标不能为空">
+                <div class="picsh">
+                    <div id="imgDiv">
+                    </div>
+                    <span class="pic4">
+                        <input type="file" onchange="fileSelected('1');" id="image_index_file">
+                    </span>
+                </div>
+            </div>
+            <div class="col-2"><span class="c-red"></span></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-3"><span class="c-red">*</span>选中图标：</label>
+            <div class="formControls col-5">
+                <input type="hidden" name="itemIconSelected" id="itemIconSelected" datatype="*" nullmsg="选中图标不能为空">
+                <div class="picsh">
+                    <div id="imgDivSelected">
+                    </div>
+                    <span class="pic4">
+                        <input type="file" onchange="fileSelected('2');" id="image_index_file_selected">
+                    </span>
+                </div>
+            </div>
+            <div class="col-2"><span class="c-red"></span></div>
+        </div>
+
+        <input type="hidden" id="questionId" name="id" />
 
         <div class="row cl">
             <div class="col-9 col-offset-3">
@@ -54,12 +99,14 @@
         </div>
     </form>
 </div>
+<img id="preview" src="" style="display: none;">
 <script th:inline="javascript">
     /*<![CDATA[*/
-    var planId = [[${planId}]];
+    var questionId = [[${questionId}]];
     /*]]>*/
 </script>
 <script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
-<script type="text/javascript" src="js/careplan/careplanAdd.js" th:src="@{/js/careplan/careplanAdd.js}"></script>
+<script type="text/javascript" src="js/question/questionAdd.js" th:src="@{/js/question/questionAdd.js}"></script>
+<script type="text/javascript" src="lib/lrz/lrz.all.bundle.js" th:src="@{/lib/lrz/lrz.all.bundle.js}"></script>
 </body>
 </html>

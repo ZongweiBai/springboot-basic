@@ -33,9 +33,9 @@ public class QuestionVo {
 
     @ApiModelProperty(notes = "问题图标:已选中")
     private String itemIconSelected;
-
-    @ApiModelProperty(notes = "是否多选")
-    private Boolean multiChoice;
+//
+//    @ApiModelProperty(notes = "是否多选", hidden = true)
+//    private Boolean multiChoice;
 
     public QuestionVo(Question question) {
         if (Objects.isNull(question)) {
@@ -48,7 +48,7 @@ public class QuestionVo {
         this.itemDesc = question.getItemDesc();
         this.itemIcon = Constant.IMG_HOST + question.getItemIcon();
         this.itemIconSelected = Constant.IMG_HOST + question.getItemIconSelected();
-        this.multiChoice = question.getMultiChoice();
+//        this.multiChoice = question.getMultiChoice();
     }
 
 }

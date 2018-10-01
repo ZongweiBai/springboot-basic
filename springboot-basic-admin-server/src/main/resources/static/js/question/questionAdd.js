@@ -2,9 +2,9 @@ $(function () {
 
     initForm();
 
-    if (!isEmpty(typeId)) {
-        $("#typeId").val(typeId);
-        loadRoleData(typeId);
+    if (!isEmpty(questionId)) {
+        $("#questionId").val(questionId);
+        loadRoleData(questionId);
     }
 
 });
@@ -15,7 +15,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "/item/saveServiceType",
+                url: contextPath + "/question/saveQuestion",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();
@@ -43,12 +43,12 @@ function initForm() {
 /**
  * 加载信息
  */
-function loadRoleData(typeId) {
+function loadRoleData(questionId) {
     $.ajax({
         type: "GET",
-        url: contextPath + "/item/getServiceTypeById",
+        url: contextPath + "/question/getQuestionById",
         data: {
-            "typeId": typeId
+            "questionId": questionId
         },
         beforeSend: function () {
             tip.showLoading();
@@ -57,12 +57,13 @@ function loadRoleData(typeId) {
             tip.hideLoading();
             if (data.result == 200) {
                 var info = data.info;
-                $("#serviceName").val(info.serviceName);
-                $("#keyWord").val(info.keyWord);
                 $("#careType").val(info.careType);
-                $("#serviceDesc").html(info.serviceDesc);
+                $("#questionType").val(info.questionType);
+                $("#itemName").val(info.itemName);
+                $("#itemDesc").html(info.itemDesc);
 
-                fillImageUpload(info.serviceIcon, '1');
+                fillImageUpload(info.itemIcon, '1');
+                fillImageUpload(info.itemIconSelected, '2');
             } else {
                 tip.alertError("加载信息失败");
             }
@@ -75,6 +76,7 @@ function loadRoleData(typeId) {
 }
 
 var uploadImgType;
+
 /**
  * 上传照片
  */
@@ -84,6 +86,8 @@ function fileSelected(type) {
     var oFile;
     if (type == 1) {
         oFile = document.getElementById('image_index_file').files[0];
+    } else if (type == 2) {
+        oFile = document.getElementById('image_index_file_selected').files[0];
     } else {
         tip.hideLoading();
         tip.toast("图片类型异常");
@@ -164,7 +168,7 @@ function startUploading(basestr) {
 
 function fillImageUpload(fileNames, uploadImgType) {
     if (uploadImgType == 1) {
-        $("#serviceIcon").val(fileNames);
+        $("#itemIcon").val(fileNames);
         var content = "<span class=\"pic3\">";
         content += "<a data-lightbox=\"" + imgPath + fileNames + "\" href=\"" + imgPath + fileNames + "\">";
         content += "<img src=\"" + imgPath + fileNames + "\" >";
@@ -173,26 +177,17 @@ function fillImageUpload(fileNames, uploadImgType) {
         content += "</span>";
         $("#imgDiv").html(content);
     }
-    // else if (uploadImgType == 2) {
-    //     if ($("#productBannerImgs").val() == "") {
-    //         $("#productBannerImgs").val(fileNames);
-    //     } else {
-    //         $("#productBannerImgs").val($("#productBannerImgs").val() + "," + fileNames);
-    //     }
-    //     var content = "<span class=\"pic3\">";
-    //     content += "<a data-lightbox=\"" + imgPath + fileNames + "\" href=\"" + imgPath + fileNames + "\">";
-    //     content += "<img src=\"" + imgPath + fileNames + "\" >";
-    //     content += "</a>";
-    //     content += "<img class=\"guanbi\" onclick=\"removeFileImg(this, '" + fileNames + "', '" + uploadImgType + "');\" >";
-    //     content += "</span>";
-    //     $("#productBannerImgDiv").prepend(content);
-    //     var fileArr = $("#productBannerImgs").val().split(",");
-    //     if (!isEmpty(fileArr)) {
-    //         if (fileArr.length >= 3) {
-    //             $("#uploadBannerImageSpan").hide();
-    //         }
-    //     }
-    // }else if (uploadImgType == 3) {
+    else if (uploadImgType == 2) {
+        $("#itemIconSelected").val(fileNames);
+        var content = "<span class=\"pic3\">";
+        content += "<a data-lightbox=\"" + imgPath + fileNames + "\" href=\"" + imgPath + fileNames + "\">";
+        content += "<img src=\"" + imgPath + fileNames + "\" >";
+        content += "</a>";
+        content += "<img class=\"guanbi\" onclick=\"removeFileImg(this, '" + fileNames + "', '" + uploadImgType + "');\" >";
+        content += "</span>";
+        $("#imgDivSelected").html(content);
+    }
+    // else if (uploadImgType == 3) {
     //     $("#indexImg").val(fileNames);
     //     var content = "<span class=\"pic3\">";
     //     content += "<a data-lightbox=\"" + imgPath + fileNames + "\" href=\"" + imgPath + fileNames + "\">";
@@ -214,15 +209,16 @@ function removeFileImg(obj, fileName, type) {
     var arr = [];
 
     if (type == 1) {
-        if ($("#serviceIcon").length > 0) {
-            arr = $("#serviceIcon").val().split(",");
+        if ($("#itemIcon").length > 0) {
+            arr = $("#itemIcon").val().split(",");
         }
     }
-    // else if (type == 2) {
-    //     if ($("#productBannerImgs").length > 0) {
-    //         arr = $("#productBannerImgs").val().split(",");
-    //     }
-    // } else if (type == 3) {
+    else if (type == 2) {
+        if ($("#itemIconSelected").length > 0) {
+            arr = $("#itemIconSelected").val().split(",");
+        }
+    }
+    // else if (type == 3) {
     //     if ($("#indexImg").length > 0) {
     //         arr = $("#indexImg").val().split(",");
     //     }
@@ -242,17 +238,12 @@ function removeFileImg(obj, fileName, type) {
         }
     }
     if (type == 1) {
-        $("#serviceIcon").val(newStr);
+        $("#itemIcon").val(newStr);
     }
-    // else if (type == 2) {
-    //     $("#productBannerImgs").val(newStr);
-    //     var fileArr = $("#productBannerImgs").val().split(",");
-    //     if (!isEmpty(fileArr)) {
-    //         if (fileArr.length < 3) {
-    //             $("#uploadBannerImageSpan").show();
-    //         }
-    //     }
-    // }else if (type == 3) {
+    else if (type == 2) {
+        $("#itemIconSelected").val(newStr);
+    }
+    // else if (type == 3) {
     //     $("#indexImg").val(newStr);
     // }
     $(obj).parent("span").remove();

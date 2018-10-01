@@ -5,17 +5,18 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/item/queryServiceTypeForPage",
+        url: contextPath + "/question/queryQuestionForPage",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
                 size: params.limit,  //页面大小
-                page: params.offset/params.limit,
+                page: params.offset / params.limit,
                 sort: params.sort,
                 order: params.order,
-                basicItemType: $("#basicItemType").val()
+                careType: $("#careType").val(),
+                questionType: $("#questionType").val()
             };
             return paramsMap;
         },
@@ -27,7 +28,7 @@ function loadTable() {
         columns: [
             {
                 field: 'careType',
-                title: '服务分类',
+                title: '陪护类型',
                 align: 'center',
                 formatter: function (value, row, index) {
                     if (value == "HOSPITAL_CARE") {
@@ -36,25 +37,37 @@ function loadTable() {
                         return "居家照护";
                     } else if (value == "REHABILITATION") {
                         return "康复护理";
-                    } else if (value == "LTC_INSURANCE") {
-                        return "长期护理险";
                     }
                     return "";
                 }
             },
             {
-                field: 'serviceName',
-                title: '分组名称',
+                field: 'questionType',
+                title: '问题类型',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == "DISEASES") {
+                        return "问题1";
+                    } else if (value == "SELF_CARE") {
+                        return "问题2";
+                    } else if (value == "EATING") {
+                        return "问题3";
+                    } else if (value == "CATHETER_CARE") {
+                        return "问题4";
+                    } else if (value == "ASSIST_WITH_MEDICATION") {
+                        return "问题5";
+                    }
+                    return "";
+                }
+            },
+            {
+                field: 'itemName',
+                title: '问题选项',
                 align: 'center'
             },
             {
-                field: 'keyWord',
-                title: '关键词',
-                align: 'center'
-            },
-            {
-                field: 'serviceDesc',
-                title: '分组描述',
+                field: 'itemDesc',
+                title: '选项描述',
                 align: 'center'
             },
             {
@@ -84,14 +97,14 @@ function loadTable() {
 /**
  * 新增
  */
-function addServiceType() {
-    tip.openIframe("新增服务分类", contextPath + 'index/type/basic/add');
+function addDict() {
+    tip.openIframe("新增问题", contextPath + 'index/question/add');
 }
 
 /**
  * 编辑
  * @param serviceId
  */
-function editServiceType(typeId) {
-    tip.openIframe("编辑服务分类", contextPath + 'index/type/basic/add?typeId=' + typeId);
+function editServiceType(questionId) {
+    tip.openIframe("编辑问题", contextPath + 'index/question/add?questionId=' + questionId);
 }

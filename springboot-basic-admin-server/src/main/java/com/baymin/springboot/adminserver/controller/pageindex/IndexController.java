@@ -344,4 +344,20 @@ public class IndexController {
         return "question/addQuestion";
     }
 
+    /**
+     * ===========================医院管理入口================================
+     */
+    @GetMapping("/index/hospital/manage")
+    public String manageHospital() {
+        return "hospital/hospitalManage";
+    }
+
+    @GetMapping("/index/hospital/add")
+    public String addHospital(String hospitalId, Model model) {
+        if (Objects.nonNull(hospitalId)) {
+            model.addAttribute("hospitalId", hospitalId);
+        }
+        return "hospital/addHospital";
+    }
+
 }

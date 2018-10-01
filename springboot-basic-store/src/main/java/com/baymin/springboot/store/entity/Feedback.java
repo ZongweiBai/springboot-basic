@@ -1,5 +1,6 @@
 package com.baymin.springboot.store.entity;
 
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +14,7 @@ import java.util.Date;
 /**
  * 意见反馈
  */
+@ApiModel(description = "意见反馈")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,12 +29,15 @@ public class Feedback implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
+    @ApiModelProperty(notes = "等级评分 1-5星")
     @Column(name = "GRADE")
     private Integer grade = 5;
 
+    @ApiModelProperty(notes = "反馈内容")
     @Column(name = "CONTENT", length = 2048)
     private String content;
 
+    @ApiModelProperty(notes = "用户ID")
     @Column(name = "USER_ID")
     private String userId;
 
