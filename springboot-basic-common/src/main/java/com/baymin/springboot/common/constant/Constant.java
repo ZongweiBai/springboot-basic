@@ -20,8 +20,18 @@ public interface Constant {
         String dysmsDomain = "dysmsapi.aliyuncs.com";
 
         // 此处需要替换成开发者自己的AK(在阿里云访问控制台寻找)
-        String accessKeyId = "LTAI9FVWK4Iqw3Wj";
-        String accessKeySecret = "gio5DRQnEfZ6hR1tsJRiBXM1gF1sSV";
+        String accessKeyId = "LTAICpePRa6IP0Rh";
+        String accessKeySecret = "dHfQs1tPdF7D4URw9RlJF0XA40INXV";
+        String signName = "一家依护";
+
+        String ORDER_ASSING = "SMS_146802582"; //订单指派提醒
+        String ORDER_CHANGE_REJECT = "SMS_146807518"; //客户换人申请不通过通知
+        String ORDER_CHANGE_AGREE = "SMS_146802565";  //客户换人申请通过通知
+        String ORDER_REFUND_REJECT = "SMS_146802556"; //退款申请不通过通知
+        String ORDER_REFUND_AGREE = "SMS_146807496";  //客户退款申请通过通知
+        String ORDER_CHECK_REJECT = "SMS_146802529";  //订单审核不通过
+        String ORDER_CHECK_AGREE = "SMS_146807451";   //订单审核通过通知
+        String ORDER_USER_REG = "SMS_146802494";  //用户注册验证
     }
 
     interface JWTAPI {

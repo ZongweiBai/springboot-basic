@@ -19,5 +19,6 @@ public class ErrorDescription {
     public static final String RECORD_NOT_EXIST = "记录不存在";
     public static final String GET_WECHAT_OPENID_ERROR = "根据Code获取OpenId失败";
     public static final String WECHAT_PAY_ERROR = "生成预付单失败";
+    public static final String SMS_SEND_ERROR = "短信验证码发送失败";
 
 }

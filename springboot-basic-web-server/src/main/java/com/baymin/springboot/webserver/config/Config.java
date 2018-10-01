@@ -34,7 +34,7 @@ public class Config implements WebMvcConfigurer {
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor)
                 .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/login", "/api/token/refresh", "/api/wechat/*");
+                .excludePathPatterns("/api/login", "/api/login/smscode", "/api/token/refresh", "/api/wechat/*");
     }
 
 }

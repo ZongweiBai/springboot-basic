@@ -1,0 +1,2 @@
+mvn install:install-file -Dfile=/home/zongwei/workspace/java/springboot-basic/lib/aliyun-java-sdk-dycdpapi-1.0.0-SNAPSHOT.jar -DgroupId=com.aliyun -DartifactId=aliyun-java-sdk-dycdpapi -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar
+mvn install:install-file -Dfile=/home/zongwei/workspace/java/springboot-basic/lib/aliyun-java-sdk-dysmsapi-1.0.0-SNAPSHOT.jar -DgroupId=com.aliyun -DartifactId=aliyun-java-sdk-dysmsapi -Dversion=1.0.0-SNAPSHOT -Dpackaging=jar

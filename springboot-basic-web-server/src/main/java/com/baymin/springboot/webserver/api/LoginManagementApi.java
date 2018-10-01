@@ -1,10 +1,14 @@
 package com.baymin.springboot.webserver.api;
 
+import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
+import com.aliyuncs.exceptions.ClientException;
 import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.util.JwtUtil;
+import com.baymin.springboot.pay.wechat.param.RandomStringGenerator;
+import com.baymin.springboot.service.AliyunService;
 import com.baymin.springboot.service.IRedisService;
 import com.baymin.springboot.service.IStaffService;
 import com.baymin.springboot.service.IUserProfileService;
@@ -24,6 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +36,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.*;
 
@@ -50,6 +56,34 @@ public class LoginManagementApi {
 
     @Autowired
     private IRedisService redisService;
+
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+
+    @Autowired
+    private AliyunService aliyunService;
+
+    @ApiOperation(value = "获取验证码")
+    @GetMapping("login/smscode")
+    @ResponseBody
+    public void sendSmsCode(@RequestParam String mobilePhone) {
+        if (StringUtils.isBlank(mobilePhone)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+
+        String smsCode = RandomStringGenerator.randomNumString(4);
+        try {
+            SendSmsResponse response = aliyunService.sendSms(mobilePhone, smsCode, Constant.AliyunAPI.ORDER_USER_REG);
+            if (StringUtils.equals("OK", response.getCode())) {
+                stringRedisTemplate.opsForValue().set(mobilePhone + "_" + "login_sms_code", smsCode, 30, TimeUnit.MINUTES);
+            } else {
+                throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), response.getMessage()));
+            }
+        } catch (ClientException e) {
+            log.error("发送短信验证码失败", e);
+            throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SMS_SEND_ERROR));
+        }
+    }
 
     @ApiOperation(value = "登陆并绑定微信")
     @PostMapping("login")
