@@ -33,7 +33,7 @@ public class Question {
     private CareType careType;
 
     @ApiModelProperty(hidden = true)
-    @Column(name = "QUESTION_TYPE", length = 20)
+    @Column(name = "QUESTION_TYPE", length = 50)
     private String questionType;
 
     @ApiModelProperty(notes = "问题名称")
