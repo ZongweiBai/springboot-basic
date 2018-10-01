@@ -26,6 +26,8 @@ import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.io.xml.DomDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -116,6 +118,9 @@ public class WechatApi {
      * 使用微信支付商品费用
      */
     @ApiOperation(value = "微信支付预下单")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @ResponseBody
     @RequestMapping(value = "/pay", method = RequestMethod.POST)
     public JsApiOrderReqData payOrderWithWeChat(@RequestBody PayRequestVo requestVo, HttpServletResponse response) {

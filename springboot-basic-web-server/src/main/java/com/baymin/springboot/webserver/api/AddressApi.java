@@ -25,6 +25,7 @@ public class AddressApi {
 
     @ApiOperation(value = "新增常用地址")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "address.addressType", value = "地址类型 H：医院 M：居家")
     })
     @PostMapping
@@ -37,6 +38,9 @@ public class AddressApi {
     }
 
     @ApiOperation(value = "删除常用地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @DeleteMapping("/{userId}/{addressId}")
     public void deleteAddress(@PathVariable String userId,
                               @PathVariable String addressId) {
@@ -47,6 +51,9 @@ public class AddressApi {
     }
 
     @ApiOperation(value = "更新常用地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @PutMapping
     @ResponseBody
     public Address updateAddress(@RequestBody Address address) {
@@ -57,6 +64,9 @@ public class AddressApi {
     }
 
     @ApiOperation(value = "根据用户ID查询地址")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/{userId}")
     @ResponseBody
     public List<Address> queryAddress(@PathVariable String userId) {
@@ -67,6 +77,9 @@ public class AddressApi {
     }
 
     @ApiOperation(value = "查询地址明细")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/{userId}/{addressId}")
     @ResponseBody
     public Address queryAddressDetail(@PathVariable String userId,

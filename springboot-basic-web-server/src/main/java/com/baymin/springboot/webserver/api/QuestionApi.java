@@ -31,6 +31,7 @@ public class QuestionApi {
 
     @ApiOperation(value = "根据类型查询陪护问题")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "careType", value = "HOSPITAL_CARE：医院陪护  HOME_CARE：居家照护 REHABILITATION：康复护理"),
             @ApiImplicitParam(name = "questionType", value = "DISEASES:问题1 SELF_CARE：问题2 EATING：问题3 CATHETER_CARE：问题4 ASSIST_WITH_MEDICATION：问题5")
     })

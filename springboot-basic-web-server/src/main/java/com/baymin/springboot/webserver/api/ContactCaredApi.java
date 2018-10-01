@@ -28,6 +28,7 @@ public class ContactCaredApi {
 
     @ApiOperation(value = "新增被照护人")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "contactCared.sex", value = "M:女 F：男")
     })
     @PostMapping
@@ -40,6 +41,9 @@ public class ContactCaredApi {
     }
 
     @ApiOperation(value = "删除被照护人")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @DeleteMapping("/{userId}/{contactCaredId}")
     public void deleteContactCared(@PathVariable String userId,
                               @PathVariable String contactCaredId) {
@@ -51,6 +55,7 @@ public class ContactCaredApi {
 
     @ApiOperation(value = "更新被照护人")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "contactCared.sex", value = "M:女 F：男")
     })
     @PutMapping
@@ -63,6 +68,9 @@ public class ContactCaredApi {
     }
 
     @ApiOperation(value = "根据用户ID查询被照护人")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/{userId}")
     @ResponseBody
     public List<ContactCared> queryContactCared(@PathVariable String userId) {
@@ -73,6 +81,9 @@ public class ContactCaredApi {
     }
 
     @ApiOperation(value = "查询被照护人明细")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/{userId}/{contactCaredId}")
     @ResponseBody
     public ContactCared queryContactCaredDetail(@PathVariable String userId,

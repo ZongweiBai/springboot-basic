@@ -52,6 +52,9 @@ public class StaffApi {
     private ICarePlanService carePlanService;
 
     @ApiOperation(value = "查询护士/护工业绩")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/income/{staffId}/")
     @ResponseBody
     public StaffIncomeInfoVo queryStaffIncome(@PathVariable String staffId) {
@@ -67,6 +70,7 @@ public class StaffApi {
 
     @ApiOperation(value = "查询护士/护工订单")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "status", value = "INIT：待服务  PROCESSING：服务中  FINISHED：已完成")
     })
     @GetMapping("/order/{staffId}/")
@@ -81,6 +85,9 @@ public class StaffApi {
     }
 
     @ApiOperation(value = "查询护士/护工业绩排行榜")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/rank/{staffId}/")
     @ResponseBody
     public StaffRankInfoVo queryStaffRank(@PathVariable String staffId) {
@@ -103,6 +110,7 @@ public class StaffApi {
 
     @ApiOperation(value = "护士/护工开始服务")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "orderId", value = "订单ID")
     })
     @PutMapping("/servicestart/{orderId}")
@@ -114,6 +122,9 @@ public class StaffApi {
     }
 
     @ApiOperation(value = "查询系统默认的照护计划")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/careplan")
     public List<CarePlan> querySysCarePlan(@RequestParam("typeId") String typeId, @RequestParam("caseId") String caseId,
                                            @RequestParam("key") String key) {
@@ -122,6 +133,7 @@ public class StaffApi {
 
     @ApiOperation(value = "查询订单的照护计划")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "orderId", value = "订单ID")
     })
     @GetMapping("/careplan/{orderId}")
@@ -151,6 +163,7 @@ public class StaffApi {
 
     @ApiOperation(value = "保存订单的照护计划")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "orderId", value = "订单ID")
     })
     @PostMapping("/careplan/{orderId}")

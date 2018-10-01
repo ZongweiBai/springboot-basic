@@ -11,6 +11,8 @@ import com.baymin.springboot.store.enumconstant.BasicItemType;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.payload.ServiceProductVo;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,6 +34,9 @@ public class BasicItemApi {
     private IBasicItemService basicItemService;
 
     @ApiOperation(value = "查询服务项目")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping
     @ResponseBody
     public List<ServiceType> queryServiceType() {
@@ -39,6 +44,9 @@ public class BasicItemApi {
     }
 
     @ApiOperation(value = "根据服务项目查询产品")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/{serviceTypeId}")
     @ResponseBody
     public List<ServiceProductVo> queryProductByTypeId(@PathVariable("serviceTypeId") String serviceTypeId) {

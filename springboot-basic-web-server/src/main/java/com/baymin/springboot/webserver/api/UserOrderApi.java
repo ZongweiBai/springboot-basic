@@ -36,6 +36,7 @@ public class UserOrderApi {
 
     @ApiOperation(value = "用户下单")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "request.orderType", value = "HOSPITAL_CARE：医院陪护  HOME_CARE：居家照护 REHABILITATION：康复护理"),
             @ApiImplicitParam(name = "request.payway", value = "支付方式 ONLINE_WECHAT  OFFLINE")
     })
@@ -54,6 +55,7 @@ public class UserOrderApi {
 
     @ApiOperation(value = "查询用户订单")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "status", value = "INIT：代付款  PROCESSING：服务中  FINISHED：已完成")
     })
     @GetMapping("/{userId}/")
@@ -68,6 +70,9 @@ public class UserOrderApi {
     }
 
     @ApiOperation(value = "查询用户订单详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @GetMapping("/{userId}/{orderId}/")
     @ResponseBody
     public OrderDetailVo queryOrderDetail(@PathVariable String userId,
@@ -79,6 +84,9 @@ public class UserOrderApi {
     }
 
     @ApiOperation(value = "订单评价")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @PostMapping("/evaluate")
     public void orderEvaluate(@RequestBody Evaluate evaluate) {
 
@@ -91,6 +99,7 @@ public class UserOrderApi {
 
     @ApiOperation(value = "订单开票申请")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "invoice.invoiceType", value = "发票类型 E：电子  P：纸质"),
             @ApiImplicitParam(name = "invoice.headerType", value = "抬头类型 C:企业单位  P:个人")
     })
@@ -103,6 +112,9 @@ public class UserOrderApi {
     }
 
     @ApiOperation(value = "申请更换照护人")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @PostMapping("/staffchange")
     public void staffChangeRequest(@RequestBody OrderStaffChange staffChange) {
         if (Objects.isNull(staffChange)) {
@@ -112,6 +124,9 @@ public class UserOrderApi {
     }
 
     @ApiOperation(value = "申请退款")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @PostMapping("/refund")
     public OrderRefund orderRefundRequest(@RequestBody OrderRefund orderRefund) {
         if (Objects.isNull(orderRefund)) {

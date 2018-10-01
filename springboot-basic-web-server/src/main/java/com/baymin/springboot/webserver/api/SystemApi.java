@@ -32,6 +32,9 @@ public class SystemApi {
     private ISysManageService sysManageService;
 
     @ApiOperation(value = "用户反馈")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
     @PostMapping("/feedback")
     @ResponseBody
     public void feedback(@RequestBody Feedback feedback) {
@@ -43,6 +46,7 @@ public class SystemApi {
 
     @ApiOperation(value = "根据类型查询照护计划选项")
     @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
             @ApiImplicitParam(name = "dictName", value = "CARE_PLAN_TYPE：明细类型  CARE_PLAN_CASE：适用病症")
     })
     @ResponseBody
