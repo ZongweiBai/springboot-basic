@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -32,7 +33,7 @@ public class AddressServiceImpl implements IAddressService {
 
     @Override
     public Address saveAddress(Address address) {
-        address.setCreateTime(System.currentTimeMillis());
+        address.setCreateTime(new Date());
         return addressRepository.save(address);
     }
 

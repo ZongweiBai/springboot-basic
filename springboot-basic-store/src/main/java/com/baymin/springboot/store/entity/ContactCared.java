@@ -37,6 +37,10 @@ public class ContactCared {
     @Column(name = "SEX", length = 2)
     private String sex;
 
+    @ApiModelProperty(notes = "年龄")
+    @Column(name = "AGE", length = 4)
+    private Integer age;
+
     @ApiModelProperty(notes = "身高 cm")
     @Column(name = "TALL", precision = 5, scale = 2)
     private Double tall;

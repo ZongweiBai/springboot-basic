@@ -10,10 +10,12 @@ import com.baymin.springboot.store.entity.ServiceType;
 import com.baymin.springboot.store.enumconstant.BasicItemType;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.payload.ServiceProductVo;
+import com.baymin.springboot.store.payload.ServiceTypeVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
+@Slf4j
 @Api(value = "服务项目", tags = "服务项目")
 @RestController
 @RequestMapping(path = "/api/basicitem")
@@ -39,8 +42,16 @@ public class BasicItemApi {
     })
     @GetMapping
     @ResponseBody
-    public List<ServiceType> queryServiceType() {
-        return basicItemService.getAllServiceType();
+    public List<ServiceTypeVo> queryServiceType() {
+        List<ServiceType> typeList = basicItemService.getAllServiceType();
+
+        List<ServiceTypeVo> typeVoList = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(typeList)) {
+            for (ServiceType serviceType : typeList) {
+                typeVoList.add(new ServiceTypeVo(serviceType));
+            }
+        }
+        return typeVoList;
     }
 
     @ApiOperation(value = "根据服务项目查询产品")

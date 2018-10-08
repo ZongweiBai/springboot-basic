@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -31,7 +32,7 @@ public class AddressDaoImpl implements IAddressDao {
 
     @Override
     public Address save(Address address) {
-        address.setCreateTime(System.currentTimeMillis());
+        address.setCreateTime(new Date());
         return addressRepository.save(address);
     }
 

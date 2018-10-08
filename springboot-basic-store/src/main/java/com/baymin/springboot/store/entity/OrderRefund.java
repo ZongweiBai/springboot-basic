@@ -58,7 +58,7 @@ public class OrderRefund {
     @Column(name = "DEAL_STATUS", length = 2)
     private CommonDealStatus dealStatus;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(notes = "退款原因")
     @Column(name = "REFUND_DESC", length = 1024)
     private String refundDesc;
 
@@ -78,5 +78,14 @@ public class OrderRefund {
     @ApiModelProperty(notes = "开户行名称")
     @Column(name = "BANK_NAME", length = 64)
     private String bankName;
+
+    /********************联系人信息************************/
+    @ApiModelProperty(notes = "退款联系人")
+    @Column(name = "REFUND_CONTACT", length = 50)
+    private String refundContact;
+
+    @ApiModelProperty(notes = "联系方式")
+    @Column(name = "CONTACT_MOBILE", length = 32)
+    private String contactMobile;
 
 }

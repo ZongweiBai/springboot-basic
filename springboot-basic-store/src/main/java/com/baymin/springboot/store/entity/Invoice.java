@@ -64,6 +64,10 @@ public class Invoice {
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
     private Date dealTime;
 
+    @ApiModelProperty(notes = "电子发票寄送邮箱")
+    @Column(name = "RECIPIENT_EMAIL", length = 32)
+    private String recipientEmail;
+
     @ApiModelProperty(notes = "纸质发票收货人")
     @Column(name = "RECIPIENT", length = 32)
     private String recipient;

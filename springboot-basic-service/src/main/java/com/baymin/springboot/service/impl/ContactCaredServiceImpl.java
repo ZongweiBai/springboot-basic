@@ -57,6 +57,7 @@ public class ContactCaredServiceImpl implements IContactCaredService {
         contactInDB.setTall(contactCared.getTall());
         contactInDB.setWeight(contactCared.getWeight());
         contactInDB.setOtherInfo(contactCared.getOtherInfo());
+        contactInDB.setAge(contactCared.getAge());
         return contactCaredRepository.save(contactInDB);
     }
 

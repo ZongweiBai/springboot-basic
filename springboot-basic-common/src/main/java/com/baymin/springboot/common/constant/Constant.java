@@ -6,7 +6,8 @@ package com.baymin.springboot.common.constant;
  */
 public interface Constant {
 
-    String IMG_HOST = "http://127.0.0.1:9090/admin";
+//    String IMG_HOST = "http://127.0.0.1:9090/admin";
+    String IMG_HOST = "http://120.78.69.141/admin";
 
     interface AliyunAPI {
         //云通信短信API产品

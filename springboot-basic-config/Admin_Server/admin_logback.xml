@@ -9,7 +9,7 @@
     <!-- application log -->
     <appender name="EVENT-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>/var/lib/modules/Admin-Server/log/event_log_%d{yyyy-M-d}.log</FileNamePattern>
+            <FileNamePattern>/var/lib/modules/Admin-Server/log/serverlog/event_log_%d{yyyy-MM-dd}.log</FileNamePattern>
             <MaxHistory>10</MaxHistory>
         </rollingPolicy>
         <encoder>
@@ -17,42 +17,46 @@
         </encoder>
     </appender>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="EVENT-LOG"/>
     </root>
 
-    <logger name="org.springframework" additivity="true" level="info">
+    <logger name="com.baymin.springboot" additivity="false" level="DEBUG">
+        <appender-ref ref="EVENT-LOG"/>
     </logger>
 
-    <logger name="org.apache.axis" additivity="true" level="info">
+    <logger name="org.springframework" additivity="false" level="info">
     </logger>
 
-    <logger name="org.apache.cxf" additivity="true" level="info">
+    <logger name="org.apache.axis" additivity="false" level="info">
     </logger>
 
-    <logger name="net.sf.ehcache" additivity="true" level="error">
+    <logger name="org.apache.cxf" additivity="false" level="info">
     </logger>
 
-    <logger name="com.zaxxer.hikari" additivity="true" level="debug">
+    <logger name="net.sf.ehcache" additivity="false" level="error">
     </logger>
 
-    <logger name="org.eclipse.jetty" additivity="true" level="info">
+    <logger name="com.zaxxer.hikari" additivity="false" level="debug">
     </logger>
 
-    <logger name="org.hibernate" additivity="true" level="info">
+    <logger name="org.eclipse.jetty" additivity="false" level="info">
+    </logger>
+
+    <logger name="org.hibernate" additivity="false" level="info">
     </logger>
 
     <!-- print the start log in nohup.out-->
-    <logger name="com.baymin.springboot.SpringBootAdminApp" additivity="true" level="INFO">
+    <logger name="com.baymin.springboot.SpringBootAdminApp" additivity="false" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="org.springframework.boot" additivity="true" level="INFO">
+    <logger name="org.springframework.boot" additivity="false" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="org.apache.tomcat" additivity="true" level="INFO">
+    <logger name="org.apache.tomcat" additivity="false" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="com.zaxxer" additivity="true" level="INFO">
+    <logger name="com.zaxxer" additivity="false" level="INFO">
         <appender-ref ref="STDOUT"/>
     </logger>
 

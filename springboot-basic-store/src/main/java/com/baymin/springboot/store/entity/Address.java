@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 用户地址
@@ -85,7 +86,7 @@ public class Address {
 
     @ApiModelProperty(hidden = true)
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
-    private Long createTime;
+    private Date createTime;
 
     public Address(String addressId) {
         this.id = addressId;
