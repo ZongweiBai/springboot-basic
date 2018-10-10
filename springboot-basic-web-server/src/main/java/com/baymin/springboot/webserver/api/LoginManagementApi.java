@@ -17,6 +17,7 @@ import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.store.entity.WechatUserInfo;
 import com.baymin.springboot.store.payload.LoginRequestVo;
 import com.baymin.springboot.store.payload.TokenVo;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -34,6 +35,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -73,13 +75,15 @@ public class LoginManagementApi {
 
         String smsCode = RandomStringGenerator.randomNumString(4);
         try {
-            SendSmsResponse response = aliyunService.sendSms(mobilePhone, smsCode, Constant.AliyunAPI.ORDER_USER_REG);
+            Map<String, String> templateParams = new HashMap<>();
+            templateParams.put("code", smsCode);
+            SendSmsResponse response = aliyunService.sendSms(mobilePhone, smsCode, Constant.AliyunAPI.ORDER_USER_REG, templateParams);
             if (StringUtils.equals("OK", response.getCode())) {
                 stringRedisTemplate.opsForValue().set(mobilePhone + "_" + "login_sms_code", smsCode, 30, TimeUnit.MINUTES);
             } else {
                 throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), response.getMessage()));
             }
-        } catch (ClientException e) {
+        } catch (ClientException | JsonProcessingException e) {
             log.error("发送短信验证码失败", e);
             throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SMS_SEND_ERROR));
         }
