@@ -11,6 +11,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -22,7 +23,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "T_BASIC_ITEM")
-public class BasicItem {
+public class BasicItem implements Serializable {
+
+    private static final long serialVersionUID = -3793562407884366461L;
 
     @ApiModelProperty(notes = "基础项目ID", required = true)
     @Id

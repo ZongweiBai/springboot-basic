@@ -33,7 +33,7 @@ public class OrderExt implements Serializable {
     @Column(name = "ORDER_ID", length = 32)
     private String orderId;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(notes = "下单时选择的问题", hidden = true)
     @Type(type = "json")
     @Column(name = "PATIENT_INFO", columnDefinition = "json")
     private Map<String, Object> patientInfo;

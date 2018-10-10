@@ -1,25 +1,30 @@
 package com.baymin.springboot.store.entity;
 
+import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.InvoiceStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.PayWay;
+import com.baymin.springboot.store.payload.BasicItemRequestVo;
+import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
+import org.hibernate.annotations.TypeDef;
 
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @ApiModel(description = "订单基本信息表")
 @Data
 @NoArgsConstructor
 @Entity
 @Table(name = "T_ORDER")
+@TypeDef(name = "json", typeClass = JsonStringType.class)
 public class Order implements Serializable {
 
     @ApiModelProperty(notes = "订单ID")
@@ -40,6 +45,11 @@ public class Order implements Serializable {
     @ApiModelProperty(notes = "产品ID")
     @Column(name = "serviceProductId", length = 32)
     private String serviceProductId;
+
+    @ApiModelProperty(notes = "服务项目信息", hidden = true)
+    @Type(type = "json")
+    @Column(name = "BASIC_ITEM_INFO", columnDefinition = "json")
+    private List<BasicItemRequestVo> basicItemInfo;
 
     @ApiModelProperty(notes = "订单时间")
     @Column(name = "ORDER_TIME", columnDefinition = "timestamp")
@@ -67,7 +77,7 @@ public class Order implements Serializable {
     private OrderStatus status;
 
     @ApiModelProperty(notes = "订单总额")
-    @Column(name = "TOTAL_FEE", precision=10, scale=2)
+    @Column(name = "TOTAL_FEE", precision = 10, scale = 2)
     private Double totalFee;
 
     /**

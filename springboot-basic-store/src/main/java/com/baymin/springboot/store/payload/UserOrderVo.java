@@ -21,6 +21,9 @@ public class UserOrderVo {
     @ApiModelProperty(notes = "陪护类型")
     private CareType orderType;
 
+    @ApiModelProperty(notes = "订单总额")
+    private Double totalFee;
+
     @ApiModelProperty(notes = "支付方式 在线：ONLINE_WECHAT  线下：OFFLINE")
     private String payway; //支付方式 ONLINE_WECHAT  OFFLINE
 
@@ -52,7 +55,7 @@ public class UserOrderVo {
     private String productId;
 
     @ApiModelProperty(notes = "基础项目列表")
-    private List<BasicItem> basicItems;
+    private List<BasicItemRequestVo> basicItems;
 
     @ApiModelProperty(notes = "问题列表")
     private List<Question> questions;

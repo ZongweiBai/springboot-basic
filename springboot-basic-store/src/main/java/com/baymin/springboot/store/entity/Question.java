@@ -10,6 +10,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @ApiModel(description = "问题")
@@ -18,7 +19,9 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "T_QUESTION")
-public class Question {
+public class Question implements Serializable {
+
+    private static final long serialVersionUID = 7395197720021454000L;
 
     @ApiModelProperty(hidden = true)
     @Id
@@ -32,7 +35,7 @@ public class Question {
     @Column(name = "CARE_TYPE")
     private CareType careType;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(notes = "问题类型")
     @Column(name = "QUESTION_TYPE", length = 50)
     private String questionType;
 

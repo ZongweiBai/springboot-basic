@@ -10,8 +10,9 @@ import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.*;
-import com.baymin.springboot.store.payload.UserOrderVo;
+import com.baymin.springboot.store.payload.BasicItemRequestVo;
 import com.baymin.springboot.store.payload.OrderDetailVo;
+import com.baymin.springboot.store.payload.UserOrderVo;
 import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
@@ -73,6 +74,9 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IServiceProductRepository serviceProductRepository;
 
+    @Autowired
+    private IBasicItemRepository basicItemRepository;
+
     @Override
     public Order saveUserOrder(UserOrderVo request) {
         Invoice invoice = request.getInvoice();
@@ -86,9 +90,14 @@ public class OrderServiceImpl implements IOrderService {
         }
         order.setOrderSource("WECHAT");
         order.setServiceProductId(request.getProductId());
+        order.setBasicItemInfo(request.getBasicItems());
 
-        double totalFee = calculateTotalFee(request);
-        order.setTotalFee(totalFee);
+        if (Objects.nonNull(request.getTotalFee())) {
+            order.setTotalFee(request.getTotalFee());
+        } else {
+            double totalFee = calculateTotalFee(request);
+            order.setTotalFee(totalFee);
+        }
         order.setVersion(0);
         if (Objects.isNull(request.getInvoice())) {
             order.setInvoiceStatus(InvoiceStatus.NOT_INVOICED);
@@ -140,9 +149,12 @@ public class OrderServiceImpl implements IOrderService {
             if (CollectionUtils.isNotEmpty(request.getBasicItems())) {
                 List<String> productItems = Arrays.asList(product.getBasicItems().split(","));
                 List<BasicItem> billingItems = new ArrayList<>();
-                for (BasicItem basicItem : request.getBasicItems()) {
-                    if (!productItems.contains(basicItem.getId())) {
-                        billingItems.add(basicItem);
+                for (BasicItemRequestVo itemRequestVo : request.getBasicItems()) {
+                    if (!productItems.contains(itemRequestVo.getId())) {
+                        BasicItem itemInDB = basicItemRepository.findById(itemRequestVo.getId()).orElse(null);
+                        if (Objects.nonNull(itemInDB)) {
+                            billingItems.add(itemInDB);
+                        }
                     }
                 }
 
@@ -152,6 +164,7 @@ public class OrderServiceImpl implements IOrderService {
                 }
             }
         }
+        totalFee = BigDecimalUtil.mul(totalFee, request.getServiceDuration());
         return totalFee;
     }
 
