@@ -1,0 +1,14 @@
+[Unit]
+Description=API Server
+
+[Service]
+Type=simple
+User=root
+ExecStart=/var/lib/modules/API-Server/bin/API_Server.sh start
+ExecReload=/var/lib/modules/API-Server/bin/API_Server.sh restart
+ExecStop=/var/lib/modules/API-Server/bin/API_Server.sh stop
+RemainAfterExit=yes
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

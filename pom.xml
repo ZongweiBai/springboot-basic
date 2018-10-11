@@ -16,6 +16,7 @@
         <module>springboot-basic-service</module>
         <module>springboot-basic-web-server</module>
         <module>springboot-basic-admin-server</module>
+        <module>springboot-basic-timer-server</module>
     </modules>
 
     <properties>
@@ -70,6 +71,12 @@
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-security</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-quartz</artifactId>
                 <version>${springboot.version}</version>
             </dependency>
 
