@@ -41,4 +41,7 @@ public interface IOrderService {
     Map<String, Object> getOrderBasicWithUserInfo(String orderId);
 
     Order queryOrderById(String orderId);
+
+    List<OrderStaffChange> queryUserStaffChange(String userId);
+
 }

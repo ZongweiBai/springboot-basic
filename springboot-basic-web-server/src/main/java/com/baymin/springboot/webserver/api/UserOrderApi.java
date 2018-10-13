@@ -12,6 +12,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -123,6 +124,19 @@ public class UserOrderApi {
         orderService.staffChangeRequest(staffChange);
     }
 
+    @ApiOperation(value = "换人申请查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
+    @GetMapping("/staffchange/{userId}")
+    @ResponseBody
+    public List<OrderStaffChange> queryUserStaffChangeRequest(@PathVariable String userId) {
+        if (StringUtils.isBlank(userId)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        return orderService.queryUserStaffChange(userId);
+    }
+
     @ApiOperation(value = "申请退款")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
@@ -133,6 +147,19 @@ public class UserOrderApi {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
         return orderRefundService.saveOrderRefund(orderRefund);
+    }
+
+    @ApiOperation(value = "退款申请查询")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
+    @GetMapping("/refund/{userId}")
+    @ResponseBody
+    public List<OrderRefund> queryUserOrderRefundRequest(@PathVariable String userId) {
+        if (StringUtils.isBlank(userId)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        return orderRefundService.queryUserOrderRefund(userId);
     }
 
 }

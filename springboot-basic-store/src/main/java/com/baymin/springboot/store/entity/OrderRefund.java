@@ -32,6 +32,10 @@ public class OrderRefund {
     @Column(name = "ORDER_ID", length = 32)
     private String orderId;
 
+    @ApiModelProperty(notes = "用户ID")
+    @Column(name = "USER_ID", length = 32)
+    private String userId;
+
     @ApiModelProperty(notes = "服务类型")
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "CARE_TYPE")
@@ -41,15 +45,27 @@ public class OrderRefund {
     @Column(name = "REFUND_FEE", precision = 10, scale = 0)
     private Double refundFee;
 
+    @ApiModelProperty(notes = "退款时间段（开始）")
+    @Column(name = "BEGIN_REFUND_PERIOD", length = 32)
+    private String beginRefundPeriod;
+
+    @ApiModelProperty(notes = "退款时间段（结束）")
+    @Column(name = "END_REFUND_PERIOD", length = 32)
+    private String endRefundPeriod;
+
     @ApiModelProperty(notes = "退款的次数（时长）")
     @Column(name = "REFUND_DURATION", precision = 10, scale = 2)
     private Double refundDuration;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(hidden = true, notes = "创建时间")
+    @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
+    private Date createTime;
+
+    @ApiModelProperty(hidden = true, notes = "财务退款时间")
     @Column(name = "REFUND_TIME", columnDefinition = "timestamp")
     private Date refundTime;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(hidden = true, notes = "审核时间")
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
     private Date dealTime;
 

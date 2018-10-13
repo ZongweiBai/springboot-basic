@@ -104,6 +104,10 @@ public class Order implements Serializable {
     @Column(name = "INVOICE_ID", length = 32)
     private String invoiceId;
 
+    @ApiModelProperty(notes = "是否已评价")
+    @Column(name = "EVALUATED")
+    private Boolean evaluated;
+
     /**
      * 乐观锁
      */

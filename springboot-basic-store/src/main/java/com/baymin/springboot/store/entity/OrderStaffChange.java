@@ -32,12 +32,16 @@ public class OrderStaffChange {
     @Column(name = "ORDER_ID", length = 32)
     private String orderId;
 
+    @ApiModelProperty(notes = "用户ID")
+    @Column(name = "USER_ID", length = 32)
+    private String userId;
+
     @ApiModelProperty(hidden = true)
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "DEAL_STATUS", length = 2)
     private CommonDealStatus dealStatus;
 
-    @ApiModelProperty(notes = "订单ID")
+    @ApiModelProperty(notes = "变更原因")
     @Column(name = "CHANGE_DESC", length = 1024)
     private String changeDesc;
 

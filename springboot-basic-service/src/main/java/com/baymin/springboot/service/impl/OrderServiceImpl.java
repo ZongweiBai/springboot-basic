@@ -105,6 +105,7 @@ public class OrderServiceImpl implements IOrderService {
             order.setInvoiceStatus(InvoiceStatus.INVOICING);
         }
         order.setStatus(OrderStatus.ORDER_UN_PAY);
+        order.setEvaluated(false);
 
         OrderExt orderExt = new OrderExt();
         orderExt.setContact(request.getContact());
@@ -216,6 +217,12 @@ public class OrderServiceImpl implements IOrderService {
     public void orderEvaluate(Evaluate evaluate) {
         evaluate.setCreateTime(new Date());
         evaluateRepository.save(evaluate);
+
+        Order order = orderRepository.findById(evaluate.getOrderId()).orElse(null);
+        if (Objects.nonNull(order)) {
+            order.setEvaluated(true);
+            orderRepository.save(order);
+        }
     }
 
     @Override
@@ -347,6 +354,11 @@ public class OrderServiceImpl implements IOrderService {
             serviceStaffRepository.updateServiceStatus(staffChange.getNewStaffId(), ServiceStatus.ASSIGNED);
         }
         orderStaffChangeRepository.save(staffChange);
+    }
+
+    @Override
+    public List<OrderStaffChange> queryUserStaffChange(String userId) {
+        return orderStaffChangeRepository.findByUserId(userId);
     }
 
     @Override

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -50,6 +51,7 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
             orderRefund.setCareType(order.getCareType());
             orderRefund.setRefundTime(new Date());
             orderRefund.setDealTime(new Date());
+            orderRefund.setCreateTime(new Date());
             if (orderRefund.getRefundFee() == null) {
                 double refundFee = calcRefundFee(orderRefund, order);
                 orderRefund.setRefundFee(refundFee);
@@ -79,5 +81,10 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
         }
         refund.setDealTime(new Date());
         orderRefundRepository.save(refund);
+    }
+
+    @Override
+    public List<OrderRefund> queryUserOrderRefund(String userId) {
+        return orderRefundRepository.findByUserId(userId);
     }
 }
