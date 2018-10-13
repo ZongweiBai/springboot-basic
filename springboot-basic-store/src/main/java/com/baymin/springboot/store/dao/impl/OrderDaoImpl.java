@@ -56,7 +56,7 @@ public class OrderDaoImpl implements IOrderDao {
 
         BooleanExpression predicate;
         if (StringUtils.equals("user", ownerType)) {
-            predicate = qOrder.id.eq(userId);
+            predicate = qOrder.orderUserId.eq(userId);
             if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
                 predicate.and(qOrder.status.eq(OrderStatus.ORDER_UN_PAY));
             } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {

@@ -32,7 +32,7 @@ public class TokenVo {
 
     @ApiModelProperty(notes = "access_token过期时间，单位秒")
     @JsonProperty("expires_in")
-    private int expiresIn;
+    private Integer expiresIn;
 
     @ApiModelProperty(notes = "token类型")
     @JsonProperty("token_type")

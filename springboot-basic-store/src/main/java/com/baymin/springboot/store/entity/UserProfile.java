@@ -43,7 +43,7 @@ public class UserProfile implements Serializable {
     @Column(name = "ACTUAL_NAME", length = 32)
     private String actualName;
 
-    @Column(name = "PASSWORD", nullable = false, length = 32)
+    @Column(name = "PASSWORD", length = 32)
     private String password;
 
     @Column(name = "PAY_PASSWORD", length = 32)

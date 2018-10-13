@@ -129,6 +129,11 @@ public class LoginManagementApi {
                     userProfile.setIdpNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
                     userProfile.setIdpId(wechatId);
                     userProfile.setAccount(userAccount);
+                    if (StringUtils.equals("1", userInfo.getSex())) {
+                        userProfile.setSex("M");
+                    } else {
+                        userProfile.setSex("F");
+                    }
                 }
                 userProfile.setLastLoginTime(new Date());
                 userProfileService.saveUserProfile(userProfile);

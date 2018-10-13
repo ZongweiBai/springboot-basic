@@ -25,9 +25,9 @@ function loadUserInfo(userId) {
                 $("#nickName").html(userProfile.nickName);
                 $("#account").html(userProfile.account);
                 if (userProfile.sex == "M") {
-                    $("#sex").html("女");
-                } else {
                     $("#sex").html("男");
+                } else {
+                    $("#sex").html("女");
                 }
                 if (userProfile.birthday != null) {
                     $("#birthday").html(getFormatDateByLong(userProfile.birthday, "yyyy年MM月dd日"));

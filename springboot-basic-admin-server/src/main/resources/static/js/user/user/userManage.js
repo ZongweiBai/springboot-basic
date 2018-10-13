@@ -52,9 +52,9 @@ function loadTable() {
                 align: 'center',
                 formatter: function (value, row, index) {
                     if (value == "M") {
-                        return "女";
-                    } else {
                         return "男";
+                    } else {
+                        return "女";
                     }
                 }
             },

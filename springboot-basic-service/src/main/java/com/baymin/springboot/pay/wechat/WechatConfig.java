@@ -6,10 +6,12 @@ package com.baymin.springboot.pay.wechat;
  */
 public class WechatConfig {
 
-    public static String AppID = "wxe98ff38ab973378e";
-    public static String AppSecret = "4c0be9dcda96ad1079c48678ead089a0";
+    public static String AppID = "wx2e480aa3f1f76b4a";
+    public static String AppSecret = "d5c4e3ea0e63f44441d4723c15a83e15";
     public static String mchID = "1493923352";
     public static String key = "L8R3HmFAJLY4LJNiZb14Y8Gh0qMEhp5g";
+
+    public static String apiValidationToken = "18040225420166561792";
 
     // 微信openID的code获取
     public static String WECHAT_OPENID_CODE_URL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=";

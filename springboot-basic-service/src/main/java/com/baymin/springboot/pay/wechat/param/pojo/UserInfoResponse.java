@@ -4,12 +4,14 @@ package com.baymin.springboot.pay.wechat.param.pojo;
  * Created by JacksonGenerator on 18-9-24.
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.List;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfoResponse extends ErrorResponse {
     @JsonProperty("country")
     private String country;
@@ -25,6 +27,8 @@ public class UserInfoResponse extends ErrorResponse {
     private String sex;
     @JsonProperty("nickname")
     private String nickname;
+    @JsonProperty("language")
+    private String language;
     @JsonProperty("headimgurl")
     private String headimgurl;
     @JsonProperty("privilege")
