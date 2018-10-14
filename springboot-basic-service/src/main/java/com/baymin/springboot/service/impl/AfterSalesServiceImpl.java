@@ -1,9 +1,11 @@
 package com.baymin.springboot.service.impl;
 
+import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IAfterSalesService;
+import com.baymin.springboot.service.ISmsSendRecordService;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
@@ -23,6 +25,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
+import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT_EXIST;
 
 @Service
 @Transactional
@@ -51,6 +54,9 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
 
     @Autowired
     private IInvoiceRepository invoiceRepository;
+
+    @Autowired
+    private ISmsSendRecordService smsSendRecordService;
 
     @Override
     public Page<OrderStaffChange> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId) {
@@ -178,21 +184,40 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
     public void dealStaffChange(OrderStaffChange change) {
         OrderStaffChange oldData = orderStaffChangeRepository.findById(change.getId()).orElse(null);
         if (Objects.isNull(oldData)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), RECORD_NOT_EXIST));
+        }
+
+        Order order = orderRepository.findById(oldData.getOrderId()).orElse(null);
+        if (Objects.isNull(order)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
 
+        UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
+
         if (change.getDealStatus() == CommonDealStatus.AGREE) {
             oldData.setNewStaffId(change.getNewStaffId());
-
-            Order order = orderRepository.findById(oldData.getOrderId()).orElse(null);
-            if (Objects.isNull(order)) {
-                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
-            }
             order.setServiceStaffId(change.getNewStaffId());
             orderRepository.save(order);
 
             serviceStaffRepository.updateServiceStatus(change.getOldStaffId(), ServiceStatus.FREE);
             serviceStaffRepository.updateServiceStatus(change.getNewStaffId(), ServiceStatus.ASSIGNED);
+
+            // 换人申请审核通过
+            if (Objects.nonNull(userProfile)) {
+                Map<String, String> templateParam = new HashMap<>();
+                templateParam.put("orderno", oldData.getOrderId());
+                templateParam.put("name", userProfile.getNickName());
+                smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_CHANGE_AGREE, templateParam);
+            }
+        } else {
+            // 换人申请审核不通过
+            if (Objects.nonNull(userProfile)) {
+                Map<String, String> templateParam = new HashMap<>();
+                templateParam.put("name", userProfile.getNickName());
+                templateParam.put("orderNo", oldData.getOrderId());
+                templateParam.put("reason", change.getDealDesc());
+                smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_CHANGE_REJECT, templateParam);
+            }
         }
         oldData.setDealDesc(change.getDealDesc());
         oldData.setDealStatus(change.getDealStatus());

@@ -19,6 +19,7 @@ public interface RequestConstant {
     String ORDER_INIT = "INIT";
     String ORDER_PROCESSING = "PROCESSING";
     String ORDER_FINISHED = "FINISHED";
+    String ORDER_UNINVOCIED = "UNINVOCIED";
 
     // address type
     String ADDR_HOME = "M";

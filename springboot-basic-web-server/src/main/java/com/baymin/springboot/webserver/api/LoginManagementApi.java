@@ -1,15 +1,13 @@
 package com.baymin.springboot.webserver.api;
 
-import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
-import com.aliyuncs.exceptions.ClientException;
 import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.util.JwtUtil;
 import com.baymin.springboot.pay.wechat.param.RandomStringGenerator;
-import com.baymin.springboot.service.AliyunService;
 import com.baymin.springboot.service.IRedisService;
+import com.baymin.springboot.service.ISmsSendRecordService;
 import com.baymin.springboot.service.IStaffService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.ServiceStaff;
@@ -17,7 +15,6 @@ import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.store.entity.WechatUserInfo;
 import com.baymin.springboot.store.payload.LoginRequestVo;
 import com.baymin.springboot.store.payload.TokenVo;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -29,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +34,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.*;
 
@@ -60,10 +55,7 @@ public class LoginManagementApi {
     private IRedisService redisService;
 
     @Autowired
-    private StringRedisTemplate stringRedisTemplate;
-
-    @Autowired
-    private AliyunService aliyunService;
+    private ISmsSendRecordService smsSendRecordService;
 
     @ApiOperation(value = "获取验证码")
     @GetMapping("login/smscode")
@@ -77,13 +69,8 @@ public class LoginManagementApi {
         try {
             Map<String, String> templateParams = new HashMap<>();
             templateParams.put("code", smsCode);
-            SendSmsResponse response = aliyunService.sendSms(mobilePhone, smsCode, Constant.AliyunAPI.ORDER_USER_REG, templateParams);
-            if (StringUtils.equals("OK", response.getCode())) {
-                stringRedisTemplate.opsForValue().set(mobilePhone + "_" + "login_sms_code", smsCode, 30, TimeUnit.MINUTES);
-            } else {
-                throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), response.getMessage()));
-            }
-        } catch (ClientException | JsonProcessingException e) {
+            smsSendRecordService.addSmsSendRecord(mobilePhone, Constant.AliyunAPI.ORDER_USER_REG, templateParams);
+        } catch (Exception e) {
             log.error("发送短信验证码失败", e);
             throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SMS_SEND_ERROR));
         }
@@ -165,29 +152,24 @@ public class LoginManagementApi {
                 throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
             }
 
-            String subject;
-            if (StringUtils.equals("U", String.valueOf(accountMap.get("userType")))) {
-                UserProfile userProfile = userProfileService.findById(String.valueOf(accountMap.get("userId")));
+            String accountId = String.valueOf(accountMap.get("userId"));
+            String userType = String.valueOf(accountMap.get("userType"));
+            if (StringUtils.equals("U", userType)) {
+                UserProfile userProfile = userProfileService.findById(accountId);
                 if (userProfile == null) {
                     throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
                 }
-                subject = JwtUtil.generalSubject(userProfile.getId(), "U", Constant.JWTAPI.JWT_TOKEN);
-            } else if (StringUtils.equals("S", String.valueOf(accountMap.get("userType")))) {
-                ServiceStaff staff = staffService.findById(String.valueOf(accountMap.get("userId")));
+            } else if (StringUtils.equals("S", userType)) {
+                ServiceStaff staff = staffService.findById(accountId);
                 if (staff == null) {
                     throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
                 }
-                subject = JwtUtil.generalSubject(staff.getId(), "S", Constant.JWTAPI.JWT_TOKEN);
             } else {
                 throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
             }
 
-            String accessToken = JwtUtil.createJWT(Constant.JWTAPI.JWT_ID, subject, Constant.JWTAPI.JWT_TTL);
-            TokenVo tokenVo = new TokenVo();
-            tokenVo.setAccessToken(accessToken);
+            TokenVo tokenVo = userProfileService.getTokenVo(accountId, userType);
             tokenVo.setRefreshToken(refreshToken);
-            tokenVo.setExpiresIn(Constant.JWTAPI.JWT_TTL / 1000);
-            tokenVo.setTokenType("bearer");
             return tokenVo;
         } catch (SignatureException | ExpiredJwtException | IOException e) {
             if (e instanceof SignatureException) {

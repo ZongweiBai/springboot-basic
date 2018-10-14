@@ -1,9 +1,6 @@
 package com.baymin.springboot.store.entity;
 
-import com.baymin.springboot.store.enumconstant.CareType;
-import com.baymin.springboot.store.enumconstant.InvoiceStatus;
-import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.enumconstant.PayWay;
+import com.baymin.springboot.store.enumconstant.*;
 import com.baymin.springboot.store.payload.BasicItemRequestVo;
 import com.vladmihalcea.hibernate.type.json.JsonStringType;
 import io.swagger.annotations.ApiModel;
@@ -30,8 +27,8 @@ public class Order implements Serializable {
     @ApiModelProperty(notes = "订单ID")
     @Id
     @Column(name = "ID", length = 32)
-    @GeneratedValue(strategy = GenerationType.TABLE, generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")
+    /*@GeneratedValue(strategy = GenerationType.TABLE, generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid")*/
     private String id;
 
     @ApiModelProperty(notes = "用户ID")
@@ -108,11 +105,25 @@ public class Order implements Serializable {
     @Column(name = "EVALUATED")
     private Boolean evaluated;
 
+    @ApiModelProperty(notes = "订单退款状态")
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "REFUND_STATUS", length = 2)
+    private CommonDealStatus refundStatus;
+
+    @ApiModelProperty(notes = "护士/护工换人状态")
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "STAFF_CHANGE_STATUS", length = 2)
+    private CommonDealStatus staffChangeStatus;
+
     /**
      * 乐观锁
      */
     @ApiModelProperty(hidden = true)
     @Version
     private int version;
+
+    @ApiModelProperty(notes = "订单附加信息")
+    @Transient
+    private OrderExt orderExt;
 
 }

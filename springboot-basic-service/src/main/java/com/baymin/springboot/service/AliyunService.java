@@ -21,7 +21,7 @@ public interface AliyunService {
 
     QueryChargeDetailResponse queryChargeDetail(String outId) throws ClientException;
 
-    SendSmsResponse sendSms(String mobilePhone, String code, String codeTemplate, Map<String, String> templateParams) throws ClientException, JsonProcessingException;
+    SendSmsResponse sendSms(String mobilePhone, String codeTemplate, Map<String, String> templateParams) throws ClientException, JsonProcessingException;
 
     QuerySendDetailsResponse querySendDetails(String bizId) throws ClientException;
 

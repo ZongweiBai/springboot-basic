@@ -1,14 +1,18 @@
 package com.baymin.springboot.pay.wechat;
 
 import com.baymin.springboot.common.util.HttpClientUtil;
-import com.baymin.springboot.pay.wechat.param.pojo.BasicTokenResponse;
-import com.baymin.springboot.pay.wechat.param.pojo.ModelMsgRequest;
-import com.baymin.springboot.pay.wechat.param.pojo.ModelMsgResponse;
+import com.baymin.springboot.pay.wechat.param.RandomStringGenerator;
+import com.baymin.springboot.pay.wechat.param.Signature;
+import com.baymin.springboot.pay.wechat.param.pojo.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +33,22 @@ public class WechatUtil {
         try {
             return objectMapper.readValue(responseStr, BasicTokenResponse.class);
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("获取微信basic accessToken失败", e);
+            return null;
+        }
+    }
+
+    public static JsapiTicketResponse getJsapiTicket(String accessToken) {
+        String addr = String.format(WECHAT_JSAPI_TICKET_URL, accessToken);
+        String responseStr = HttpClientUtil.sendGet(addr, null);
+        log.debug("获取微信jspai_ticket的response是：{}", responseStr);
+        if (StringUtils.isBlank(responseStr)) {
+            return null;
+        }
+        try {
+            return objectMapper.readValue(responseStr, JsapiTicketResponse.class);
+        } catch (IOException e) {
+            log.error("获取微信jspai_ticket失败", e);
             return null;
         }
     }
@@ -88,6 +107,50 @@ public class WechatUtil {
             log.error("发送微信模板消息失败", e);
             return null;
         }
+    }
+
+    public static JssdkSignResponse sign(String jsapi_ticket, String url) {
+        String nonce_str = RandomStringGenerator.getRandomStringByLength(32);
+        String timestamp = create_timestamp();
+        String orignStr;
+        String signature = "";
+        Map<String, String> params = new HashMap<>();
+        params.put("jsapi_ticket", jsapi_ticket);
+        params.put("noncestr", nonce_str);
+        params.put("timestamp", timestamp);
+        params.put("url", url);
+
+        //1.1 对所有待签名参数按照字段名的ASCII 码从小到大排序（字典序）
+        Map<String, String> sortParams = Signature.sortAsc(params);
+        //1.2 使用URL键值对的格式拼接成字符串
+        orignStr = Signature.mapJoin(sortParams, false);
+        log.debug(orignStr);
+
+        try {
+            MessageDigest crypt = MessageDigest.getInstance("SHA-1");
+            crypt.reset();
+            crypt.update(orignStr.getBytes("UTF-8")); //对string1 字符串进行SHA-1加密处理
+            signature = byteToHex(crypt.digest());  //对加密后字符串转成16进制
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            log.error("生成js-sdk签名信息失败");
+        }
+
+        return new JssdkSignResponse(false, url, jsapi_ticket, nonce_str, timestamp, signature);
+    }
+
+    private static String byteToHex(final byte[] hash) {
+        Formatter formatter = new Formatter();
+        for (byte b : hash) {
+            formatter.format("%02x", b);
+        }
+        String result = formatter.toString();
+        formatter.close();
+        return result;
+    }
+
+    //生成时间戳字符串
+    private static String create_timestamp() {
+        return Long.toString(System.currentTimeMillis() / 1000);
     }
 
     public static void main(String[] args) {

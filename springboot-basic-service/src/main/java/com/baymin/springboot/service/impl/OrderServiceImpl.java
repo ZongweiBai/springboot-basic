@@ -1,11 +1,13 @@
 package com.baymin.springboot.service.impl;
 
+import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.constant.RequestConstant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.util.BigDecimalUtil;
 import com.baymin.springboot.service.IOrderService;
+import com.baymin.springboot.service.ISmsSendRecordService;
 import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
@@ -77,11 +79,15 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IBasicItemRepository basicItemRepository;
 
+    @Autowired
+    private ISmsSendRecordService smsSendRecordService;
+
     @Override
     public Order saveUserOrder(UserOrderVo request) {
         Invoice invoice = request.getInvoice();
         Order order = new Order();
 
+        order.setId(String.valueOf(System.currentTimeMillis()));
         order.setOrderUserId(request.getOrderUserId());
         order.setOrderTime(new Date());
         order.setCareType(request.getOrderType());
@@ -171,7 +177,16 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public List<Order> queryUserOrder(String userId, String status, String ownerType) {
-        return orderDao.queryUserOrder(userId, status, ownerType);
+        List<Order> orderList = orderDao.queryUserOrder(userId, status, ownerType);
+        if (!StringUtils.equals("user", ownerType)) {
+            for (Order order : orderList) {
+                OrderExt orderExt = orderExtRepository.findByOrderId(order.getId());
+                if (Objects.nonNull(orderExt)) {
+                    order.setOrderExt(orderExt);
+                }
+            }
+        }
+        return orderList;
     }
 
     @Override
@@ -312,6 +327,15 @@ public class OrderServiceImpl implements IOrderService {
 
         staff.setServiceStatus(ServiceStatus.ASSIGNED);
         serviceStaffRepository.save(staff);
+
+        // send sms
+        Map<String, String> templateParam = new HashMap<>();
+        templateParam.put("orderno", orderId);
+        smsSendRecordService.addSmsSendRecord(staff.getMobile(), Constant.AliyunAPI.ORDER_ASSING, templateParam);
+
+        if (staff.getAssignOrderNotification()) {
+            // TODO 发送模板消息，通知护士有订单指派
+        }
     }
 
     @Override
@@ -345,8 +369,12 @@ public class OrderServiceImpl implements IOrderService {
         staffChange.setCreateTime(new Date());
         if (Objects.isNull(staffChange.getDealStatus())) {
             staffChange.setDealStatus(CommonDealStatus.APPLY);
+
+            order.setStaffChangeStatus(CommonDealStatus.APPLY);
+            orderRepository.save(order);
         } else if (staffChange.getDealStatus() == CommonDealStatus.AGREE) {
             // 后台操作，直接成功
+            order.setStaffChangeStatus(CommonDealStatus.AGREE);
             order.setServiceStaffId(staffChange.getNewStaffId());
             orderRepository.save(order);
 

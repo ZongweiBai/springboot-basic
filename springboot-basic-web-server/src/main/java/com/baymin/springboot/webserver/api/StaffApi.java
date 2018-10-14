@@ -21,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
@@ -51,6 +49,22 @@ public class StaffApi {
     @Autowired
     private ICarePlanService carePlanService;
 
+    @ApiOperation(value = "查询护士/护工明细")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
+    @GetMapping("/detail/{staffId}/")
+    @ResponseBody
+    public ServiceStaff queryStaffDetail(@PathVariable String staffId) {
+        if (Objects.isNull(staffId)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+
+        ServiceStaff staff = staffService.findById(staffId);
+
+        return staff;
+    }
+
     @ApiOperation(value = "查询护士/护工业绩")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
@@ -76,7 +90,7 @@ public class StaffApi {
     @GetMapping("/order/{staffId}/")
     @ResponseBody
     public List<Order> queryUserOrder(@PathVariable String staffId,
-                                              @RequestParam(name = "status") String status) {
+                                      @RequestParam(name = "status") String status) {
         if (Objects.isNull(staffId) || Objects.isNull(status)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }

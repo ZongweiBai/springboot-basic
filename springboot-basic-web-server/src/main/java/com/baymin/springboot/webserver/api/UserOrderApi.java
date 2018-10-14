@@ -57,7 +57,7 @@ public class UserOrderApi {
     @ApiOperation(value = "查询用户订单")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
-            @ApiImplicitParam(name = "status", value = "INIT：代付款  PROCESSING：服务中  FINISHED：已完成")
+            @ApiImplicitParam(name = "status", value = "INIT：代付款  PROCESSING：服务中  FINISHED：已完成 UNINVOCIED:可开票订单")
     })
     @GetMapping("/{userId}/")
     @ResponseBody

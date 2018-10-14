@@ -3,6 +3,7 @@ package com.baymin.springboot.store.dao.impl;
 import com.baymin.springboot.common.constant.RequestConstant;
 import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.InvoiceStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.ServiceProductVo;
@@ -57,14 +58,19 @@ public class OrderDaoImpl implements IOrderDao {
         BooleanExpression predicate;
         if (StringUtils.equals("user", ownerType)) {
             predicate = qOrder.orderUserId.eq(userId);
-            if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
-                predicate.and(qOrder.status.eq(OrderStatus.ORDER_UN_PAY));
-            } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {
-                predicate.and(qOrder.status.eq(OrderStatus.ORDER_PAYED)
-                        .or(qOrder.status.eq(OrderStatus.ORDER_PROCESSING))
-                        .or(qOrder.status.eq(OrderStatus.ORDER_ASSIGN)));
+            if (StringUtils.equals(RequestConstant.ORDER_UNINVOCIED, status)) {
+                predicate.and(qOrder.invoiceStatus.eq(InvoiceStatus.NOT_INVOICED));
+                predicate.and(qOrder.payTime.isNotNull());
             } else {
-                predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
+                if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
+                    predicate.and(qOrder.status.eq(OrderStatus.ORDER_UN_PAY));
+                } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {
+                    predicate.and(qOrder.status.eq(OrderStatus.ORDER_PAYED)
+                            .or(qOrder.status.eq(OrderStatus.ORDER_PROCESSING))
+                            .or(qOrder.status.eq(OrderStatus.ORDER_ASSIGN)));
+                } else {
+                    predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
+                }
             }
         } else {
             predicate = qOrder.serviceStaffId.eq(userId);

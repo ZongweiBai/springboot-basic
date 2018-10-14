@@ -102,7 +102,7 @@ public class AliyunServiceImpl implements AliyunService {
     }
 
     @Override
-    public SendSmsResponse sendSms(String mobilePhone, String code, String codeTemplate, Map<String, String> templateParams) throws ClientException, JsonProcessingException {
+    public SendSmsResponse sendSms(String mobilePhone, String codeTemplate, Map<String, String> templateParams) throws ClientException, JsonProcessingException {
         //可自助调整超时时间
         System.setProperty("sun.net.client.defaultConnectTimeout", "10000");
         System.setProperty("sun.net.client.defaultReadTimeout", "10000");

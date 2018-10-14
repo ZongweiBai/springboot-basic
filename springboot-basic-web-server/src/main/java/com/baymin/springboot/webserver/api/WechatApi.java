@@ -6,20 +6,21 @@ import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.util.HttpClientUtil;
 import com.baymin.springboot.pay.wechat.WechatConfig;
+import com.baymin.springboot.pay.wechat.WechatUtil;
 import com.baymin.springboot.pay.wechat.param.Util;
 import com.baymin.springboot.pay.wechat.param.WXProtocolData;
 import com.baymin.springboot.pay.wechat.param.WXResCommonData;
 import com.baymin.springboot.pay.wechat.param.jsApi.JsApiOrderReqData;
 import com.baymin.springboot.pay.wechat.param.paynotify.PayNotifyReqData;
+import com.baymin.springboot.pay.wechat.param.pojo.JssdkSignResponse;
 import com.baymin.springboot.pay.wechat.param.pojo.TokenResponse;
 import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
-import com.baymin.springboot.service.IOrderService;
-import com.baymin.springboot.service.IPayRecordService;
-import com.baymin.springboot.service.IStaffService;
-import com.baymin.springboot.service.IUserProfileService;
+import com.baymin.springboot.service.*;
 import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.PayRequestVo;
+import com.baymin.springboot.store.payload.TicketRequestVo;
 import com.baymin.springboot.store.payload.TokenVo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.thoughtworks.xstream.XStream;
@@ -66,6 +67,9 @@ public class WechatApi {
 
     @Autowired
     private IPayRecordService payRecordService;
+
+    @Autowired
+    private IWechatService wechatService;
 
     @ApiOperation(value = "根据code获取用户openId")
     @ResponseBody
@@ -116,6 +120,25 @@ public class WechatApi {
     }
 
     /**
+     * 获取微信js-sdk签名信息
+     */
+    @ApiOperation(value = "获取微信js-sdk签名信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
+    @ResponseBody
+    @RequestMapping(value = "/jssdk/sign", method = RequestMethod.POST)
+    public JssdkSignResponse getJsapiTicket(@RequestBody TicketRequestVo requestVo, HttpServletResponse response) {
+        if (Objects.isNull(requestVo) || StringUtils.isBlank(requestVo.getUrl())) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+
+        String jsapi_ticket = wechatService.getJsapiTicket(requestVo);
+
+        return WechatUtil.sign(jsapi_ticket, requestVo.getUrl());
+    }
+
+    /**
      * 使用微信支付商品费用
      */
     @ApiOperation(value = "微信支付预下单")
@@ -135,6 +158,9 @@ public class WechatApi {
         Order order = orderService.queryOrderById(orderId);
         if (Objects.isNull(order)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
+        }
+        if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单支付方式不是微信支付，不能发起线上支付"));
         }
 
         Map<String, Object> resultMap;

@@ -17,7 +17,7 @@ public class JobConfig {
     @Bean
     public Trigger smsSendJobTrigger() {
         SimpleScheduleBuilder simpleScheduleBuilder = SimpleScheduleBuilder.simpleSchedule()
-                .withIntervalInSeconds(5).repeatForever();
+                .withIntervalInSeconds(30).repeatForever();
         return TriggerBuilder.newTrigger().forJob(smsSendJobDetail()).withIdentity("SmsSendTrigger").withSchedule(simpleScheduleBuilder).build();
     }
 

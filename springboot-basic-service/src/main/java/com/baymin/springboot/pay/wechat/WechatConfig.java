@@ -8,7 +8,7 @@ public class WechatConfig {
 
     public static String AppID = "wx2e480aa3f1f76b4a";
     public static String AppSecret = "d5c4e3ea0e63f44441d4723c15a83e15";
-    public static String mchID = "1493923352";
+    public static String mchID = "1244739002";
     public static String key = "L8R3HmFAJLY4LJNiZb14Y8Gh0qMEhp5g";
 
     public static String apiValidationToken = "18040225420166561792";
@@ -22,6 +22,8 @@ public class WechatConfig {
 
     // 微信基础access_token获取
     public static String WECHAT_BASIC_ACCESS_TOKEN_URL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";
+    // 微信jsapi_ticket获取
+    public static String WECHAT_JSAPI_TICKET_URL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi";
     // 微信发送模板消息
     public static String WECHAT_SEND_MODEL_MSG_URL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";
 
@@ -30,8 +32,11 @@ public class WechatConfig {
     // 机器IP
     public static String ip = "120.79.8.35";
     // 提供给微信回调URL
-    public static String notifyUrl = "http://www.dgyygg.cn/web/wechatNotifyController/notifyPayResult";
+    public static String notifyUrl = "http://dms.ecare-easy.com/family-care/api/wechat/pay/notify";
 
+    /**
+     * 模板消息ID
+     */
     public static String TEMPLATE_MSG_ORDER_FINISHED = "Dyvp3-Ff0cnail_CDSzk1fIc6-9lOkxsQE7exTJbwUE";
 
 }
