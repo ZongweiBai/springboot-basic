@@ -14,7 +14,6 @@ import com.baymin.springboot.pay.wechat.param.paynotify.PayNotifyReqData;
 import com.baymin.springboot.pay.wechat.param.pojo.TokenResponse;
 import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
-import com.baymin.springboot.pay.wechat.util.SignUtil;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.service.IPayRecordService;
 import com.baymin.springboot.service.IStaffService;
@@ -35,7 +34,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,26 +66,6 @@ public class WechatApi {
 
     @Autowired
     private IPayRecordService payRecordService;
-
-    @ApiOperation(value = "微信服务器验证")
-    @GetMapping(value = "wechatValidate", produces = MediaType.TEXT_PLAIN_VALUE)
-    public String wechatValidate(HttpServletRequest request, HttpServletResponse response) {
-        logger.info("请求进来了...");
-        // 微信加密签名，signature结合了开发者填写的token参数和请求中的timestamp参数、nonce参数。
-        String signature = request.getParameter("signature");
-        // 时间戳
-        String timestamp = request.getParameter("timestamp");
-        // 随机数
-        String nonce = request.getParameter("nonce");
-        // 随机字符串
-        String echostr = request.getParameter("echostr");
-        if (SignUtil.checkSignature(signature, timestamp, nonce)) {
-            logger.debug("检查签名成功");
-            return echostr;
-        }
-        logger.debug("检查签名失败");
-        return null;
-    }
 
     @ApiOperation(value = "根据code获取用户openId")
     @ResponseBody
@@ -231,7 +209,7 @@ public class WechatApi {
 
     private JsApiOrderReqData dealWechatOrderResponse(HttpServletResponse response, Map<String, Object> resultMap) {
         if (StringUtils.equals(String.valueOf(resultMap.get(WebConstant.RESULT)), String.valueOf(WebConstant.FAULT))) {
-            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), WECHAT_PAY_ERROR));
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), String.valueOf(resultMap.get(WebConstant.MESSAGE))));
         } else {
             UnifiedOrderResData resData = (UnifiedOrderResData) resultMap.get(WebConstant.INFO);
             resData.setAppid(WechatConfig.AppID);

@@ -175,4 +175,22 @@ public class StaffApi {
         orderCarePlanService.saveOrderCarePlan(orderCarePlan);
     }
 
+    @ApiOperation(value = "开启/关闭接单功能")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
+            @ApiImplicitParam(name = "operation", value = "操作类型 enable:开启接单 disable:关闭接单")
+    })
+    @PutMapping("/notification/{staffId}")
+    public void modiftNofitication(@PathVariable String staffId, @RequestParam String operation) {
+        if (StringUtils.isBlank(staffId) || StringUtils.isBlank(operation)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        if (!StringUtils.equals("enable", operation) && !StringUtils.equals("disable", operation)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+
+        Boolean enableNotification = StringUtils.equals("enable", operation);
+        staffService.changeNotification(staffId, enableNotification);
+    }
+
 }

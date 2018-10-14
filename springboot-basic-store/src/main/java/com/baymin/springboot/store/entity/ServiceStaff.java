@@ -100,4 +100,7 @@ public class ServiceStaff {
 
     @Column(name = "IDP_ID", length = 128)
     private String idpId;
+
+    @Column(name = "ASSIGN_ORDER_NOTIFICATION")
+    private Boolean assignOrderNotification;
 }

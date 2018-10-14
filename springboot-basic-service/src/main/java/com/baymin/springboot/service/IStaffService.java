@@ -24,7 +24,9 @@ public interface IStaffService {
 
     ServiceStaff findByMobile(String userAccount);
 
-    void updateIdpId(String id, String wechatId);
+    void updateIdpId(String id, String openId);
 
     ServiceStaff findByIdpId(String openid);
+
+    void changeNotification(String staffId, Boolean enableNotification);
 }

@@ -15,7 +15,7 @@ public class ModelMsgRequest {
     @JsonProperty("touser")
     private String touser;
     @JsonProperty("data")
-    private Map<String, Map<String, Map<String, String>>> data;
+    private Map<String, Map<String, String>> data;
     @JsonProperty("template_id")
     private String templateId;
     @JsonProperty("miniprogram")

@@ -59,11 +59,14 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setServiceCount(oldData.getServiceCount());
             serviceStaff.setStaffStatus(oldData.getStaffStatus());
             serviceStaff.setServiceStatus(oldData.getServiceStatus());
+            serviceStaff.setAssignOrderNotification(oldData.getAssignOrderNotification());
+            serviceStaff.setIdpId(oldData.getIdpId());
         } else {
             serviceStaff.setStaffStatus(CommonStatus.NORMAL);
             serviceStaff.setCreateTime(new Date());
             serviceStaff.setServiceStatus(ServiceStatus.FREE);
             serviceStaff.setServiceCount(0);
+            serviceStaff.setAssignOrderNotification(false);
         }
         serviceStaffRepository.save(serviceStaff);
     }
@@ -100,12 +103,17 @@ public class StaffServiceImpl implements IStaffService {
     }
 
     @Override
-    public void updateIdpId(String id, String wechatId) {
-        serviceStaffRepository.updateIdpId(id, wechatId);
+    public void updateIdpId(String id, String openId) {
+        serviceStaffRepository.updateIdpId(id, openId);
     }
 
     @Override
     public ServiceStaff findByIdpId(String openid) {
         return serviceStaffRepository.findByIdpId(openid);
+    }
+
+    @Override
+    public void changeNotification(String staffId, Boolean enableNotification) {
+        serviceStaffRepository.updateAssignOrderNotification(staffId, enableNotification);
     }
 }

@@ -35,7 +35,11 @@ public interface IServiceStaffRepository extends PagingAndSortingRepository<Serv
 
     @Modifying
     @Query("update ServiceStaff set idpId = :idpId where id = :id")
-    void updateIdpId(@Param("id") String id, @Param("idpId") String wechatId);
+    void updateIdpId(@Param("id") String id, @Param("idpId") String openId);
 
     ServiceStaff findByIdpId(String openid);
+
+    @Modifying
+    @Query("update ServiceStaff  set assignOrderNotification = :notification where id = :id")
+    void updateAssignOrderNotification(@Param("id") String staffId, @Param("notification") Boolean enableNotification);
 }

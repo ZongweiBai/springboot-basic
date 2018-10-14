@@ -29,7 +29,7 @@ public class Configure {
      */
     public static String ORDER_QUERY_API = "https://api.mch.weixin.qq.com/pay/orderquery";
 
-    public static String HttpsRequestClassName = "com.guotion.arrive.pay.wechat.param.HttpsRequest";
+    public static String HttpsRequestClassName = "com.baymin.springboot.pay.wechat.param.HttpsRequest";
 
     public static String getHttpsRequestClassName() {
         return HttpsRequestClassName;

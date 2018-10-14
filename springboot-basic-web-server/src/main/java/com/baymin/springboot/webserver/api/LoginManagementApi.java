@@ -109,10 +109,11 @@ public class LoginManagementApi {
 
         TokenVo tokenVo;
         try {
+            WechatUserInfo userInfo = userProfileService.getWechatUserInfoById(wechatId);
             ServiceStaff staff = staffService.findByMobile(userAccount);
             if (Objects.nonNull(staff)) {
-                if (StringUtils.isNotBlank(wechatId)) {
-                    staffService.updateIdpId(staff.getId(), wechatId);
+                if (Objects.nonNull(userInfo) && StringUtils.isNotBlank(userInfo.getOpenid())) {
+                    staffService.updateIdpId(staff.getId(), userInfo.getOpenid());
                 }
 
                 tokenVo = userProfileService.getTokenVo(staff.getId(), "S");
@@ -120,7 +121,6 @@ public class LoginManagementApi {
             } else {
                 userProfile = userProfileService.findByAccount(userAccount);
                 if (Objects.isNull(userProfile)) {
-                    WechatUserInfo userInfo = userProfileService.getWechatUserInfoById(wechatId);
 
                     userProfile = new UserProfile();
                     userProfile.setRegisterTime(new Date());
@@ -129,7 +129,7 @@ public class LoginManagementApi {
                     userProfile.setIdpNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
                     userProfile.setIdpId(wechatId);
                     userProfile.setAccount(userAccount);
-                    if (StringUtils.equals("1", userInfo.getSex())) {
+                    if (Objects.nonNull(userInfo) && StringUtils.equals("1", userInfo.getSex())) {
                         userProfile.setSex("M");
                     } else {
                         userProfile.setSex("F");

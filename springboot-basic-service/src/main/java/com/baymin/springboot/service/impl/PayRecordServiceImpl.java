@@ -40,7 +40,7 @@ public class PayRecordServiceImpl implements IPayRecordService {
 
         final double totalFee = order.getTotalFee();
 
-        String channelCode = "FAMILY_CARE";
+        String channelCode = "FMY_CARE";
 
         try {
             final UnifiedOrderReqData reqData = new UnifiedOrderReqData(null, "JSAPI", order.getId(), (int) (totalFee * 100), appID, mchID, key, channelCode, user.getIdpId());

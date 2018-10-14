@@ -2,8 +2,10 @@ package com.baymin.springboot.webserver.config;
 
 import com.baymin.springboot.common.logging.LoggingFilter;
 import com.baymin.springboot.webserver.interceptor.AuthorizationInterceptor;
+import com.baymin.springboot.webserver.servlet.WeChatServlet;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
@@ -30,11 +32,22 @@ public class Config implements WebMvcConfigurer {
         return registration;
     }
 
+    @Bean
+    public ServletRegistrationBean wechatServletRegistration() {
+        ServletRegistrationBean registration = new ServletRegistrationBean(new WeChatServlet());
+        registration.addUrlMappings("/wechat/notification");
+        return registration;
+    }
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(authorizationInterceptor)
                 .addPathPatterns("/api/**")
-                .excludePathPatterns("/api/login", "/api/login/smscode", "/api/token/refresh", "/api/wechat/*");
+                .excludePathPatterns("/api/login",
+                        "/api/login/smscode",
+                        "/api/token/refresh",
+                        "/wechat/*",
+                        "/api/wechat/*");
     }
 
 }

@@ -35,10 +35,6 @@ public class UnifiedOrderService extends BaseService {
 
 		try {
 			UnifiedOrderResData resData = (UnifiedOrderResData) Util.getObjectFromXML(responseStr, UnifiedOrderResData.class);
-//			UnifiedOrderResData resData = new UnifiedOrderResData();
-			resData.setReturn_code(WXResCommonData.SUCCESS_RETURN_CODE);
-			resData.setResult_code(WXResCommonData.SUCCESS_RESULT_CODE);
-			resData.setOut_trade_no("TEST-10023129329435");
 			// 判断通信标识return_code
 			if(resData == null || resData.getReturn_code() == null) {
 				log.error("统一下单API请求逻辑错误，请仔细检测传过去的每一个参数是否合法，或是看API能否被正常访问");

@@ -10,5 +10,5 @@ import lombok.Data;
 @Data
 public class ModelMsgResponse extends ErrorResponse {
     @JsonProperty("msgid")
-    private Integer msgid;
+    private String msgid;
 }
