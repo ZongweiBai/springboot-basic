@@ -162,4 +162,17 @@ public class UserOrderApi {
         return orderRefundService.queryUserOrderRefund(userId);
     }
 
+    @ApiOperation(value = "订单完成")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
+            @ApiImplicitParam(name = "orderId", value = "订单ID")
+    })
+    @PutMapping("/complete/{orderId}")
+    public void staffChangeRequest(@PathVariable String orderId) {
+        if (Objects.isNull(orderId) || StringUtils.isBlank(orderId)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        orderService.orderCompleted(orderId);
+    }
+
 }

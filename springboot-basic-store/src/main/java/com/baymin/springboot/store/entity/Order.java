@@ -115,6 +115,10 @@ public class Order implements Serializable {
     @Column(name = "STAFF_CHANGE_STATUS", length = 2)
     private CommonDealStatus staffChangeStatus;
 
+    @ApiModelProperty(notes = "是否已制定陪护计划")
+    @Column(name = "CARE_PLAN_EXISTS")
+    private Boolean carePlanExists;
+
     /**
      * 乐观锁
      */

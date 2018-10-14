@@ -44,4 +44,5 @@ public interface IOrderService {
 
     List<OrderStaffChange> queryUserStaffChange(String userId);
 
+    void orderCompleted(String orderId);
 }

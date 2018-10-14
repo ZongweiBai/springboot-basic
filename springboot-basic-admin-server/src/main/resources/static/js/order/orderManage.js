@@ -13,8 +13,6 @@ function loadTable() {
             var paramsMap = {
                 size: params.limit,  //页面大小
                 page: params.offset / params.limit,
-                sort: params.sort,
-                order: params.order,
                 careType: $("#careType").val(),
                 orderId: $("#orderId").val(),
                 status: $("#status").val(),
@@ -95,17 +93,6 @@ function loadTable() {
                         return "-";
                     }
                     return getFormatDateByLong(value, "yyyy-MM-dd hh:mm:ss");
-                }
-            },
-            {
-                field: 'payTime',
-                title: '付款时间',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == null) {
-                        return "未收款";
-                    }
-                    return "已收款";
                 }
             },
             {

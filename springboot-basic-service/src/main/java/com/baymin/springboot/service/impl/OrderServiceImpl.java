@@ -82,6 +82,12 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private ISmsSendRecordService smsSendRecordService;
 
+    @Autowired
+    private IOrderRefundRepository orderRefundRepository;
+
+    @Autowired
+    private IStaffIncomeRepository staffIncomeRepository;
+
     @Override
     public Order saveUserOrder(UserOrderVo request) {
         Invoice invoice = request.getInvoice();
@@ -112,6 +118,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         order.setStatus(OrderStatus.ORDER_UN_PAY);
         order.setEvaluated(false);
+        order.setCarePlanExists(false);
 
         OrderExt orderExt = new OrderExt();
         orderExt.setContact(request.getContact());
@@ -405,5 +412,46 @@ public class OrderServiceImpl implements IOrderService {
 
         serviceStaff.setServiceStatus(ServiceStatus.IN_SERVICE);
         serviceStaffRepository.save(serviceStaff);
+    }
+
+    @Override
+    public void orderCompleted(String orderId) {
+        Order order = orderRepository.findById(orderId).orElse(null);
+        if (Objects.isNull(order)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
+        }
+
+        // 修改订单
+        order.setCloseTime(new Date());
+        order.setStatus(OrderStatus.ORDER_FINISH);
+        orderRepository.save(order);
+
+        // 修改用户订单数
+        UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
+        if (Objects.nonNull(userProfile)) {
+            userProfile.setOrderCount(userProfile.getOrderCount() + 1);
+            userProfileRepository.save(userProfile);
+        }
+
+        if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+            ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+            if (Objects.nonNull(staff)) {
+                // 释放护士/护工的服务状态
+                staff.setServiceCount(staff.getServiceCount() + 1);
+                staff.setServiceStatus(ServiceStatus.FREE);
+                serviceStaffRepository.save(staff);
+
+                // 计算护士/护工收入并记录
+                Double refundFee = orderRefundRepository.sumRefundFeeByOrderId(orderId, CommonDealStatus.AGREE);
+                StaffIncome staffIncome = new StaffIncome();
+                staffIncome.setCreateTime(new Date());
+                double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);
+                staffIncome.setIncome(BigDecimalUtil.mul(realFee, 0.8));
+                staffIncome.setOrderId(orderId);
+                staffIncome.setOrderTotalFee(order.getTotalFee());
+                staffIncome.setStaffId(order.getServiceStaffId());
+                staffIncomeRepository.save(staffIncome);
+            }
+        }
     }
 }

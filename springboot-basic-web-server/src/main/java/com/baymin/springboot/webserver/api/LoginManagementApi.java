@@ -121,6 +121,7 @@ public class LoginManagementApi {
                     } else {
                         userProfile.setSex("F");
                     }
+                    userProfile.setImgUrl(Objects.nonNull(userInfo) ? userInfo.getHeadimgurl() : null);
                 }
                 userProfile.setLastLoginTime(new Date());
                 userProfileService.saveUserProfile(userProfile);

@@ -4,17 +4,23 @@ import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
-import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.entity.Order;
+import com.baymin.springboot.store.entity.OrderRefund;
+import com.baymin.springboot.store.entity.OrderStaffChange;
+import com.baymin.springboot.store.entity.PayRecord;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.enumconstant.PayWay;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
@@ -40,8 +46,8 @@ public class OrderController {
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "orderTime"));
-        Page<Order> queryResult = orderService.queryOrderForPage(pageable, status, orderId, careType, maxDate, minDate, payStatus, orderSource);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
+        Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, status, orderId, careType, maxDate, minDate, payStatus, orderSource);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

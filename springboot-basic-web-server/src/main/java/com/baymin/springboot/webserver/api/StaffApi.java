@@ -62,6 +62,9 @@ public class StaffApi {
 
         ServiceStaff staff = staffService.findById(staffId);
 
+        if (Objects.nonNull(staff)) {
+            staff.setIdpId(null);
+        }
         return staff;
     }
 
