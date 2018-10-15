@@ -61,6 +61,7 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setServiceStatus(oldData.getServiceStatus());
             serviceStaff.setAssignOrderNotification(oldData.getAssignOrderNotification());
             serviceStaff.setIdpId(oldData.getIdpId());
+            serviceStaff.setImgUrl(oldData.getImgUrl());
         } else {
             serviceStaff.setStaffStatus(CommonStatus.NORMAL);
             serviceStaff.setCreateTime(new Date());
@@ -115,5 +116,10 @@ public class StaffServiceImpl implements IStaffService {
     @Override
     public void changeNotification(String staffId, Boolean enableNotification) {
         serviceStaffRepository.updateAssignOrderNotification(staffId, enableNotification);
+    }
+
+    @Override
+    public void updateStaff(ServiceStaff staff) {
+        serviceStaffRepository.save(staff);
     }
 }

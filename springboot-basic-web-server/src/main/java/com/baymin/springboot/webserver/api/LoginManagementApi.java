@@ -112,17 +112,18 @@ public class LoginManagementApi {
                     userProfile = new UserProfile();
                     userProfile.setRegisterTime(new Date());
                     userProfile.setOrderCount(0);
-                    userProfile.setNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
-                    userProfile.setIdpNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
-                    userProfile.setIdpId(wechatId);
                     userProfile.setAccount(userAccount);
-                    if (Objects.nonNull(userInfo) && StringUtils.equals("1", userInfo.getSex())) {
-                        userProfile.setSex("M");
-                    } else {
-                        userProfile.setSex("F");
-                    }
-                    userProfile.setImgUrl(Objects.nonNull(userInfo) ? userInfo.getHeadimgurl() : null);
                 }
+
+                userProfile.setNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
+                userProfile.setIdpNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
+                userProfile.setIdpId(Objects.nonNull(userInfo) ? userInfo.getOpenid() : null);
+                if (Objects.nonNull(userInfo) && StringUtils.equals("1", userInfo.getSex())) {
+                    userProfile.setSex("M");
+                } else {
+                    userProfile.setSex("F");
+                }
+                userProfile.setImgUrl(Objects.nonNull(userInfo) ? userInfo.getHeadimgurl() : null);
                 userProfile.setLastLoginTime(new Date());
                 userProfileService.saveUserProfile(userProfile);
 

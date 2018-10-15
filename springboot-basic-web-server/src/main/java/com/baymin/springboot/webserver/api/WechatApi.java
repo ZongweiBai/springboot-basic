@@ -41,7 +41,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -75,7 +74,6 @@ public class WechatApi {
     @ResponseBody
     @GetMapping(value = "/openId")
     public TokenVo getUserOpenId(String code, HttpServletResponse response) {
-        Map<String, Object> resultMap = new HashMap<>();
         try {
             String urlAddr = String.format(WECHAT_WEB_ACCESS_TOKEN_URL, WechatConfig.AppID, WechatConfig.AppSecret, code);
             String accessTokenResponse = HttpClientUtil.sendGet(urlAddr, null);
@@ -100,11 +98,17 @@ public class WechatApi {
 
                     ServiceStaff staff = staffService.findByIdpId(wechatUserInfo.getOpenid());
                     if (Objects.nonNull(staff)) {
+                        staff.setIdpId(wechatUserInfo.getOpenid());
+                        staff.setImgUrl(wechatUserInfo.getHeadimgurl());
+                        staffService.updateStaff(staff);
                         return userProfileService.getTokenVo(staff.getId(), "S");
                     }
 
                     UserProfile userProfile = userProfileService.findByIdpId(wechatUserInfo.getOpenid());
                     if (Objects.nonNull(userProfile)) {
+                        userProfile.setIdpId(wechatUserInfo.getOpenid());
+                        userProfile.setImgUrl(wechatUserInfo.getHeadimgurl());
+                        userProfileService.saveUserProfile(userProfile);
                         return userProfileService.getTokenVo(userProfile.getId(), "U");
                     }
 

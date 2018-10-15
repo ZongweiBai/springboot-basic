@@ -29,4 +29,6 @@ public interface IStaffService {
     ServiceStaff findByIdpId(String openid);
 
     void changeNotification(String staffId, Boolean enableNotification);
+
+    void updateStaff(ServiceStaff staff);
 }

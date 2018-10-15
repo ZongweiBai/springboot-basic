@@ -35,6 +35,10 @@ public class ServiceStaff {
     @Column(name = "USER_NAME", length = 20, nullable = false)
     private String userName;
 
+    @ApiModelProperty(notes = "头像")
+    @Column(name = "IMG_URL", length = 1024)
+    private String imgUrl;
+
     @ApiModelProperty(notes = "性别 M:男 F:女")
     @Column(name = "SEX", length = 2)
     private String sex; // M:男 F:女
