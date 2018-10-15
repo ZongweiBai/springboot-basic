@@ -6,10 +6,15 @@ package com.baymin.springboot.pay.wechat;
  */
 public class WechatConfig {
 
-    public static String AppID = "wx2e480aa3f1f76b4a";
-    public static String AppSecret = "d5c4e3ea0e63f44441d4723c15a83e15";
+//    public static String AppID = "wx2e480aa3f1f76b4a";
+//    public static String AppSecret = "d5c4e3ea0e63f44441d4723c15a83e15";
+//    public static String mchID = "1244739002";
+//    public static String key = "L8R3HmFAJLY4LJNiZb14Y8Gh0qMEhp5g";
+
+    public static String AppID = "wx86b3751ad43f4062";
+    public static String AppSecret = "f52a587fefed285df9244f310eee8a34";
     public static String mchID = "1244739002";
-    public static String key = "L8R3HmFAJLY4LJNiZb14Y8Gh0qMEhp5g";
+    public static String key = "e10adc3949ba59abbe56e057f20f883e";
 
     public static String apiValidationToken = "18040225420166561792";
 
