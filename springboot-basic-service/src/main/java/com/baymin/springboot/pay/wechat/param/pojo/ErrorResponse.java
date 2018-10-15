@@ -8,6 +8,7 @@ import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.HashMap;
 import java.util.Map;
 
 public class ErrorResponse {
@@ -19,13 +20,21 @@ public class ErrorResponse {
 
     private Map<String, Object> extension;
 
-    @JsonAnySetter
+    @JsonAnyGetter
+    public Map<String, Object> getExtension() {
+        return this.extension;
+    }
+
     public void setExtension(Map<String, Object> extension) {
         this.extension = extension;
     }
 
-    @JsonAnyGetter
-    public Map<String, Object> getExtension() {
-        return extension;
+    @JsonAnySetter
+    public void setExtension(String name, Object value) {
+        if (this.extension == null) {
+            this.extension = new HashMap();
+        }
+
+        this.extension.put(name, value);
     }
 }
