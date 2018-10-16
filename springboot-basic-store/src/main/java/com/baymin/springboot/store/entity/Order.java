@@ -7,7 +7,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
 
@@ -38,6 +37,10 @@ public class Order implements Serializable {
     @ApiModelProperty(notes = "服务人员ID")
     @Column(name = "SERVICE_STAFF_ID", length = 32)
     private String serviceStaffId;
+
+    @ApiModelProperty(notes = "服务监督人员ID", hidden = true)
+    @Column(name = "SERVICE_ADMIN_ID", length = 32)
+    private String serviceAdminId;
 
     @ApiModelProperty(notes = "产品ID")
     @Column(name = "serviceProductId", length = 32)

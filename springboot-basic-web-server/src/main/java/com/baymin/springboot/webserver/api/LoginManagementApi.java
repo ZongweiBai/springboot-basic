@@ -89,10 +89,11 @@ public class LoginManagementApi {
         }
 
         UserProfile userProfile;
-//        String smsCodeInDB = redisService.get(userAccount + "_" + "login_sms_code");
-//        if (!StringUtils.equalsIgnoreCase(smsCode, smsCodeInDB)) {
-//            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_SMS_CODE));
-//        }
+        String smsCodeInDB = redisService.get(userAccount + "_" + "login_sms_code");
+        if (!StringUtils.equalsIgnoreCase(smsCode, smsCodeInDB)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_SMS_CODE));
+        }
+        redisService.delete(userAccount + "_" + "login_sms_code");
 
         TokenVo tokenVo;
         try {
@@ -115,15 +116,17 @@ public class LoginManagementApi {
                     userProfile.setAccount(userAccount);
                 }
 
-                userProfile.setNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
-                userProfile.setIdpNickName(Objects.nonNull(userInfo) ? userInfo.getNickname() : null);
-                userProfile.setIdpId(Objects.nonNull(userInfo) ? userInfo.getOpenid() : null);
-                if (Objects.nonNull(userInfo) && StringUtils.equals("1", userInfo.getSex())) {
-                    userProfile.setSex("M");
-                } else {
-                    userProfile.setSex("F");
+                if (Objects.nonNull(userInfo)) {
+                    userProfile.setNickName(userInfo.getNickname());
+                    userProfile.setIdpNickName(userInfo.getNickname());
+                    userProfile.setIdpId(userInfo.getOpenid());
+                    if (StringUtils.equals("1", userInfo.getSex())) {
+                        userProfile.setSex("M");
+                    } else {
+                        userProfile.setSex("F");
+                    }
+                    userProfile.setImgUrl(userInfo.getHeadimgurl());
                 }
-                userProfile.setImgUrl(Objects.nonNull(userInfo) ? userInfo.getHeadimgurl() : null);
                 userProfile.setLastLoginTime(new Date());
                 userProfileService.saveUserProfile(userProfile);
 

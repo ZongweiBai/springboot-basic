@@ -27,4 +27,5 @@ public interface IRedisService {
 
     String rpop(String key);
 
+    void delete(String key);
 }

@@ -41,7 +41,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.baymin.springboot.SpringBootApp</mainClass>
+                    <mainClass>com.baymin.springboot.SpringBootTimerApp</mainClass>
                     <layout>ZIP</layout>
                 </configuration>
                 <executions>

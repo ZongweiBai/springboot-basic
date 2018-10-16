@@ -25,12 +25,39 @@
             </div>
             <div class="col-2"></div>
         </div>
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>用户姓名：</label>
+            <div class="formControls col-8">
+                <input type="text" class="input-text" value="" placeholder="" id="adminName" name="adminName"
+                       datatype="*2-16" nullmsg="用户姓名不能为空">
+            </div>
+            <div class="col-2"></div>
+        </div>
         
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>邮箱地址：</label>
+            <div class="formControls col-8">
+                <input type="text" class="input-text" value="" placeholder="" id="email" name="email"
+                       datatype="e" nullmsg="邮箱地址不能为空" errormsg="邮箱地址格式错误">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
         <div class="row cl">
             <label class="form-label col-2"><span class="c-red">*</span>手机号码：</label>
             <div class="formControls col-8">
                 <input type="text" class="input-text" value="" placeholder="" id="mobile" name="mobile" maxlength="11"
                        datatype="m" nullmsg="手机号码不能为空" errormsg="手机号码格式错误">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>所属部门：</label>
+            <div class="formControls col-8">
+                <select class="select input-text" name="orgId" id="orgId" datatype="*" size="1" nullmsg="所属部门不能为空">
+                    <option value="">请选择所属部门</option>
+                </select>
             </div>
             <div class="col-2"></div>
         </div>
@@ -43,6 +70,13 @@
                 </select>
             </div>
             <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>备注：</label>
+            <div class="formControls col-8">
+                <textarea type="text" style="height: 100px;" class="input-text" value="" placeholder="" id="adminNote" name="adminNote" datatype="*"></textarea>
+            </div>
         </div>
 
         <input type="hidden" id="userId" name="id" value=""/>

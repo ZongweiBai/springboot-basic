@@ -305,13 +305,15 @@ public class OrderServiceImpl implements IOrderService {
         Order order = orderRepository.findById(orderId).orElse(null);
         detailMap.put("order", order);
 
-        UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
-        detailMap.put("user", userProfile);
+        if (Objects.nonNull(order)) {
+            UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
+            detailMap.put("user", userProfile);
+        }
 
         OrderExt orderExt = orderExtRepository.findByOrderId(orderId);
         detailMap.put("orderExt", orderExt);
 
-        if (StringUtils.isNotBlank(order.getInvoiceId())) {
+        if (Objects.nonNull(order) && StringUtils.isNotBlank(order.getInvoiceId())) {
             Invoice invoice = invoiceRepository.findById(order.getInvoiceId()).orElse(null);
             if (Objects.nonNull(invoice)) {
                 detailMap.put("invoice", invoice);

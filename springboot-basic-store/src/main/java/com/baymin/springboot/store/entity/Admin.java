@@ -26,6 +26,9 @@ public class Admin implements Serializable {
      */
     @Column(name = "ACCOUNT", length = 32)
     private String account;
+
+    @Column(name = "ADMIN_NAME", length = 32)
+    private String adminName;
     /**
      * 密码
      */
@@ -69,5 +72,11 @@ public class Admin implements Serializable {
 
     @Column(name = "ADMIN_NOTE", length = 256)
     private String adminNote;
+
+    @Transient
+    private SysRole sysRole;
+
+    @Transient
+    private Organization organization;
 
 }

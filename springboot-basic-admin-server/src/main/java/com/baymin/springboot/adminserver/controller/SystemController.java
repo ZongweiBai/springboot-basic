@@ -3,8 +3,8 @@ package com.baymin.springboot.adminserver.controller;
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.ImageUtil;
 import com.baymin.springboot.service.IAdminService;
-import com.baymin.springboot.service.ISysManageService;
 import com.baymin.springboot.service.IOrganizationService;
+import com.baymin.springboot.service.ISysManageService;
 import com.baymin.springboot.store.entity.*;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -48,6 +48,9 @@ public class SystemController {
             if (StringUtils.equals(admin.getPassword(), passWord)) {
                 request.getSession().setAttribute(WebConstant.ADMIN_USER_SESSION, admin);
                 reMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+
+                admin.setLastLoginTime(new Date());
+                adminService.updateAdmin(admin);
             } else {
                 reMap.put(WebConstant.RESULT, WebConstant.FAULT);
                 reMap.put(WebConstant.MESSAGE, "用户名或密码错误");
@@ -233,7 +236,7 @@ public class SystemController {
      * @param: base64    图片的base64编码
      * @param: size        图片的长度
      * @param: request
-     * @return: Map<String , Object>
+     * @return: Map<String   ,   Object>
      */
     @ResponseBody
     @RequestMapping(value = "uploadWap", method = RequestMethod.POST)
@@ -452,8 +455,21 @@ public class SystemController {
         Map<String, Object> resultMap = new HashMap<>();
         Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
         try {
-            admin.setGrade(2);
-            adminService.saveAdmin(admin, sysUser);
+            if (StringUtils.isBlank(admin.getId())) {
+                admin.setGrade(2);
+                adminService.saveAdmin(admin, sysUser);
+            } else {
+                Admin oldData = adminService.getAdminById(admin.getId());
+                if (Objects.isNull(oldData)) {
+                    resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+                    resultMap.put(WebConstant.MESSAGE, "没有该用户");
+                }
+                admin.setCreateTime(oldData.getCreateTime());
+                admin.setGrade(oldData.getGrade());
+                admin.setLastLoginTime(oldData.getLastLoginTime());
+                admin.setPassword(oldData.getPassword());
+                adminService.updateAdmin(admin);
+            }
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

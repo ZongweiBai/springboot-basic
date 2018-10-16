@@ -29,6 +29,7 @@ public class SysRole implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
+    // A:系统管理员 B:普通管理员 C:督导
     @Column(name = "ROLE_TYPE", length = 4)
     private String roleType;
 

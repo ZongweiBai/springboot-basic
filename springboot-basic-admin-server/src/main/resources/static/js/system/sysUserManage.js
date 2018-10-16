@@ -12,7 +12,7 @@ function loadTable() {
         queryParams: function (params) {
             var paramsMap = {
                 size: params.limit,  //页面大小
-                page: params.offset/params.limit,
+                page: params.offset / params.limit,
                 sort: params.sort,
                 order: params.order
             };
@@ -30,31 +30,42 @@ function loadTable() {
                 align: 'center'
             },
             {
-                field: 'grade',
-                title: '用户等级',
+                field: 'adminName',
+                title: '姓名',
+                align: 'center'
+            },
+            {
+                field: 'email',
+                title: '邮箱地址',
+                align: 'center'
+            },
+            {
+                field: 'orgId',
+                title: '所属机构',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    //1、超级管理员 2、普通管理员
-                    var gradeName = "";
-                    switch (value) {
-                        case 1:
-                            gradeName = "超级管理员";
-                            break;
-                        case 2:
-                            gradeName = "普通管理员";
-                            break;
+                    var organization = row.organization;
+                    if (organization != null) {
+                        return organization.orgName;
                     }
-                    return gradeName;
+                    return "-";
+                }
+            },
+            {
+                field: 'roleId',
+                title: '所属角色',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    var sysRole = row.sysRole;
+                    if (sysRole != null) {
+                        return sysRole.roleName;
+                    }
+                    return "-";
                 }
             },
             {
                 field: 'mobile',
                 title: '手机号码',
-                align: 'center'
-            },
-            {
-                field: 'roleName',
-                title: '所属角色',
                 align: 'center'
             },
             {
@@ -66,9 +77,15 @@ function loadTable() {
                 }
             },
             {
-                field: 'creator',
-                title: '创建人',
-                align: 'center'
+                field: 'lastLoginTime',
+                title: '最后登录时间',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value != "") {
+                        return getFormatDateByLong(value, "yyyy-MM-dd hh:mm");
+                    }
+                    return "-";
+                }
             },
             {
                 field: 'id',
@@ -78,7 +95,7 @@ function loadTable() {
                     if (adminGrade == 1) {
                         if (row.grade == 2) {
                             var content = '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editRole(\'' + value + '\')" title="编辑"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
-                            var content = '<a href="javascript:void(0);" style="text-decoration:none;" onclick="resetPsd(\'' + row.account + '\')" title="重置密码"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
+                            content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="resetPsd(\'' + row.account + '\')" title="重置密码"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
                             return content;
                         } else {
                             return "";
@@ -109,7 +126,7 @@ function editRole(userId) {
 }
 
 
-function resetPsd(account){
+function resetPsd(account) {
     $.ajax({
         type: "POST",
         url: contextPath + "/system/resetPsd",
@@ -126,7 +143,7 @@ function resetPsd(account){
             tip.hideLoading();
             if (data.result == "200") {
                 var info = data.info;
-                tip.alertSuccess("重置成功，新密码为："+info, function () {
+                tip.alertSuccess("重置成功，新密码为：" + info, function () {
                     tip.closeIframe();
                 });
             } else {

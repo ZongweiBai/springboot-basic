@@ -2,6 +2,8 @@ $(function () {
 
     loadRoleData();
 
+    loadOrgData();
+
     initForm();
 
     if (!isEmpty(userId)) {
@@ -50,6 +52,7 @@ function loadRoleData() {
     $.ajax({
         type: "GET",
         url: contextPath + "/system/getAllRoleList",
+        async: true,
         data: {},
         beforeSend: function () {
             tip.showLoading();
@@ -66,6 +69,39 @@ function loadRoleData() {
                 $("#roleId").html(content);
             } else {
                 tip.alertError("加载角色信息失败");
+            }
+        },
+        error: function () {
+            tip.hideLoading();
+            tip.alertError("加载角色信息失败");
+        }
+    });
+}
+
+/**
+ * 加载部门信息
+ * @param roleId
+ */
+function loadOrgData() {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "/system/getAllOrg",
+        data: {},
+        beforeSend: function () {
+            tip.showLoading();
+        },
+        success: function (data) {
+            tip.hideLoading();
+            if (data.result == 200) {
+                var rows = data.rows;
+                var content = '<option value="">请选择所属部门</option>';
+                for (var i = 0; i < rows.length; i++) {
+                    var roleObj = rows[i];
+                    content += '<option value="' + roleObj.id + '">' + roleObj.orgName + '</option>';
+                }
+                $("#orgId").html(content);
+            } else {
+                tip.alertError("加载部门信息失败");
             }
         },
         error: function () {
@@ -96,6 +132,10 @@ function loadUserData(userId) {
                     $("#account").val(info.account);
                     $("#mobile").val(info.mobile);
                     $("#roleId").val(info.roleId);
+                    $("#orgId").val(info.orgId);
+                    $("#adminName").val(info.adminName);
+                    $("#email").val(info.email);
+                    $("#adminNote").text(info.adminNote);
                 }
             } else {
                 tip.alertError("加载角色信息失败");

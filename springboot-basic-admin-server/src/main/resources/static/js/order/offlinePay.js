@@ -55,6 +55,7 @@ function loadData(orderId) {
                 var order = info.order;
                 var orderExt = info.orderExt;
                 $("#id").val(order.id);
+                $("#orderFee").val(order.totalFee);
                 $("#orderId").html(order.id);
                 $("#orderTime").html(order.orderTime);
                 $("#orderFeeDisplay").html(order.totalFee);

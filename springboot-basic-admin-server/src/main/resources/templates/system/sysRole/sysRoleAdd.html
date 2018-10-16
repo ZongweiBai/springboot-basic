@@ -14,6 +14,20 @@
 <body>
 <div class="pd-20">
     <form action="" method="post" class="form form-horizontal" id="form-menu-add">
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>角色类型：</label>
+            <div class="formControls col-8">
+                <select class="select input-text" name="roleType" id="roleType" datatype="*" size="1"
+                        nullmsg="角色类型不能为空">
+                    <option value="">选择角色类型</option>
+                    <option value="B">普通管理员</option>
+                    <option value="C">督导</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
         <div class="row cl">
             <label class="form-label col-2"><span class="c-red">*</span>角色名称：</label>
             <div class="formControls col-8">

@@ -53,6 +53,11 @@ public class RedisServiceImpl implements IRedisService {
     }
 
     @Override
+    public void delete(String key) {
+        stringRedisTemplate.delete(key);
+    }
+
+    @Override
     public <T> boolean setList(String key, List<T> list) throws JsonProcessingException {
         String value = objectMapper.writeValueAsString(list);
         return set(key, value);

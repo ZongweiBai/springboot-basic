@@ -46,6 +46,14 @@
     <logger name="org.hibernate" additivity="false" level="info">
     </logger>
 
+    <logger name="org.hibernate.SQL" additivity="false" level="DEBUG">
+        <appender-ref ref="EVENT-LOG"/>
+    </logger>
+
+    <logger name="org.hibernate.type.descriptor.sql" additivity="false" level="DEBUG">
+        <appender-ref ref="EVENT-LOG"/>
+    </logger>
+
     <!-- print the start log in nohup.out-->
     <logger name="com.baymin.springboot.SpringBootApp" additivity="false" level="INFO">
         <appender-ref ref="STDOUT"/>

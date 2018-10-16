@@ -1,8 +1,13 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IAdminService;
+import com.baymin.springboot.service.IOrganizationService;
 import com.baymin.springboot.store.entity.Admin;
+import com.baymin.springboot.store.entity.Organization;
+import com.baymin.springboot.store.entity.SysRole;
 import com.baymin.springboot.store.repository.IAdminRepository;
+import com.baymin.springboot.store.repository.ISysRoleRepository;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,6 +15,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -17,6 +26,12 @@ public class AdminServiceImpl implements IAdminService {
 
     @Autowired
     private IAdminRepository adminRepository;
+
+    @Autowired
+    private IOrganizationService organizationService;
+
+    @Autowired
+    private ISysRoleRepository sysRoleRepository;
 
     @Override
     public Admin getAdminByAccount(String account) {
@@ -30,7 +45,20 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public Page<Admin> queryAdminForPage(Pageable pageable) {
-        return adminRepository.findAll(pageable);
+        Page<Admin> adminPage = adminRepository.findAll(pageable);
+        if (CollectionUtils.isNotEmpty(adminPage.getContent())) {
+            List<Organization> organizationList = organizationService.getAllOrg();
+            List<SysRole> roleList = sysRoleRepository.findAllRoles();
+
+            Map<String, Organization> organizationMap = organizationList.stream().collect(Collectors.toMap(Organization::getId, Function.identity()));
+            Map<String, SysRole> roleMap = roleList.stream().collect(Collectors.toMap(SysRole::getId, Function.identity()));
+
+            for (Admin admin : adminPage.getContent()) {
+                admin.setSysRole(roleMap.get(admin.getRoleId()));
+                admin.setOrganization(organizationMap.get(admin.getOrgId()));
+            }
+        }
+        return adminPage;
     }
 
     @Override

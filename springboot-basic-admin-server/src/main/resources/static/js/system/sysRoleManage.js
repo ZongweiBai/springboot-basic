@@ -40,8 +40,10 @@ function loadTable() {
                 formatter: function (value, row, index) {
                     if (value == 'A') {
                         return "系统管理员";
-                    } else {
+                    } else if (value =='B') {
                         return "普通管理员";
+                    } else if (value =='C') {
+                        return "督导";
                     }
                 }
             },
