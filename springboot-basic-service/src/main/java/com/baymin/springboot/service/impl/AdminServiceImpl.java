@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -71,5 +72,17 @@ public class AdminServiceImpl implements IAdminService {
         admin.setCreateTime(new Date());
         admin.setPassword("888888");
         adminRepository.save(admin);
+    }
+
+    @Override
+    public List<Admin> queryAdminByRoleType(String roleType) {
+        List<SysRole> roleList = sysRoleRepository.findByRoleType(roleType);
+        if (CollectionUtils.isEmpty(roleList)) {
+            return new ArrayList<>();
+        }
+
+        List<String> roleIds = roleList.stream().map(SysRole::getId).collect(Collectors.toList());
+
+        return adminRepository.findByRoleIds(roleIds);
     }
 }

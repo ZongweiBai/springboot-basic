@@ -15,4 +15,5 @@ public interface ISysRoleRepository extends PagingAndSortingRepository<SysRole, 
     @Query("select vo from SysRole vo")
     List<SysRole> findAllRoles();
 
+    List<SysRole> findByRoleType(String roleType);
 }

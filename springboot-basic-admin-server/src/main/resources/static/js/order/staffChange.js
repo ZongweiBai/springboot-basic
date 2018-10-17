@@ -54,10 +54,18 @@ function loadData(orderId) {
                 var info = data.info;
                 var order = info.order;
                 var staff = info.staff;
-                $("#id").val(order.id);
-                $("#orderId").html(order.id);
-                $("#currentStaffId").html(staff.userName);
-                $("#oldStaffId").val(staff.id);
+                var admin = info.admin;
+                if (order != null) {
+                    $("#id").val(order.id);
+                    $("#orderId").html(order.id);
+                }
+                if (staff != null) {
+                    $("#currentStaffId").html(staff.userName);
+                    $("#oldStaffId").val(staff.id);
+                }
+                if (admin != null) {
+                    $("#currentAdminId").html(admin.adminName);
+                }
             } else {
                 tip.alertError("加载信息失败");
             }

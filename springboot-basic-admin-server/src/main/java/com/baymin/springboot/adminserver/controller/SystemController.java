@@ -479,6 +479,17 @@ public class SystemController {
         return resultMap;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "queryAdminByRoleType", method = RequestMethod.GET)
+    public Map<String, Object> queryAdminByRoleType(String roleType, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        List<Admin> adminList = adminService.queryAdminByRoleType(roleType);
+        resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        resultMap.put(WebConstant.ROWS, adminList);
+        return resultMap;
+    }
+
     /**************************************
      * 系统字典管理
      ******************************************************/

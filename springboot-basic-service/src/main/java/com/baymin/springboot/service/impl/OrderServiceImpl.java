@@ -88,6 +88,9 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IStaffIncomeRepository staffIncomeRepository;
 
+    @Autowired
+    private IAdminRepository adminRepository;
+
     @Override
     public Order saveUserOrder(UserOrderVo request) {
         Invoice invoice = request.getInvoice();
@@ -227,6 +230,11 @@ public class OrderServiceImpl implements IOrderService {
             detailMap.put("staff", staff);
         }
 
+        if (Objects.nonNull(order) && StringUtils.isNotBlank(order.getServiceAdminId())) {
+            Admin admin = adminRepository.findById(order.getServiceAdminId()).orElse(null);
+            detailMap.put("admin", admin);
+        }
+
         return detailMap;
     }
 
@@ -324,7 +332,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public void assignOrderStaff(String orderId, String staffId) {
+    public void assignOrderStaff(String orderId, String staffId, String adminId) {
         Order order = orderRepository.findById(orderId).orElse(null);
         ServiceStaff staff = serviceStaffRepository.findById(staffId).orElse(null);
         if (Objects.isNull(order) || Objects.isNull(staff)) {
@@ -332,6 +340,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         order.setServiceStaffId(staffId);
         order.setStatus(OrderStatus.ORDER_ASSIGN);
+        order.setServiceAdminId(adminId);
         orderRepository.save(order);
 
         staff.setServiceStatus(ServiceStatus.ASSIGNED);

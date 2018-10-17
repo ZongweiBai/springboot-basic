@@ -1,6 +1,8 @@
 $(function () {
     initForm();
 
+    loadAdminData();
+
     loadData(orderId);
 });
 
@@ -13,7 +15,8 @@ function initForm() {
                 url: contextPath + "/order/assignOrderStaff",
                 data: {
                     "orderId": $("#orderId").html(),
-                    "staffId": $("#serviceStaffId").val()
+                    "staffId": $("#serviceStaffId").val(),
+                    "adminId": $("#serviceAdminId").val()
                 },
                 beforeSend: function () {
                     tip.showLoading();
@@ -59,12 +62,12 @@ function loadData(orderId) {
                 $("#id").val(order.id);
                 $("#orderId").html(order.id);
             } else {
-                tip.alertError("加载信息失败");
+                tip.alertError("加载订单信息失败");
             }
         },
         error: function () {
             tip.hideLoading();
-            tip.alertError("加载信息失败");
+            tip.alertError("加载订单信息失败");
         }
     });
 }
@@ -93,15 +96,44 @@ function selectStaff(staffType) {
                         $("#serviceStaffId").append('<option value="' + staff.id + '">' + staff.userName + '-' + staff.mobile + '</option>');
                     }
                 } else {
-                    tip.alertError("加载信息失败");
+                    tip.alertError("加载护工信息失败");
                 }
             },
             error: function () {
                 tip.hideLoading();
-                tip.alertError("加载信息失败");
+                tip.alertError("加载护工信息失败");
             }
         });
     }
+}
+
+function loadAdminData() {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "system/queryAdminByRoleType",
+        data: {
+            "roleType": "C"
+        },
+        beforeSend: function () {
+            tip.showLoading();
+        },
+        success: function (data) {
+            tip.hideLoading();
+            if (data.result == 200) {
+                var rows = data.rows;
+                for (var i = 0; i < rows.length; i++) {
+                    var admin = rows[i];
+                    $("#serviceAdminId").append('<option value="' + admin.id + '">' + admin.adminName + '</option>');
+                }
+            } else {
+                tip.alertError("加载督导信息失败");
+            }
+        },
+        error: function () {
+            tip.hideLoading();
+            tip.alertError("加载督导信息失败");
+        }
+    });
 }
 
 

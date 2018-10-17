@@ -4,13 +4,12 @@ import com.baymin.springboot.store.entity.OrderCarePlan;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class OrderCarePlanVo {
 
     private String id;
-
-    private String planId;
 
     private String orderId;
 
@@ -22,7 +21,7 @@ public class OrderCarePlanVo {
 
     private String caseName;
 
-    private String planDesc;
+    private List<SubCarePlanVo> subCarePlans;
 
     private Date createTime;
 
@@ -32,11 +31,10 @@ public class OrderCarePlanVo {
 
     public OrderCarePlanVo(OrderCarePlan carePlan) {
         this.id = carePlan.getId();
-        this.planId = carePlan.getPlanId();
         this.orderId = carePlan.getOrderId();
         this.typeId = carePlan.getTypeId();
         this.caseId = carePlan.getCaseId();
-        this.planDesc = carePlan.getPlanDesc();
+        this.subCarePlans = carePlan.getSubCarePlans();
         this.createTime = carePlan.getCreateTime();
         this.staffId = carePlan.getStaffId();
     }
