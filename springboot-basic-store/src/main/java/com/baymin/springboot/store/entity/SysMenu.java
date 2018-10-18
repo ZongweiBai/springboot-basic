@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "T_SYS_MENU")
-public class SysMenu implements Serializable {
+public class SysMenu implements Serializable, Comparable<SysMenu> {
 
     private static final long serialVersionUID = 4192075544699716172L;
 
@@ -53,10 +53,18 @@ public class SysMenu implements Serializable {
     @Column(name = "MENU_ICON", length = 20)
     private String menuIcon;    // 菜单图标
 
+    @Column(name = "PRIORITY")
+    private Integer priority;   // 排序
+
     @Transient
     private List<SysMenu> subMenuList;
 
     @Transient
     private Boolean checked = false;
+
+    @Override
+    public int compareTo(SysMenu ob) {
+        return priority.compareTo(ob.getPriority());
+    }
 
 }

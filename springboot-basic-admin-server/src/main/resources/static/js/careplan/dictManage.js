@@ -39,7 +39,7 @@ function loadTable() {
                 title: '创建时间',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    return getFormatDateByLong(value, "yyyy-MM-dd hh:mm");
+                    return getFormatDateByLong(value, "yyyy-MM-dd hh:mm:ss");
                 }
             },
             {
@@ -61,7 +61,7 @@ function loadTable() {
  * 新增菜单
  */
 function addDict() {
-    tip.openIframe("新增", contextPath + 'index/careplan/dict/add?dictName=' + dictName, 350, 250);
+    tip.openIframe("新增", contextPath + 'index/careplan/dict/add?dictName=' + dictName, 350, 250, refreshData);
 }
 
 /**
@@ -69,7 +69,7 @@ function addDict() {
  * @param menuId
  */
 function editDict(dictId) {
-    tip.openIframe("编辑", contextPath + 'index/careplan/dict/add?dictId=' + dictId + '&dictName=' + dictName, 350, 250);
+    tip.openIframe("编辑", contextPath + 'index/careplan/dict/add?dictId=' + dictId + '&dictName=' + dictName, 350, 250, refreshData);
 }
 
 function deleteDict(dictId) {

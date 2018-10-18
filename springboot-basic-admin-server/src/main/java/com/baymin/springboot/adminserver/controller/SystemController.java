@@ -10,6 +10,7 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -130,6 +131,10 @@ public class SystemController {
                 }
             }
         }
+        if (CollectionUtils.isNotEmpty(mainSysMenuList)) {
+            List<SysMenu> realMenuList = mainSysMenuList.stream().sorted(Comparator.comparing(SysMenu::getPriority)).collect(Collectors.toList());
+            return realMenuList;
+        }
         return mainSysMenuList;
     }
 
@@ -236,7 +241,7 @@ public class SystemController {
      * @param: base64    图片的base64编码
      * @param: size        图片的长度
      * @param: request
-     * @return: Map<String   ,   Object>
+     * @return: Map<String       ,       Object>
      */
     @ResponseBody
     @RequestMapping(value = "uploadWap", method = RequestMethod.POST)
@@ -498,8 +503,8 @@ public class SystemController {
     public Map<String, Object> queryDictForPage(String dictName, String codeValue, Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<SysDict> queryResult = sysManageService.getDictForPage(dictName, codeValue, pageable);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
+        Page<SysDict> queryResult = sysManageService.getDictForPage(dictName, codeValue, pageRequest);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

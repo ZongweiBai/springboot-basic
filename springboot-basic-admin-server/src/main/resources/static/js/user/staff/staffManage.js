@@ -92,7 +92,7 @@ function viewDetailInfo(staffId) {
  * 编辑
  */
 function editStaffInfo(staffId) {
-    tip.openIframe("编辑", contextPath + 'index/staff/add?staffId=' + staffId);
+    tip.openIframe("编辑", contextPath + 'index/staff/add?staffId=' + staffId, null, null, refreshData);
 }
 
 /**
@@ -121,7 +121,7 @@ function deleteStaffInfo(staffId) {
  * 新增
  */
 function addDriver() {
-    tip.openIframe("新增", contextPath + 'index/staff/add');
+    tip.openIframe("新增", contextPath + 'index/staff/add', null, null, refreshData);
 }
 
 var refreshData = function () {

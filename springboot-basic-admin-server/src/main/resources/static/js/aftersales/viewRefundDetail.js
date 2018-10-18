@@ -91,7 +91,7 @@ function loadDataInfo(refundId) {
                 var refund = info.refund;
 
                 $("#refundId").html(refund.id);
-                var dealStatusTd= "";
+                var dealStatusTd = "";
                 if (refund.dealStatus == "APPLY") {
                     dealStatusTd = "已申请";
                 } else if (refund.dealStatus == "AGREE") {
@@ -105,7 +105,11 @@ function loadDataInfo(refundId) {
                 $("#orderId").html(order.id);
                 $("#totalFee").html(order.totalFee);
                 $("#refundTime").html(refund.refundTime);
-                $("#refundFeeTd").html(refund.refundFee);
+                if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
+                    $("#refundFeeTd").html(refund.refundFee + " 天");
+                } else {
+                    $("#refundFeeTd").html(refund.refundFee + " 次");
+                }
                 $("#refundDesc").html(refund.refundDesc);
                 $("#serviceDuration").html(orderExt.serviceDuration);
 

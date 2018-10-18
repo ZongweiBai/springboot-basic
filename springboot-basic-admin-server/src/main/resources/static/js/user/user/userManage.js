@@ -100,7 +100,7 @@ function viewUserInfo(userId) {
  * @param userId
  */
 function editUserInfo(userId) {
-    tip.openIframe("编辑用户", contextPath + 'index/userprofile/add?userId=' + userId, refreshData);
+    tip.openIframe("编辑用户", contextPath + 'index/userprofile/add?userId=' + userId, null, null, refreshData);
 }
 
 /**
@@ -108,7 +108,7 @@ function editUserInfo(userId) {
  * @param userId
  */
 function addUser() {
-    tip.openIframe("新增用户", contextPath + 'index/userprofile/add', refreshData);
+    tip.openIframe("新增用户", contextPath + 'index/userprofile/add', null, null, refreshData);
 }
 
 var refreshData = function () {

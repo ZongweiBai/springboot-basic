@@ -10,6 +10,7 @@ import com.baymin.springboot.store.enumconstant.CommonStatus;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -41,8 +42,8 @@ public class CarePlanController {
                                                     Pageable pageable, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<CarePlan> queryResult = carePlanService.queryCarePlanForPage(typeId, caseId, planDesc, pageable);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
+        Page<CarePlan> queryResult = carePlanService.queryCarePlanForPage(typeId, caseId, planDesc, pageRequest);
         List<CarePlan> carePlanList = queryResult.getContent();
         if (CollectionUtils.isNotEmpty(carePlanList)) {
             List<SysDict> typeList = sysManageService.getSysDictByDictName("CARE_PLAN_TYPE");

@@ -66,7 +66,7 @@ function loadTable() {
                 title: '创建时间',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    return getFormatDateByLong(value, "yyyy-MM-dd hh:mm");
+                    return getFormatDateByLong(value, "yyyy-MM-dd hh:mm:ss");
                 }
             },
             {
@@ -88,7 +88,7 @@ function loadTable() {
  * 新增菜单
  */
 function addDict() {
-    tip.openIframe("新增", contextPath + 'index/careplan/add');
+    tip.openIframe("新增", contextPath + 'index/careplan/add', null, null, refreshData);
 }
 
 /**
@@ -96,7 +96,7 @@ function addDict() {
  * @param menuId
  */
 function editDict(planId) {
-    tip.openIframe("编辑", contextPath + 'index/careplan/add?planId=' + planId);
+    tip.openIframe("编辑", contextPath + 'index/careplan/add?planId=' + planId, null, null, refreshData);
 }
 
 function deleteDict(planId) {

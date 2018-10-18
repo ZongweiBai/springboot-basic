@@ -59,7 +59,15 @@ function loadTable() {
             {
                 field: 'refundDuration',
                 title: '退款数量',
-                align: 'center'
+                align: 'center',
+                formatter: function (value, row, index) {
+                    var careType = row.careType;
+                    if (careType == 'HOSPITAL_CARE' || careType == 'HOME_CARE') {
+                        return value + " 天";
+                    } else {
+                        return value + " 次";
+                    }
+                }
             },
             {
                 field: 'refundFee',
