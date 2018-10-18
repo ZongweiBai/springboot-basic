@@ -100,8 +100,14 @@
         <div class="row cl">
             <label class="form-label col-3"><span class="c-red">*</span>籍贯：</label>
             <div class="formControls col-5">
-                <input type="text" class="input-text" value="" placeholder="" id="birthplace" name="birthplace"
-                       datatype="*" nullmsg="籍贯不能为空">
+                <select class="select input-text" style="width: 48%" id="birthplacePid" name="birthplacePid"
+                        datatype="*" onchange="selectProvince(this.value, '1')">
+                    <option value="">选择省份</option>
+                </select>
+                <select class="select input-text" style="width: 48%" id="birthplaceCid" name="birthplaceCid"
+                        datatype="*" >
+                    <option value="">选择城市</option>
+                </select>
             </div>
             <div class="col-2"></div>
         </div>
@@ -126,8 +132,14 @@
         <div class="row cl">
             <label class="form-label col-3"><span class="c-red">*</span>护理城市：</label>
             <div class="formControls col-5">
-                <input type="text" class="input-text" value="" placeholder="" id="localtion" name="localtion"
-                       datatype="*" nullmsg="护理城市不能为空">
+                <select class="select input-text" style="width: 48%" id="locationPid" name="locationPid"
+                        datatype="*" onchange="selectProvince(this.value, '2')">
+                    <option value="">选择省份</option>
+                </select>
+                <select class="select input-text" style="width: 48%;" id="locationCid" name="locationCid"
+                        datatype="*" >
+                    <option value="">选择城市</option>
+                </select>
             </div>
             <div class="col-2"></div>
         </div>

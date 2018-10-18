@@ -3,6 +3,7 @@ package com.baymin.springboot.adminserver.controller;
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.ImageUtil;
 import com.baymin.springboot.service.IAdminService;
+import com.baymin.springboot.service.IAreaService;
 import com.baymin.springboot.service.IOrganizationService;
 import com.baymin.springboot.service.ISysManageService;
 import com.baymin.springboot.store.entity.*;
@@ -38,6 +39,9 @@ public class SystemController {
 
     @Autowired
     private IOrganizationService organizationService;
+
+    @Autowired
+    private IAreaService areaService;
 
     @PostMapping("/login")
     @ResponseBody
@@ -241,7 +245,7 @@ public class SystemController {
      * @param: base64    图片的base64编码
      * @param: size        图片的长度
      * @param: request
-     * @return: Map<String       ,       Object>
+     * @return: Map<String               ,               Object>
      */
     @ResponseBody
     @RequestMapping(value = "uploadWap", method = RequestMethod.POST)
@@ -625,6 +629,16 @@ public class SystemController {
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "保存失败");
         }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getAreaByParentId", method = RequestMethod.GET)
+    public Map<String, Object> getAreaByParentId(String parentId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        List<Area> area = areaService.getAreaByParentId(parentId);
+        resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        resultMap.put(WebConstant.ROWS, area);
         return resultMap;
     }
 

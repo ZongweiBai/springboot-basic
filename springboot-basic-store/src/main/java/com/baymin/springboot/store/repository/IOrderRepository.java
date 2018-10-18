@@ -28,6 +28,6 @@ public interface IOrderRepository extends PagingAndSortingRepository<Order, Stri
 
     List<Order> findByServiceStaffIdOrderByOrderTimeDesc(String staffId);
 
-    @Query("select sum(o.totalFee) from Order o where id = :orderId")
+    @Query("select sum(o.totalFee) from Order o where id in :orderId")
     Double sumTotalFeeByIds(@Param("orderId") List<String> orderIdList);
 }

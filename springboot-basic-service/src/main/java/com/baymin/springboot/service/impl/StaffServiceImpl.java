@@ -1,12 +1,14 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IStaffService;
+import com.baymin.springboot.store.entity.Area;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.QServiceStaff;
 import com.baymin.springboot.store.entity.ServiceStaff;
 import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
+import com.baymin.springboot.store.repository.IAreaRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IServiceStaffRepository;
 import com.querydsl.core.BooleanBuilder;
@@ -17,10 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,6 +32,9 @@ public class StaffServiceImpl implements IStaffService {
 
     @Autowired
     private IOrderRepository orderRepository;
+
+    @Autowired
+    private IAreaRepository areaRepository;
 
     @Override
     public Page<ServiceStaff> queryStaffForPage(Pageable pageable, String userName, String account, String sex) {
@@ -69,6 +73,28 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setServiceCount(0);
             serviceStaff.setAssignOrderNotification(false);
         }
+
+        List<Area> areaList = areaRepository.findByParentId("0");
+        Map<String, String> provinceMap = areaList.stream().collect(Collectors.toMap(Area::getAreaId, Area::getAreaName));
+        if (StringUtils.isNotBlank(serviceStaff.getBirthplacePid())) {
+            StringBuilder birthplace = new StringBuilder(provinceMap.get(serviceStaff.getBirthplacePid()));
+            if (StringUtils.isNotBlank(serviceStaff.getBirthplaceCid())) {
+                List<Area> subAreaList = areaRepository.findByParentId(serviceStaff.getBirthplacePid());
+                Map<String, String> cityMap = subAreaList.stream().collect(Collectors.toMap(Area::getAreaId, Area::getAreaName));
+                birthplace.append(" ").append(cityMap.get(serviceStaff.getBirthplaceCid()));
+            }
+            serviceStaff.setBirthplace(birthplace.toString());
+        }
+        if (StringUtils.isNotBlank(serviceStaff.getLocationPid())) {
+            StringBuilder location = new StringBuilder(provinceMap.get(serviceStaff.getLocationPid()));
+            if (StringUtils.isNotBlank(serviceStaff.getBirthplaceCid())) {
+                List<Area> subAreaList = areaRepository.findByParentId(serviceStaff.getLocationPid());
+                Map<String, String> cityMap = subAreaList.stream().collect(Collectors.toMap(Area::getAreaId, Area::getAreaName));
+                location.append(" ").append(cityMap.get(serviceStaff.getLocationCid()));
+            }
+            serviceStaff.setLocaltion(location.toString());
+        }
+
         serviceStaffRepository.save(serviceStaff);
     }
 

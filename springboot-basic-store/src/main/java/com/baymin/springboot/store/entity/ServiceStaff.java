@@ -63,9 +63,13 @@ public class ServiceStaff {
     @Column(name = "NATIONALITY", length = 10)
     private String nationality;
 
-    @ApiModelProperty(notes = "籍贯")
-    @Column(name = "BIRTHPLACE", length = 128)
-    private String birthplace;
+    @ApiModelProperty(notes = "籍贯省份ID")
+    @Column(name = "BIRTHPLACE_PID", length = 128)
+    private String birthplacePid;
+
+    @ApiModelProperty(notes = "籍贯城市ID")
+    @Column(name = "BIRTHPLACE_CID", length = 128)
+    private String birthplaceCid;
 
     @ApiModelProperty(notes = "方言")
     @Column(name = "LOCALISM", length = 32)
@@ -75,9 +79,13 @@ public class ServiceStaff {
     @Column(name = "MANDARIN", length = 2)
     private String mandarin; // A\B\C
 
-    @ApiModelProperty(notes = "护理城市")
-    @Column(name = "LOCATION", length = 128)
-    private String localtion;
+    @ApiModelProperty(notes = "护理省份ID")
+    @Column(name = "LOCATION_PID", length = 128)
+    private String locationPid;
+
+    @ApiModelProperty(notes = "护理城市ID")
+    @Column(name = "LOCATION_CID", length = 128)
+    private String locationCid;
 
     @ApiModelProperty(notes = "优先服务类型")
     @Column(name = "FIRST_SKILL", length = 20)
@@ -137,4 +145,12 @@ public class ServiceStaff {
     @ApiModelProperty(notes = "是否开启接单")
     @Column(name = "ASSIGN_ORDER_NOTIFICATION")
     private Boolean assignOrderNotification;
+
+    @ApiModelProperty(notes = "籍贯")
+    @Column(name = "BIRTHPLACE", length = 128)
+    private String birthplace;
+
+    @ApiModelProperty(notes = "护理城市")
+    @Column(name = "LOCATION", length = 128)
+    private String localtion;
 }

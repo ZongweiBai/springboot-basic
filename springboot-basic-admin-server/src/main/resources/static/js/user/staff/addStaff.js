@@ -1,5 +1,7 @@
 $(function () {
 
+    loadProvince("0");
+
     initForm();
 
     if (!isEmpty(staffId)) {
@@ -144,6 +146,12 @@ function removeFileImg(obj, fileName, type) {
     $(obj).parent("span").remove();
 }
 
+
+var birthplacePid;
+var birthplaceCid;
+var locationPid;
+var locationCid;
+
 function loadStaffById(staffId) {
     $.ajax({
         type: "GET",
@@ -162,7 +170,7 @@ function loadStaffById(staffId) {
                 $("#serviceStaffType").val(info.serviceStaffType);
                 $("#userName").val(info.userName);
                 $("#mobile").val(info.mobile);
-                $("input[name='sex'][value='"+info.sex+"']").attr("checked",true);
+                $("input[name='sex'][value='" + info.sex + "']").attr("checked", true);
                 $("#experience").val(info.experience);
                 $("#height").val(info.height);
                 $("#weight").val(info.weight);
@@ -177,11 +185,110 @@ function loadStaffById(staffId) {
                 $("#healthCardId").val(info.healthCardId);
                 $("#pensionCardId").val(info.pensionCardId);
                 $("#healthCareCardId").val(info.healthCareCardId);
+
+                if (!isEmpty(info.birthplaceCid)) {
+                    birthplaceCid = info.birthplaceCid;
+                }
+                if (!isEmpty(info.locationCid)) {
+                    locationCid = info.locationCid;
+                }
+                if (!isEmpty(info.birthplacePid)) {
+                    birthplacePid = info.birthplacePid;
+                    $("#birthplacePid").val(birthplacePid);
+                    selectProvince(birthplacePid, '1');
+                }
+                if (!isEmpty(info.locationPid)) {
+                    locationPid = info.locationPid;
+                    $("#locationPid").val(locationPid);
+                    selectProvince(locationPid, '2');
+                }
             }
         },
         error: function () {
             tip.hideLoading();
             tip.alertError("加载信息失败");
+        }
+    });
+}
+
+function loadProvince(parentId) {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "/system/getAreaByParentId",
+        data: {
+            "parentId": parentId
+        },
+        beforeSend: function () {
+            tip.showLoading();
+        },
+        success: function (data) {
+            tip.hideLoading();
+            if (data.result == 200) {
+                var rows = data.rows;
+                var content = '<option value="">选择省份</option>';
+                for (var i = 0; i < rows.length; i++) {
+                    var areaObj = rows[i];
+                    content += '<option value="' + areaObj.areaId + '">' + areaObj.areaName + '</option>';
+                }
+                $("#birthplacePid").html(content);
+                $("#locationPid").html(content);
+
+                if (!isEmpty(birthplacePid)) {
+                    $("#birthplacePid").val(birthplacePid);
+                    selectProvince(birthplacePid, '1');
+                }
+                if (!isEmpty(locationPid)) {
+                    $("#locationPid").val(locationPid);
+                    selectProvince(locationPid, '2');
+                }
+            } else {
+                tip.alertError("加载省份信息失败");
+            }
+        },
+        error: function () {
+            tip.hideLoading();
+            tip.alertError("加载省份信息失败");
+        }
+    });
+}
+
+function selectProvince(parentId, type) {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "/system/getAreaByParentId",
+        data: {
+            "parentId": parentId
+        },
+        beforeSend: function () {
+            tip.showLoading();
+        },
+        success: function (data) {
+            tip.hideLoading();
+            if (data.result == 200) {
+                var rows = data.rows;
+                var content = '<option value="">选择城市</option>';
+                for (var i = 0; i < rows.length; i++) {
+                    var areaObj = rows[i];
+                    content += '<option value="' + areaObj.areaId + '">' + areaObj.areaName + '</option>';
+                }
+                if (type == '1') {
+                    $("#birthplaceCid").html(content);
+                    if (!isEmpty(birthplaceCid)) {
+                        $("#birthplaceCid").val(birthplaceCid);
+                    }
+                } else {
+                    $("#locationCid").html(content);
+                    if (!isEmpty(locationCid)) {
+                        $("#locationCid").val(locationCid);
+                    }
+                }
+            } else {
+                tip.alertError("加载城市信息失败");
+            }
+        },
+        error: function () {
+            tip.hideLoading();
+            tip.alertError("加载城市信息失败");
         }
     });
 }
