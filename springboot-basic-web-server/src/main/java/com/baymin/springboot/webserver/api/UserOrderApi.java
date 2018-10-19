@@ -66,8 +66,7 @@ public class UserOrderApi {
         if (Objects.isNull(userId) || Objects.isNull(status)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
-        List<Order> orderList = orderService.queryUserOrder(userId, status, "user");
-        return orderList;
+        return orderService.queryUserOrder(userId, status, "user");
     }
 
     @ApiOperation(value = "查询用户订单详情")

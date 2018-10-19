@@ -36,7 +36,7 @@ public class OrderStaffChange {
     @Column(name = "USER_ID", length = 32)
     private String userId;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(notes = "申请处理状态")
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "DEAL_STATUS", length = 2)
     private CommonDealStatus dealStatus;
@@ -53,7 +53,7 @@ public class OrderStaffChange {
     @Column(name = "NEW_STAFF_ID", length = 32)
     private String newStaffId;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(notes = "申请状态")
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
 

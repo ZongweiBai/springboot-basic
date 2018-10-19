@@ -102,7 +102,7 @@ function loadDataInfo(refundId) {
                     dealStatusTd = "已完成";
                 }
                 $("#dealStatusTd").html(dealStatusTd);
-                $("#orderId").html(order.id);
+                $("#orderIdTd").html(order.id);
                 $("#totalFee").html(order.totalFee);
                 $("#refundTime").html(refund.refundTime);
                 if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
@@ -116,6 +116,7 @@ function loadDataInfo(refundId) {
                 $("#id").val(refund.id);
                 $("#refundDuration").val(refund.refundDuration);
                 $("#refundFee").val(refund.refundFee);
+                $("#orderId").val(order.id);
 
                 if (refund.dealStatus != "APPLY") {
                     $("#dealDiv").hide();

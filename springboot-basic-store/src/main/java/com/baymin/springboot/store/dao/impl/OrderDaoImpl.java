@@ -9,7 +9,7 @@ import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.ServiceProductVo;
 import com.baymin.springboot.store.repository.IOrderExtRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -55,9 +55,9 @@ public class OrderDaoImpl implements IOrderDao {
     public List<Order> queryUserOrder(String userId, String status, String ownerType) {
         QOrder qOrder = QOrder.order;
 
-        BooleanExpression predicate;
+        BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.equals("user", ownerType)) {
-            predicate = qOrder.orderUserId.eq(userId);
+            predicate.and(qOrder.orderUserId.eq(userId));
             if (StringUtils.equals(RequestConstant.ORDER_UNINVOCIED, status)) {
                 predicate.and(qOrder.invoiceStatus.eq(InvoiceStatus.NOT_INVOICED));
                 predicate.and(qOrder.payTime.isNotNull());
@@ -65,15 +65,13 @@ public class OrderDaoImpl implements IOrderDao {
                 if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
                     predicate.and(qOrder.status.eq(OrderStatus.ORDER_UN_PAY));
                 } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {
-                    predicate.and(qOrder.status.eq(OrderStatus.ORDER_PAYED)
-                            .or(qOrder.status.eq(OrderStatus.ORDER_PROCESSING))
-                            .or(qOrder.status.eq(OrderStatus.ORDER_ASSIGN)));
+                    predicate.and(qOrder.status.in(OrderStatus.ORDER_PAYED, OrderStatus.ORDER_PROCESSING, OrderStatus.ORDER_ASSIGN));
                 } else {
                     predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
                 }
             }
         } else {
-            predicate = qOrder.serviceStaffId.eq(userId);
+            predicate.and(qOrder.serviceStaffId.eq(userId));
             if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
                 predicate.and(qOrder.status.eq(OrderStatus.ORDER_ASSIGN));
             } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {

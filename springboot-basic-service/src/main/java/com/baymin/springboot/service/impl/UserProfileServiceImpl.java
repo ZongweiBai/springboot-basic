@@ -12,8 +12,7 @@ import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IUserProfileRepository;
 import com.baymin.springboot.store.repository.IWechatUserInfoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import org.apache.catalina.User;
+import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -85,7 +84,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
     public Page<UserProfile> queryUserForPage(Pageable pageable, String nickName, String account, String sex, Date maxDate, Date minDate) {
         QUserProfile qUserProfile = QUserProfile.userProfile;
 
-        BooleanExpression predicate = qUserProfile.id.isNotNull();
+        BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.isNotBlank(nickName)) {
             predicate.and(qUserProfile.nickName.eq(nickName));
         }

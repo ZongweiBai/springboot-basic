@@ -55,7 +55,9 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
     public OrderRefund saveOrderRefund(OrderRefund orderRefund) {
         Order order = orderRepository.findById(orderRefund.getOrderId()).orElse(null);
         if (Objects.isNull(order) ||
-                (order.getStatus() != OrderStatus.ORDER_PROCESSING && order.getStatus() != OrderStatus.ORDER_ASSIGN)) {
+                (order.getStatus() != OrderStatus.ORDER_PROCESSING
+                        && order.getStatus() != OrderStatus.ORDER_ASSIGN
+                        && order.getStatus() != OrderStatus.ORDER_PAYED)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
 

@@ -12,7 +12,7 @@ import com.baymin.springboot.store.repository.IBasicItemRepository;
 import com.baymin.springboot.store.repository.IServiceProductRepository;
 import com.baymin.springboot.store.repository.IServiceTypeRepository;
 import com.google.common.collect.Lists;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,11 +43,11 @@ public class BasicItemServiceImpl implements IBasicItemService {
     public Page<BasicItem> queryItemForPage(Pageable pageable, BasicItemType itemType) {
         QBasicItem qBasicItem = QBasicItem.basicItem;
 
-        BooleanExpression booleanExpression = null;
+        BooleanBuilder predicate = new BooleanBuilder();
         if (Objects.nonNull(itemType)) {
-            booleanExpression = qBasicItem.basicItemType.eq(itemType);
+            predicate.and(qBasicItem.basicItemType.eq(itemType));
         }
-        return basicItemRepository.findAll(booleanExpression, pageable);
+        return basicItemRepository.findAll(predicate, pageable);
     }
 
     @Override

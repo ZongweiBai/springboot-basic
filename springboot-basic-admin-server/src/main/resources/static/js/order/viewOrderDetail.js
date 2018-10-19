@@ -53,8 +53,10 @@ function loadDataInfo(orderId) {
                 }
                 $("#orderId").html(order.id);
                 $("#careType").html(careType);
-                $("#userName").html(userProfile.nickName);
-                $("#userMobile").html(userProfile.account);
+                if (!isEmpty(userProfile)) {
+                    $("#userName").html(userProfile.nickName);
+                    $("#userMobile").html(userProfile.account);
+                }
                 $("#orderTime").html(order.orderTime);
                 $("#totalFee").html(order.totalFee);
                 $("#status").html(status);

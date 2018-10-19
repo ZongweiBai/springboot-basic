@@ -76,7 +76,7 @@ public class ServiceStaff {
     private String localism;
 
     @ApiModelProperty(notes = "普通话")
-    @Column(name = "MANDARIN", length = 2)
+    @Column(name = "MANDARIN", length = 20)
     private String mandarin; // A\B\C
 
     @ApiModelProperty(notes = "护理省份ID")

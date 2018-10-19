@@ -69,7 +69,7 @@ public class OrderRefund {
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
     private Date dealTime;
 
-    @ApiModelProperty(hidden = true)
+    @ApiModelProperty(notes = "申请处理状态")
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "DEAL_STATUS", length = 2)
     private CommonDealStatus dealStatus;
