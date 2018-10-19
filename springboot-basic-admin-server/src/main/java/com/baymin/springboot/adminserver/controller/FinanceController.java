@@ -9,6 +9,7 @@ import com.baymin.springboot.store.entity.OrderRefund;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -39,8 +40,9 @@ public class FinanceController {
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<OrderRefund> queryResult = afterSalesService.queryRefundPageForFinance(pageable, dealStatus, maxDate, minDate, orderId);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                new Sort(Sort.Direction.DESC, "createTime"));
+        Page<OrderRefund> queryResult = afterSalesService.queryRefundPageForFinance(pageRequest, dealStatus, maxDate, minDate, orderId);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -70,8 +72,9 @@ public class FinanceController {
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<Invoice> queryResult = afterSalesService.queryInvoicePage(pageable, dealStatus, maxDate, minDate, orderId);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                new Sort(Sort.Direction.DESC, "createTime"));
+        Page<Invoice> queryResult = afterSalesService.queryInvoicePage(pageRequest, dealStatus, maxDate, minDate, orderId);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

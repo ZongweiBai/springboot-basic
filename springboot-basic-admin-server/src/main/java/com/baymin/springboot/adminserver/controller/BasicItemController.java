@@ -10,6 +10,7 @@ import com.baymin.springboot.store.enumconstant.BasicItemType;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -37,8 +38,9 @@ public class BasicItemController {
     public Map<String, Object> queryItemForPage(Pageable pageable, BasicItemType basicItemType, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<BasicItem> queryResult = basicItemService.queryItemForPage(pageable, basicItemType);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                new Sort(Sort.Direction.DESC, "createTime"));
+        Page<BasicItem> queryResult = basicItemService.queryItemForPage(pageRequest, basicItemType);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -98,8 +100,9 @@ public class BasicItemController {
     public Map<String, Object> queryServiceTypeForPage(Pageable pageable, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<ServiceType> queryResult = basicItemService.queryServiceTypeForPage(pageable);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                new Sort(Sort.Direction.DESC, "createTime"));
+        Page<ServiceType> queryResult = basicItemService.queryServiceTypeForPage(pageRequest);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -158,8 +161,9 @@ public class BasicItemController {
     public Map<String, Object> queryServiceProductForPage(Pageable pageable, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<ServiceProduct> queryResult = basicItemService.queryServiceProductForPage(pageable);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                new Sort(Sort.Direction.DESC, "createTime"));
+        Page<ServiceProduct> queryResult = basicItemService.queryServiceProductForPage(pageRequest);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

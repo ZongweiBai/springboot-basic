@@ -9,8 +9,10 @@ import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.OrderRefund;
 import com.baymin.springboot.store.entity.OrderStaffChange;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Controller
 @RequestMapping("afterSales")
 public class AfterSalesController {
@@ -45,8 +48,8 @@ public class AfterSalesController {
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<OrderStaffChange> queryResult = afterSalesService.queryOrderChangePage(pageable, dealStatus, maxDate, minDate, orderId);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
+        Page<OrderStaffChange> queryResult = afterSalesService.queryOrderChangePage(pageRequest, dealStatus, maxDate, minDate, orderId);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -60,7 +63,7 @@ public class AfterSalesController {
             afterSalesService.dealStaffChange(change);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("处理换人申请出错", e);
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
         }
@@ -75,8 +78,8 @@ public class AfterSalesController {
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<OrderRefund> queryResult = afterSalesService.queryRefundPage(pageable, dealStatus, maxDate, minDate, orderId);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "createTime"));
+        Page<OrderRefund> queryResult = afterSalesService.queryRefundPage(pageRequest, dealStatus, maxDate, minDate, orderId);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -91,7 +94,7 @@ public class AfterSalesController {
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, detailMap);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("获取退款申请出错", e);
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
         }
@@ -103,10 +106,10 @@ public class AfterSalesController {
     public Map<String, Object> dealOrderRefund(OrderRefund refund, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            orderRefundService.saveOrderRefund(refund);
+            orderRefundService.dealOrderRefund(refund);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("处理退款申请出错", e);
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
         }
@@ -122,7 +125,7 @@ public class AfterSalesController {
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, detailMap);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("查看换人申请出错", e);
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
         }
@@ -137,8 +140,9 @@ public class AfterSalesController {
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageable, grade, orderId, maxDate, minDate);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                new Sort(Sort.Direction.DESC, "createTime"));
+        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageRequest, grade, orderId, maxDate, minDate);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

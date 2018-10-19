@@ -157,6 +157,7 @@ public class OrderController {
             orderRefund.setDealStatus(CommonDealStatus.AGREE);
             orderRefund.setDealDesc("后台退款");
             orderRefund.setRefundDesc("后台退款");
+            orderRefund.setApplyType("SYS");
             orderRefundService.saveOrderRefund(orderRefund);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {

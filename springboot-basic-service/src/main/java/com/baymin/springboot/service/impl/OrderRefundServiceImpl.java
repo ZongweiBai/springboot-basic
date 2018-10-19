@@ -61,56 +61,71 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
 
-        if (StringUtils.isNotBlank(orderRefund.getId())) {
-            OrderRefund oldData = orderRefundRepository.findById(orderRefund.getId()).orElse(null);
-            if (Objects.isNull(oldData)) {
-                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), RECORD_NOT_EXIST));
-            }
-            oldData.setDealDesc(orderRefund.getDealDesc());
-            oldData.setDealStatus(orderRefund.getDealStatus());
-            if (orderRefund.getDealStatus() == CommonDealStatus.AGREE) {
-                oldData.setRefundDuration(orderRefund.getRefundDuration());
-                oldData.setRefundFee(orderRefund.getRefundFee());
-            }
-            orderRefundRepository.save(oldData);
+        // save orderRefundRequest
+        orderRefund.setCareType(order.getCareType());
+        orderRefund.setDealTime(new Date());
+        orderRefund.setCreateTime(new Date());
+        if (orderRefund.getRefundFee() == null) {
+            double refundFee = calcRefundFee(orderRefund, order);
+            orderRefund.setRefundFee(refundFee);
+        }
+        if (StringUtils.equals("SYS", orderRefund.getApplyType())) {
+            orderRefund.setDealStatus(CommonDealStatus.AGREE);
+        } else {
+            orderRefund.setDealStatus(CommonDealStatus.APPLY);
+        }
+        orderRefund.setUserId(order.getOrderUserId());
+        orderRefundRepository.save(orderRefund);
 
+        order.setRefundStatus(orderRefund.getDealStatus());
+        orderRepository.save(order);
+
+        return orderRefund;
+    }
+
+    @Override
+    public void dealOrderRefund(OrderRefund orderRefund) {
+        OrderRefund oldData = orderRefundRepository.findById(orderRefund.getId()).orElse(null);
+        if (Objects.isNull(oldData)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), RECORD_NOT_EXIST));
+        }
+        oldData.setDealDesc(orderRefund.getDealDesc());
+        oldData.setDealStatus(orderRefund.getDealStatus());
+        if (orderRefund.getDealStatus() == CommonDealStatus.AGREE ||
+                orderRefund.getDealStatus() == CommonDealStatus.COMPLETED) {
+            oldData.setRefundDuration(orderRefund.getRefundDuration());
+            oldData.setRefundFee(orderRefund.getRefundFee());
+            orderRefund.setDealTime(new Date());
+        }
+        if (orderRefund.getDealStatus() == CommonDealStatus.COMPLETED) {
+            oldData.setRefundTime(new Date());
+        }
+        orderRefundRepository.save(oldData);
+
+        Order order = orderRepository.findById(oldData.getOrderId()).orElse(null);
+        if (Objects.nonNull(order)) {
             order.setRefundStatus(orderRefund.getDealStatus());
             orderRepository.save(order);
-
-            UserProfile userProfile = userProfileRepository.findById(orderRefund.getUserId()).orElse(null);
-            if (Objects.nonNull(userProfile)) {
-                // 退款申请审核通过
-                if (orderRefund.getDealStatus() == CommonDealStatus.AGREE) {
-                    Map<String, String> templateParam = new HashMap<>();
-                    templateParam.put("orderno", oldData.getOrderId());
-                    templateParam.put("name", userProfile.getNickName());
-                    smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_REFUND_AGREE, templateParam);
-                }
-                // 退款申请审核不通过
-                else if (orderRefund.getDealStatus() == CommonDealStatus.REJECT) {
-                    Map<String, String> templateParam = new HashMap<>();
-                    templateParam.put("name", userProfile.getNickName());
-                    templateParam.put("orderNo", oldData.getOrderId());
-                    templateParam.put("reason", orderRefund.getDealDesc());
-                    smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_REFUND_REJECT, templateParam);
-                }
-            }
-
-        } else {
-            orderRefund.setCareType(order.getCareType());
-            orderRefund.setRefundTime(new Date());
-            orderRefund.setDealTime(new Date());
-            orderRefund.setCreateTime(new Date());
-            if (orderRefund.getRefundFee() == null) {
-                double refundFee = calcRefundFee(orderRefund, order);
-                orderRefund.setRefundFee(refundFee);
-            }
-            orderRefundRepository.save(orderRefund);
-
-            order.setRefundStatus(CommonDealStatus.APPLY);
-            orderRepository.save(order);
         }
-        return orderRefund;
+
+        UserProfile userProfile = userProfileRepository.findById(oldData.getUserId()).orElse(null);
+        if (Objects.nonNull(userProfile)) {
+            // 退款申请审核通过
+            if (orderRefund.getDealStatus() == CommonDealStatus.AGREE) {
+                Map<String, String> templateParam = new HashMap<>();
+                templateParam.put("orderno", oldData.getOrderId());
+                templateParam.put("name", userProfile.getNickName());
+                smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_REFUND_AGREE, templateParam);
+            }
+            // 退款申请审核不通过
+            else if (orderRefund.getDealStatus() == CommonDealStatus.REJECT) {
+                Map<String, String> templateParam = new HashMap<>();
+                templateParam.put("name", userProfile.getNickName());
+                templateParam.put("orderNo", oldData.getOrderId());
+                templateParam.put("reason", orderRefund.getDealDesc());
+                smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_REFUND_REJECT, templateParam);
+            }
+        }
     }
 
     private double calcRefundFee(OrderRefund orderRefund, Order order) {

@@ -30,6 +30,11 @@ function loadTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
+                field: 'id',
+                title: '订单号',
+                align: 'center'
+            },
+            {
                 field: 'careType',
                 title: '产品名称',
                 align: 'center',
@@ -115,6 +120,23 @@ function loadTable() {
                 }
             },
             {
+                field: 'refundStatus',
+                title: '退款状态',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == "APPLY") {
+                        return "退款待处理";
+                    } else if (value == "AGREE") {
+                        return "退款审核通过";
+                    } else if (value == "COMPLETED") {
+                        return "退款已拨款";
+                    } else if (value == "REJECT") {
+                        return "退款申请驳回";
+                    }
+                    return "";
+                }
+            },
+            {
                 field: 'id',
                 title: '操作',
                 align: 'center',
@@ -137,7 +159,9 @@ function loadTable() {
                             content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
                         }
                     }
-                    if (status != "ORDER_UN_PAY" && status != "ORDER_FINISH") {
+
+                    var refundStatus = row.refundStatus;
+                    if (status != "ORDER_UN_PAY" && status != "ORDER_FINISH" && isEmpty(refundStatus)) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderRefund(\'' + value + '\')" title="退款申请"><i style="font-size: 18px;" class="Hui-iconfont">&#xe628;</i></a>&nbsp;';
                     }
                     if (status == "ORDER_ASSIGN" || status == "ORDER_PROCESSING") {

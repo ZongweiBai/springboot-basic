@@ -104,7 +104,7 @@ function loadDataInfo(refundId) {
                 $("#dealStatusTd").html(dealStatusTd);
                 $("#orderIdTd").html(order.id);
                 $("#totalFee").html(order.totalFee);
-                $("#refundTime").html(refund.refundTime);
+                $("#createTime").html(refund.createTime);
                 if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
                     $("#refundFeeTd").html(refund.refundFee + " 天");
                 } else {

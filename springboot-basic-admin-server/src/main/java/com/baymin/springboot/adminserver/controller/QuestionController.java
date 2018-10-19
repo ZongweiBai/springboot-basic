@@ -7,6 +7,7 @@ import com.baymin.springboot.store.entity.Question;
 import com.baymin.springboot.store.enumconstant.CareType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -32,8 +33,9 @@ public class QuestionController {
                                                     Pageable pageable, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
 
-        pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<Question> queryResult = questionService.queryQuestionForPage(careType, questionType, pageable);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
+                new Sort(Sort.Direction.DESC, "createTime"));
+        Page<Question> queryResult = questionService.queryQuestionForPage(careType, questionType, pageRequest);
 
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());

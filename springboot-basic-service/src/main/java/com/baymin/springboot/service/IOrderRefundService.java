@@ -11,4 +11,6 @@ public interface IOrderRefundService {
     void updateOrderRefund(String refundId, CommonDealStatus dealStatus, String dealDesc);
 
     List<OrderRefund> queryUserOrderRefund(String userId);
+
+    void dealOrderRefund(OrderRefund refund);
 }

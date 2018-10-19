@@ -41,6 +41,10 @@ public class OrderRefund {
     @Column(name = "CARE_TYPE")
     private CareType careType;
 
+    @ApiModelProperty(notes = "退款类型  SYS:内部申请  USER:用户申请")
+    @Column(name = "APPLY_TYPE", length = 10)
+    private String applyType;
+
     @ApiModelProperty(notes = "退款金额")
     @Column(name = "REFUND_FEE", precision = 10, scale = 0)
     private Double refundFee;
