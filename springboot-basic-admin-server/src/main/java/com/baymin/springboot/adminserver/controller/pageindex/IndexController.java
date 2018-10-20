@@ -251,6 +251,11 @@ public class IndexController {
         return "order/viewOrderDetail";
     }
 
+    @GetMapping("/index/order/add")
+    public String orderAdd(String orderId, Model model) {
+        return "order/orderAdd";
+    }
+
     /**
      * ===========================售后管理入口================================
      */

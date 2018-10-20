@@ -213,4 +213,22 @@ public class BasicItemController {
         return resultMap;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "getBasicProductByType", method = RequestMethod.GET)
+    public Map<String, Object> getBasicProductByType(String careType, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            List<ServiceType> serviceType = basicItemService.getServiceTypeByType(careType);
+            List<String> typeIds = serviceType.stream().map(ServiceType::getId).collect(Collectors.toList());
+            List<ServiceProduct> productList = basicItemService.getServiceProductByTypeIds(typeIds);
+            resultMap.put(WebConstant.ROWS, productList);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
 }

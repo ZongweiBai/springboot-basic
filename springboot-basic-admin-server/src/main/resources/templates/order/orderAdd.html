@@ -1,0 +1,229 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <script type="text/javascript" src="lib/My97DatePicker/WdatePicker.js" th:src="@{/lib/My97DatePicker/WdatePicker.js}"></script>
+    <head th:include="common/base">
+    <title>自主下单</title>
+</head>
+<body>
+<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 订单管理  <span class="c-gray en">&gt;</span> 代下单 </nav>
+<div class="pd-20">
+    <form action="" method="post" class="form form-horizontal" id="form-menu-add">
+
+        <div class="row cl">
+            <label class="form-label col-1"><span class="c-red"></span><strong>用户基本信息</strong></label>
+            <input type="hidden" id="orderUserId" name="orderUserId">
+        </div>
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>服务分类：</label>
+            <div class="formControls col-3">
+                医院陪护
+            </div>
+            <label class="form-label col-2"><span class="c-red">*</span>选择下单用户：</label>
+            <div class="formControls col-3">
+                <select class="select input-text" datatype="*" id="userSelect" size="1"
+                        nullmsg="用户不能为空" onchange="selectUser(this.value);">
+                    <option value="">选择用户</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>用户姓名：</label>
+            <div class="formControls col-3">
+                <span id="userName"></span>
+            </div>
+
+            <label class="form-label col-2"><span class="c-red">*</span>用户手机号码：</label>
+            <div class="formControls col-3">
+                <span id="userMobile"></span>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>服务地址：</label>
+            <div class="formControls col-3">
+                <input type="text" class="input-text" value="" placeholder="" id="serviceAddress"
+                       name="serviceAddress"
+                       datatype="*2-64" nullmsg="服务地址不能为空" errormsg="服务地址格式错误">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>联系人：</label>
+            <div class="formControls col-3">
+                <input type="text" class="input-text" value="" placeholder="" id="contact"
+                       name="contact"
+                       datatype="*2-20" nullmsg="联系人不能为空" errormsg="联系人格式错误">
+            </div>
+
+            <label class="form-label col-2"><span class="c-red">*</span>联系人号码：</label>
+            <div class="formControls col-3">
+                <input type="text" class="input-text" value="" placeholder="" id="contactMobile"
+                       name="contactMobile"
+                       datatype="m" nullmsg="联系人号码不能为空" errormsg="联系人号码格式错误">
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-1"><span class="c-red"></span><strong>用户基本情况</strong></label>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>慢性病症：</label>
+            <div class="formControls col-8" id="DISEASES_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>自理情况：</label>
+            <div class="formControls col-8" id="SELF_CARE_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>进食方式：</label>
+            <div class="formControls col-8" id="EATING_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>是否需要导管护理：</label>
+            <div class="formControls col-8" id="CATHETER_CARE_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>是否需要协助用药：</label>
+            <div class="formControls col-8" id="ASSIST_WITH_MEDICATION_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-1"><span class="c-red"></span><strong>选择产品及服务项</strong></label>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>选择产品：</label>
+            <div class="formControls col-3">
+                <select id="productId" name="productId" class="select input-text" datatype="*"
+                        onchange="selectProduct(this.value);" nullmsg="产品不能为空">
+                    <option value="">选择产品</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl" id="BASIC_div_panel" style="display: none">
+            <label class="form-label col-2"><span class="c-red">*</span>基础护理：</label>
+            <div class="formControls col-8" id="BASIC_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl" id="MEDICAL_div_panel" style="display: none">
+            <label class="form-label col-2"><span class="c-red">*</span>医疗照护：</label>
+            <div class="formControls col-8" id="MEDICAL_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl" id="LIFE_div_panel" style="display: none">
+            <label class="form-label col-2"><span class="c-red">*</span>活动照护：</label>
+            <div class="formControls col-8" id="LIFE_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+        <div class="row cl" id="HOME_div_panel" style="display: none">
+            <label class="form-label col-2"><span class="c-red">*</span>生活服务：</label>
+            <div class="formControls col-8" id="HOME_div">
+
+            </div>
+            <div class="col-4"></div>
+        </div>
+
+
+        <div class="row cl">
+            <label class="form-label col-1"><span class="c-red"></span><strong>订单内容</strong></label>
+            <input type="hidden" id="serviceDuration" name="serviceDuration" />
+            <input type="hidden" id="serviceStartDate" name="serviceStartDate" />
+            <input type="hidden" id="serviceEndDate" name="serviceEndDate" />
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>购买时长：</label>
+            <div class="formControls col-3">
+                <input type="text" onchange="getTimeStamp('1');"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-d HH:mm:ss',minDate:'%y-%M-%d'})" id="datemin"
+                       class="input-text Wdate" style="width: 45%;">
+                &nbsp;&nbsp;至&nbsp;&nbsp;
+                <input type="text" onchange="getTimeStamp('2');"
+                       onfocus="WdatePicker({dateFmt:'yyyy-MM-d HH:mm:ss',minDate:'#F{$dp.$D(\'datemin\')}'})" id="datemax"
+                       class="input-text Wdate" style="width: 45%;">
+            </div>
+            <label class="form-label col-2"><span class="c-red">*</span>总时长：</label>
+            <div class="formControls col-3">
+                <span id="serviceDurationSpan">0 天</span>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>费用合计：</label>
+            <div class="formControls col-3">
+                <input type="text" class="input-text" value="" placeholder="" id="totalFee"
+                       name="totalFee"
+                       datatype="/^(:?(:?\d+.\d+)|(:?\d+))$/" nullmsg="费用合不能为空" errormsg="费用合格式错误">
+            </div>
+            <label class="form-label col-2"><span class="c-red">*</span>支付方式：</label>
+            <div class="formControls col-3">
+                <select id="payway" name="payway" class="select input-text" datatype="*"
+                        nullmsg="支付方式不能为空">
+                    <option value="">选择支付方式</option>
+                    <option value="PAY_OFFLINE_CASH">线下支付-现金</option>
+                    <option value="PAY_OFFLINE_POS">线下支付-POS</option>
+                    <option value="PAY_OFFLINE_ALI">线下支付-支付宝</option>
+                    <option value="PAY_OFFLINE_WECHAT">线下支付-微信</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-9 col-offset-3">
+                <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交订单&nbsp;&nbsp;">
+            </div>
+        </div>
+    </form>
+</div>
+
+<script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js" th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
+<script type="text/javascript" src="js/order/orderAdd.js" th:src="@{/js/order/orderAdd.js}"></script>
+<script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
+</body>
+</html>

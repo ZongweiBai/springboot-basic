@@ -18,4 +18,8 @@ public interface IQuestionService {
     Question getQuestionById(String questionId);
 
     Page<Question> queryQuestionForPage(CareType careType, String questionType, Pageable pageable);
+
+    List<Question> queryQuestionByType(String careType);
+
+    List<Question> getQuestionByIds(List<String> questionIds);
 }

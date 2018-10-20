@@ -15,4 +15,7 @@ public interface IServiceProductRepository extends PagingAndSortingRepository<Se
 
     @Query("select t from ServiceProduct t where t.serviceTypeId = :typeId order by t.createTime desc")
     List<ServiceProduct> findByTypeId(@Param("typeId") String serviceTypeId);
+
+    @Query("select t from ServiceProduct t where t.serviceTypeId in :typeIds order by t.createTime desc")
+    List<ServiceProduct> findByTypeIds(@Param("typeIds") List<String> typeIds);
 }

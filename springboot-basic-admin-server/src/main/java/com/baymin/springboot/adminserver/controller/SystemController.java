@@ -128,9 +128,6 @@ public class SystemController {
 
             if (mainSysMenuList != null && !mainSysMenuList.isEmpty()) {
                 for (SysMenu sysMenu : mainSysMenuList) {
-                    System.out.println(sysMenu);
-                    System.out.println(sysMenu.getId());
-                    System.out.println(subMenuMap.get(sysMenu.getId()));
                     sysMenu.setSubMenuList(subMenuMap.get(sysMenu.getId()));
                 }
             }

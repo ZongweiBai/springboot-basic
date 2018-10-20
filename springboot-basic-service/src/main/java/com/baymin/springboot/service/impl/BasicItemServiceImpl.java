@@ -88,6 +88,12 @@ public class BasicItemServiceImpl implements IBasicItemService {
     }
 
     @Override
+    public List<ServiceType> getServiceTypeByType(String careType) {
+        CareType careTypeEnum = CareType.valueOf(careType);
+        return serviceTypeRepository.findByCareType(careTypeEnum);
+    }
+
+    @Override
     public Page<ServiceProduct> queryServiceProductForPage(Pageable pageable) {
         return serviceProductRepository.findAll(pageable);
     }
@@ -145,5 +151,10 @@ public class BasicItemServiceImpl implements IBasicItemService {
     @Override
     public List<ServiceProduct> getServiceProductByTypeId(String serviceTypeId) {
         return serviceProductRepository.findByTypeId(serviceTypeId);
+    }
+
+    @Override
+    public List<ServiceProduct> getServiceProductByTypeIds(List<String> typeIds) {
+        return serviceProductRepository.findByTypeIds(typeIds);
     }
 }

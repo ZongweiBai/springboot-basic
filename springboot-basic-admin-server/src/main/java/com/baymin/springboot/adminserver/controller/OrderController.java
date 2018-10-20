@@ -4,13 +4,13 @@ import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
-import com.baymin.springboot.store.entity.Order;
-import com.baymin.springboot.store.entity.OrderRefund;
-import com.baymin.springboot.store.entity.OrderStaffChange;
-import com.baymin.springboot.store.entity.PayRecord;
+import com.baymin.springboot.service.IQuestionService;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
+import com.baymin.springboot.store.payload.UserOrderVo;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("order")
@@ -36,6 +38,9 @@ public class OrderController {
 
     @Autowired
     private IOrderRefundService orderRefundService;
+
+    @Autowired
+    private IQuestionService questionService;
 
     @ResponseBody
     @PostMapping(value = "queryOrderForPage")
@@ -159,6 +164,29 @@ public class OrderController {
             orderRefund.setRefundDesc("后台退款");
             orderRefund.setApplyType("SYS");
             orderRefundService.saveOrderRefund(orderRefund);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "saveOrder")
+    public Map<String, Object> saveOrder(UserOrderVo userOrderVo, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            List<Question> questions = userOrderVo.getQuestions();
+            List<String> questionIds = questions.stream().filter(question -> StringUtils.isNotBlank(question.getId()))
+                    .map(Question::getId).collect(Collectors.toList());
+            List<Question> questionList = questionService.getQuestionByIds(questionIds);
+
+            userOrderVo.setQuestions(questionList);
+            userOrderVo.setOrderSource("PC");
+            userOrderVo.setOrderType(CareType.HOSPITAL_CARE);
+            orderService.saveUserOrder(userOrderVo);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

@@ -103,10 +103,19 @@ public class OrderServiceImpl implements IOrderService {
         order.setOrderUserId(request.getOrderUserId());
         order.setOrderTime(new Date());
         order.setCareType(request.getOrderType());
-        if (StringUtils.equals(RequestConstant.OFFLINE, request.getPayway())) {
-            order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
+        if (!"PC".equalsIgnoreCase(request.getOrderSource())) {
+            if (StringUtils.equals(RequestConstant.OFFLINE, request.getPayway())) {
+                order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
+            }
+            order.setOrderSource("WECHAT");
+            order.setStatus(OrderStatus.ORDER_UN_PAY);
+        } else {
+            PayWay payWay = PayWay.valueOf(request.getPayway());
+            order.setPayWay(payWay);
+            order.setPayTime(new Date());
+            order.setOrderSource("PC");
+            order.setStatus(OrderStatus.ORDER_PAYED);
         }
-        order.setOrderSource("WECHAT");
         order.setServiceProductId(request.getProductId());
         order.setBasicItemInfo(request.getBasicItems());
 
@@ -122,7 +131,6 @@ public class OrderServiceImpl implements IOrderService {
         } else {
             order.setInvoiceStatus(InvoiceStatus.INVOICING);
         }
-        order.setStatus(OrderStatus.ORDER_UN_PAY);
         order.setEvaluated(false);
         order.setCarePlanExists(false);
 

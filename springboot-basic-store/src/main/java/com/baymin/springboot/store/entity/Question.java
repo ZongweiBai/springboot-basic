@@ -35,7 +35,7 @@ public class Question implements Serializable {
     @Column(name = "CARE_TYPE")
     private CareType careType;
 
-    @ApiModelProperty(notes = "问题类型")
+    @ApiModelProperty(notes = "问题类型 DISEASES:问题1 SELF_CARE：问题2 EATING：问题3 CATHETER_CARE：问题4 ASSIST_WITH_MEDICATION：问题5")
     @Column(name = "QUESTION_TYPE", length = 50)
     private String questionType;
 

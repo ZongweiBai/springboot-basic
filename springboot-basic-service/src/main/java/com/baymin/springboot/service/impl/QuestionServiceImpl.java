@@ -31,6 +31,12 @@ public class QuestionServiceImpl implements IQuestionService {
     }
 
     @Override
+    public List<Question> queryQuestionByType(String careType) {
+        CareType careTypeEnum = CareType.valueOf(careType);
+        return questionRepository.findByCareType(careTypeEnum);
+    }
+
+    @Override
     public Page<Question> queryQuestionForPage(CareType careType, String questionType, Pageable pageable) {
         QQuestion qQuestion = QQuestion.question;
         BooleanBuilder builder = new BooleanBuilder();
@@ -67,5 +73,10 @@ public class QuestionServiceImpl implements IQuestionService {
     @Override
     public Question getQuestionById(String questionId) {
         return questionRepository.findById(questionId).orElse(null);
+    }
+
+    @Override
+    public List<Question> getQuestionByIds(List<String> questionIds) {
+        return questionRepository.findByIds(questionIds);
     }
 }

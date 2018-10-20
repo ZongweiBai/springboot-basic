@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Controller
@@ -83,6 +84,22 @@ public class UserProfileController {
             Map<String, Object> detailMap = userProfileService.getUserDetail(userId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, detailMap);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "queryUserProfile", method = RequestMethod.GET)
+    public Map<String, Object> queryUserProfile(String userId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            List<UserProfile> userProfileList = userProfileService.queryUserProfile();
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.ROWS, userProfileList);
         } catch (Exception e) {
             e.printStackTrace();
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);

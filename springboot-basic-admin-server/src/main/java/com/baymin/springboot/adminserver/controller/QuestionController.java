@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("question")
@@ -82,6 +84,23 @@ public class QuestionController {
             Question question = questionService.getQuestionById(questionId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, question);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "queryQuestions", method = RequestMethod.GET)
+    public Map<String, Object> queryQuestions(String careType) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            List<Question> questions = questionService.queryQuestionByType(careType);
+            Map<String, List<Question>> questionMap = questions.stream().collect(Collectors.groupingBy(Question::getQuestionType));
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.ROWS, questionMap);
         } catch (Exception e) {
             e.printStackTrace();
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);

@@ -1,6 +1,5 @@
 package com.baymin.springboot.store.payload;
 
-import com.baymin.springboot.store.entity.BasicItem;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Question;
 import com.baymin.springboot.store.enumconstant.CareType;
@@ -9,7 +8,6 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Map;
 
 @ApiModel(description = "用户下单数据")
 @Data
@@ -59,5 +57,8 @@ public class UserOrderVo {
 
     @ApiModelProperty(notes = "问题列表")
     private List<Question> questions;
+
+    @ApiModelProperty(notes = "订单来源 WECHAT：前端 PC：代下单", hidden = true)
+    private String orderSource;
 
 }

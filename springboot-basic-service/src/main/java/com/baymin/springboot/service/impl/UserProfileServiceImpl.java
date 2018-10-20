@@ -12,6 +12,7 @@ import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IUserProfileRepository;
 import com.baymin.springboot.store.repository.IWechatUserInfoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,5 +162,13 @@ public class UserProfileServiceImpl implements IUserProfileService {
     @Override
     public WechatUserInfo getWechatUserInfoById(String wechatId) {
         return wechatUserInfoRepository.findById(wechatId).orElse(null);
+    }
+
+    @Override
+    public List<UserProfile> queryUserProfile() {
+        Iterable<UserProfile> iterable = userProfileRepository.findAll();
+        List<UserProfile> list = Lists.newArrayList();
+        iterable.forEach(list::add);
+        return list;
     }
 }

@@ -34,4 +34,9 @@ public interface IBasicItemService {
     List<ServiceType> getAllServiceType();
 
     List<ServiceProduct> getServiceProductByTypeId(String serviceTypeId);
+
+    List<ServiceProduct> getServiceProductByTypeIds(List<String> typeIds);
+
+    List<ServiceType> getServiceTypeByType(String careType);
+
 }
