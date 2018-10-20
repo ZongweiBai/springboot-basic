@@ -1,6 +1,7 @@
 package com.baymin.springboot.service;
 
 import com.baymin.springboot.store.entity.ServiceStaff;
+import com.baymin.springboot.store.entity.Withdraw;
 import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import org.springframework.data.domain.Page;
@@ -31,4 +32,5 @@ public interface IStaffService {
     void changeNotification(String staffId, Boolean enableNotification);
 
     void updateStaff(ServiceStaff staff);
+
 }

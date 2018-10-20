@@ -28,6 +28,7 @@ public class Withdraw implements Serializable {
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
+    @ApiModelProperty(notes = "用户ID")
     @Column(name = "USER_ID", length = 32)
     private String userId;
 
@@ -37,14 +38,17 @@ public class Withdraw implements Serializable {
     /**
      * 提现金额
      */
+    @ApiModelProperty(notes = "提现金额")
     @Column(name = "WITHDRAW_AMOUNT", precision = 10, scale = 2)
     private Double withdrawAmount;
     /**
      * 提现结果
      */
+    @ApiModelProperty(notes = "提现结果")
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "RESULT")
     private WithdrawResult result;
+
     @ApiModelProperty(hidden = true, notes = "创建时间")
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
