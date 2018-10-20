@@ -91,6 +91,9 @@ public class OrderServiceImpl implements IOrderService {
     @Autowired
     private IAdminRepository adminRepository;
 
+    @Autowired
+    private IUserWalletRepository userWalletRepository;
+
     @Override
     public Order saveUserOrder(UserOrderVo request) {
         Invoice invoice = request.getInvoice();
@@ -457,11 +460,26 @@ public class OrderServiceImpl implements IOrderService {
                 StaffIncome staffIncome = new StaffIncome();
                 staffIncome.setCreateTime(new Date());
                 double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);
-                staffIncome.setIncome(BigDecimalUtil.mul(realFee, 0.8));
+                double realIncome = BigDecimalUtil.mul(realFee, 0.8);
+                staffIncome.setIncome(realIncome);
                 staffIncome.setOrderId(orderId);
                 staffIncome.setOrderTotalFee(order.getTotalFee());
                 staffIncome.setStaffId(order.getServiceStaffId());
                 staffIncomeRepository.save(staffIncome);
+
+                UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
+                if (Objects.isNull(userWallet)) {
+                    userWallet = new UserWallet();
+                    userWallet.setUserId(staff.getId());
+                    userWallet.setUserType("S");
+                    userWallet.setBalance(0.0);
+                    userWallet.setTotalIncome(0.0);
+                    userWallet.setTotalWithdraw(0.0);
+                    userWallet.setTotalInWithdrawing(0.0);
+                }
+                userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
+                userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
+                userWalletRepository.save(userWallet);
             }
         }
     }
