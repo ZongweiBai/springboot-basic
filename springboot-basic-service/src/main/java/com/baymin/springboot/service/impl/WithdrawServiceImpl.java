@@ -14,6 +14,8 @@ import com.baymin.springboot.store.repository.IWithdrawRepository;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -51,6 +53,32 @@ public class WithdrawServiceImpl implements IWithdrawService {
     }
 
     @Override
+    public void dealWithdraw(Withdraw withdraw) {
+        Withdraw oldData = withdrawRepository.findById(withdraw.getId()).orElse(null);
+        if (Objects.isNull(oldData)) {
+            return;
+        }
+        oldData.setResult(withdraw.getResult());
+        oldData.setDealDesc(withdraw.getDealDesc());
+        oldData.setDealTime(new Date());
+        withdrawRepository.save(oldData);
+
+        UserWallet userWallet = userWalletRepository.findByUserId(oldData.getUserId(), oldData.getUserType());
+        if (Objects.isNull(userWallet)) {
+            return;
+        }
+        if (oldData.getResult() == WithdrawResult.SUCCESS) {
+            userWallet.setTotalInWithdrawing(BigDecimalUtil.sub(userWallet.getTotalInWithdrawing(), oldData.getWithdrawAmount()));
+            userWallet.setTotalWithdraw(BigDecimalUtil.add(userWallet.getTotalWithdraw(), oldData.getWithdrawAmount()));
+            userWalletRepository.save(userWallet);
+        } else if (oldData.getResult() == WithdrawResult.DENY) {
+            userWallet.setTotalInWithdrawing(BigDecimalUtil.sub(userWallet.getTotalInWithdrawing(), oldData.getWithdrawAmount()));
+            userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), oldData.getWithdrawAmount()));
+            userWalletRepository.save(userWallet);
+        }
+    }
+
+    @Override
     public List<Withdraw> queryByUserIdAndType(String userId, String userType, WithdrawResult result) {
         BooleanBuilder builder = new BooleanBuilder();
         QWithdraw qWithdraw = QWithdraw.withdraw;
@@ -71,5 +99,31 @@ public class WithdrawServiceImpl implements IWithdrawService {
         List<Withdraw> list = new ArrayList<>();
         iterable.forEach(list::add);
         return list;
+    }
+
+    @Override
+    public UserWallet queryUserWalletByUserId(String staffId, String userType) {
+        return userWalletRepository.findByUserId(staffId, userType);
+    }
+
+    @Override
+    public Page<Withdraw> queryWithdrawPage(PageRequest pageRequest, WithdrawResult result, Date maxDate, Date minDate, String userId) {
+        QWithdraw qWithdraw = QWithdraw.withdraw;
+
+        BooleanBuilder predicate = new BooleanBuilder();
+        if (StringUtils.isNotBlank(userId)) {
+            predicate.and(qWithdraw.userId.eq(userId));
+        }
+        if (Objects.nonNull(result)) {
+            predicate.and(qWithdraw.result.eq(result));
+        }
+        if (Objects.nonNull(maxDate)) {
+            predicate.and(qWithdraw.createTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            predicate.and(qWithdraw.createTime.gt(minDate));
+        }
+
+        return withdrawRepository.findAll(predicate, pageRequest);
     }
 }

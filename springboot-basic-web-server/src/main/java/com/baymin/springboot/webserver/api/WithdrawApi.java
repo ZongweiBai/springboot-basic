@@ -54,7 +54,7 @@ public class WithdrawApi {
     @ResponseBody
     public List<Withdraw> queryUserOrderRefundRequest(@PathVariable String userId,
                                                       @RequestParam(value = "userType", defaultValue = "S") String userType,
-                                                      @RequestParam(value = "result") WithdrawResult result) {
+                                                      @RequestParam(value = "result", required = false) WithdrawResult result) {
         if (StringUtils.isBlank(userId)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }

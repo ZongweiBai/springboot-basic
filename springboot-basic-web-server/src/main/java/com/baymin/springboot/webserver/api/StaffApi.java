@@ -49,6 +49,9 @@ public class StaffApi {
     @Autowired
     private ICarePlanService carePlanService;
 
+    @Autowired
+    private IWithdrawService withdrawService;
+
     @ApiOperation(value = "查询护士/护工明细")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
@@ -83,6 +86,19 @@ public class StaffApi {
         double totalIncome = incomeList.stream().map(StaffIncome::getIncome).reduce(0.0, BigDecimalUtil::add);
 
         return new StaffIncomeInfoVo(totalIncome, income, incomeList);
+    }
+
+    @ApiOperation(value = "查询护士/护工钱包")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
+    @GetMapping("/wallet/{staffId}/")
+    @ResponseBody
+    public UserWallet queryUserWallet(@PathVariable String staffId) {
+        if (Objects.isNull(staffId)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        return withdrawService.queryUserWalletByUserId(staffId, "S");
     }
 
     @ApiOperation(value = "查询护士/护工订单")

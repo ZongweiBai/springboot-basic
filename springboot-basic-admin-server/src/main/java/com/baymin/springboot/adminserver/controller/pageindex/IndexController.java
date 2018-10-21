@@ -298,6 +298,19 @@ public class IndexController {
         return "finance/invoiceManage";
     }
 
+    @GetMapping("/index/finance/withdraw/manage")
+    public String manageFinanceWithdraw() {
+        return "finance/withdrawManage";
+    }
+
+    @GetMapping("/index/finance/withdraw/dealWithdraw")
+    public String dealFinanceWithdraw(String withdrawId, Model model) {
+        if (Objects.nonNull(withdrawId)) {
+            model.addAttribute("withdrawId", withdrawId);
+        }
+        return "finance/dealWithdraw";
+    }
+
     /**
      * ===========================照护计划入口================================
      */

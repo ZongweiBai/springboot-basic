@@ -11,8 +11,8 @@ function loadTable() {
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
-                limit: params.limit,  //页面大小
-                offset: params.offset/params.limit,
+                size: params.limit,  //页面大小
+                page: params.offset/params.limit,
                 sort: params.sort,
                 order: params.order,
                 userName: $("#userName").val(),
@@ -27,6 +27,11 @@ function loadTable() {
         pagination: true, //分页
         sidePagination: "server", //服务端处理分页
         columns: [
+            {
+                field: 'id',
+                title: '编号',
+                align: 'center'
+            },
             {
                 field: 'userName',
                 title: '姓名',
@@ -43,13 +48,27 @@ function loadTable() {
                 align: 'center'
             },
             {
+                field: 'serviceStatus',
+                title: '服务状态',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == 'FREE') {
+                        return "空闲中";
+                    } else if (value == 'ASSIGNED') {
+                        return "已指派订单";
+                    } else if (value == 'IN_SERVICE') {
+                        return "服务中";
+                    }
+                    return "-";
+                }
+            },
+            {
                 field: 'experience',
                 title: '护理经验',
                 align: 'center',
                 formatter: function (value, row, index) {
                     return value + "年";
                 }
-
             },
             {
                 field: 'firstSkill',

@@ -15,8 +15,8 @@ function loadTable() {
         contentType: "application/x-www-form-urlencoded",
         queryParams: function (params) {
             var paramsMap = {
-                limit: params.limit,  //页面大小
-                offset: params.offset / params.limit,
+                size: params.limit,  //页面大小
+                page: params.offset / params.limit,
                 sort: params.sort,
                 order: params.order,
                 userAccount: $("#userAccount").val(),
@@ -31,6 +31,11 @@ function loadTable() {
         pagination: true, //分页
         sidePagination: "server", //服务端处理分页
         columns: [
+            {
+                field: 'id',
+                title: '编号',
+                align: 'center'
+            },
             {
                 field: 'nickName',
                 title: '昵称',

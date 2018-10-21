@@ -1,16 +1,14 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IStaffService;
-import com.baymin.springboot.store.entity.Area;
-import com.baymin.springboot.store.entity.Order;
-import com.baymin.springboot.store.entity.QServiceStaff;
-import com.baymin.springboot.store.entity.ServiceStaff;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import com.baymin.springboot.store.repository.IAreaRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IServiceStaffRepository;
+import com.baymin.springboot.store.repository.IUserWalletRepository;
 import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +17,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
-import java.util.function.Function;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,6 +35,9 @@ public class StaffServiceImpl implements IStaffService {
 
     @Autowired
     private IAreaRepository areaRepository;
+
+    @Autowired
+    private IUserWalletRepository userWalletRepository;
 
     @Override
     public Page<ServiceStaff> queryStaffForPage(Pageable pageable, String userName, String account, String sex) {
@@ -57,6 +60,7 @@ public class StaffServiceImpl implements IStaffService {
 
     @Override
     public void saveStaff(ServiceStaff serviceStaff) {
+        boolean createUserWallet = false;
         if (StringUtils.isNotBlank(serviceStaff.getId())) {
             ServiceStaff oldData = serviceStaffRepository.findById(serviceStaff.getId()).orElse(null);
             serviceStaff.setCreateTime(oldData.getCreateTime());
@@ -67,6 +71,7 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setIdpId(oldData.getIdpId());
             serviceStaff.setImgUrl(oldData.getImgUrl());
         } else {
+            createUserWallet = true;
             serviceStaff.setStaffStatus(CommonStatus.NORMAL);
             serviceStaff.setCreateTime(new Date());
             serviceStaff.setServiceStatus(ServiceStatus.FREE);
@@ -95,7 +100,18 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setLocaltion(location.toString());
         }
 
-        serviceStaffRepository.save(serviceStaff);
+        serviceStaff = serviceStaffRepository.save(serviceStaff);
+
+        if (createUserWallet) {
+            UserWallet userWallet = new UserWallet();
+            userWallet.setUserId(serviceStaff.getId());
+            userWallet.setBalance(0.00D);
+            userWallet.setTotalInWithdrawing(0.00D);
+            userWallet.setTotalWithdraw(0.00D);
+            userWallet.setTotalIncome(0.00D);
+            userWallet.setUserType("S");
+            userWalletRepository.save(userWallet);
+        }
     }
 
     @Override
@@ -121,7 +137,8 @@ public class StaffServiceImpl implements IStaffService {
 
     @Override
     public List<ServiceStaff> queryStaffByType(ServiceStaffType serviceStaffType) {
-        return serviceStaffRepository.findFreeStaff(serviceStaffType, ServiceStatus.FREE, CommonStatus.NORMAL);
+//        return serviceStaffRepository.findFreeStaff(serviceStaffType, ServiceStatus.FREE, CommonStatus.NORMAL);
+        return serviceStaffRepository.findByStaffType(serviceStaffType, CommonStatus.NORMAL);
     }
 
     @Override

@@ -69,9 +69,12 @@ tip.hideLoading = function () {
  * w        弹出层宽度（缺省调默认值）
  * h        弹出层高度（缺省调默认值）
  */
-tip.openIframe = function (title, url, w, h, end) {
+tip.openIframe = function (title, url, w, h, end, scroll) {
     if (title == null || title == '') {
         title = false;
+    }
+    if (scroll == null || scroll == '') {
+        scroll = 'yes';
     }
     if (url == null || url == '') {
         url = contextPath + "/assets/page/404.jsp";
@@ -83,7 +86,7 @@ tip.openIframe = function (title, url, w, h, end) {
         maxmin: true,
         shade: 0.4,
         title: title,
-        content: url,
+        content: [url, scroll],
         end: end
     });
     if (isEmpty(w) || isEmpty(h)) {

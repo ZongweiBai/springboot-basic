@@ -57,6 +57,10 @@ public class Withdraw implements Serializable {
     @Column(name = "DEAL_TIME", columnDefinition = "timestamp")
     private Date dealTime;
 
+    @ApiModelProperty(hidden = true, notes = "处理备注")
+    @Column(name = "DEAL_DESC", length = 256)
+    private String dealDesc;
+
     /********************bank info************************/
     @ApiModelProperty(notes = "银行账户")
     @Column(name = "BANK_ACCOUNT_USER_NAME", length = 20)

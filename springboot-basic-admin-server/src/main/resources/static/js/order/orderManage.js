@@ -188,7 +188,7 @@ function viewOrderInfo(orderId) {
  * @param orderId
  */
 function orderAssign(orderId) {
-    tip.openIframe("订单指派", contextPath + 'index/order/assign?orderId=' + orderId, 550, 350, refreshData);
+    tip.openIframe("订单指派", contextPath + 'index/order/assign?orderId=' + orderId, 550, 350, refreshData, "no");
 }
 
 /**
