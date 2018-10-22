@@ -50,6 +50,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${springboot.version}</version>
                 <configuration>
                     <mainClass>com.baymin.springboot.SpringBootApp</mainClass>
                     <layout>ZIP</layout>

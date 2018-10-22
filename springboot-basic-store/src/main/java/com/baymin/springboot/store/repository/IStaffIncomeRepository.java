@@ -16,11 +16,11 @@ public interface IStaffIncomeRepository extends PagingAndSortingRepository<Staff
         QuerydslPredicateExecutor<StaffIncome> {
     List<StaffIncome> findByStaffId(String staffId);
 
-    @Query("select sum(t.income) from StaffIncome t where t.staffId = :staffId and t.createTime between :minDate and :maxDate")
+    @Query("select COALESCE(sum(t.income),0) from StaffIncome t where t.staffId = :staffId and t.createTime between :minDate and :maxDate")
     double sumIncomeByDate(@Param("staffId") String staffId, @Param("minDate") Date monthFirst, @Param("maxDate") Date monthLast);
 
-    @Query("select new com.baymin.springboot.store.payload.StaffRankVo(income.staffId, sum(income.income), staff.mobile, staff.userName) " +
+    @Query("select new com.baymin.springboot.store.payload.StaffRankVo(income.staffId, COALESCE(sum(income.income),0), staff.mobile, staff.userName) " +
             "from StaffIncome income left join ServiceStaff staff on income.staffId=staff.id " +
-            "group by income.staffId order by sum(income.income) desc")
+            "group by income.staffId order by COALESCE(sum(income.income),0) desc")
     List<StaffRankVo> queryStaffRank();
 }

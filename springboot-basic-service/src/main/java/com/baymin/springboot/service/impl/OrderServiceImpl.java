@@ -464,7 +464,10 @@ public class OrderServiceImpl implements IOrderService {
                 serviceStaffRepository.save(staff);
 
                 // 计算护士/护工收入并记录
-                Double refundFee = orderRefundRepository.sumRefundFeeByOrderId(orderId, CommonDealStatus.AGREE);
+                List<CommonDealStatus> dealStatuses = new ArrayList<>();
+                dealStatuses.add(CommonDealStatus.AGREE);
+                dealStatuses.add(CommonDealStatus.COMPLETED);
+                Double refundFee = orderRefundRepository.sumRefundFeeByOrderId(orderId, dealStatuses);
                 StaffIncome staffIncome = new StaffIncome();
                 staffIncome.setCreateTime(new Date());
                 double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);

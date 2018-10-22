@@ -34,7 +34,7 @@ public class UserProfile implements Serializable {
     private String account;
 
     @ApiModelProperty(notes = "性别 M:男 F:女")
-    @Column(name = "SEX", length = 2, nullable = false)
+    @Column(name = "SEX", length = 2, nullable = true)
     private String sex; // M:男 F:女
 
     @ApiModelProperty(notes = "昵称")

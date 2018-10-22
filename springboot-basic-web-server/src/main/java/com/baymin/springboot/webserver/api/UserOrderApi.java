@@ -168,7 +168,7 @@ public class UserOrderApi {
             @ApiImplicitParam(name = "orderId", value = "订单ID")
     })
     @PutMapping("/complete/{orderId}")
-    public void staffChangeRequest(@PathVariable String orderId) {
+    public void orderCompleted(@PathVariable String orderId) {
         if (Objects.isNull(orderId) || StringUtils.isBlank(orderId)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
