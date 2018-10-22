@@ -49,7 +49,7 @@ function loadTable() {
                 }
             },
             {
-                field: 'refundTime',
+                field: 'createTime',
                 title: '申请时间',
                 align: 'center',
                 formatter: function (value, row, index) {

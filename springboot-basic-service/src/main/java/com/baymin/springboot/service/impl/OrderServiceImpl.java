@@ -104,7 +104,7 @@ public class OrderServiceImpl implements IOrderService {
         order.setOrderTime(new Date());
         order.setCareType(request.getOrderType());
         if (!"PC".equalsIgnoreCase(request.getOrderSource())) {
-            if (StringUtils.equals(RequestConstant.OFFLINE, request.getPayway())) {
+            if (StringUtils.equals(RequestConstant.ONLINE_WECHAT, request.getPayway())) {
                 order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
             }
             order.setOrderSource("WECHAT");
@@ -468,15 +468,9 @@ public class OrderServiceImpl implements IOrderService {
                 dealStatuses.add(CommonDealStatus.AGREE);
                 dealStatuses.add(CommonDealStatus.COMPLETED);
                 Double refundFee = orderRefundRepository.sumRefundFeeByOrderId(orderId, dealStatuses);
-                StaffIncome staffIncome = new StaffIncome();
-                staffIncome.setCreateTime(new Date());
+
                 double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);
                 double realIncome = BigDecimalUtil.mul(realFee, 0.8);
-                staffIncome.setIncome(realIncome);
-                staffIncome.setOrderId(orderId);
-                staffIncome.setOrderTotalFee(order.getTotalFee());
-                staffIncome.setStaffId(order.getServiceStaffId());
-                staffIncomeRepository.save(staffIncome);
 
                 UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
                 if (Objects.isNull(userWallet)) {
@@ -491,6 +485,17 @@ public class OrderServiceImpl implements IOrderService {
                 userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
                 userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
                 userWalletRepository.save(userWallet);
+
+                StaffIncome staffIncome = new StaffIncome();
+                staffIncome.setCreateTime(new Date());
+                staffIncome.setIncome(realIncome);
+                staffIncome.setOrderId(orderId);
+                staffIncome.setOrderTotalFee(order.getTotalFee());
+                staffIncome.setStaffId(order.getServiceStaffId());
+                staffIncome.setCurrentBalance(userWallet.getBalance());
+                staffIncome.setIncomeType(IncomeType.INCOME);
+                staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
+                staffIncomeRepository.save(staffIncome);
             }
         }
     }

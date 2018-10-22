@@ -1,9 +1,12 @@
 package com.baymin.springboot.store.entity;
 
+import com.baymin.springboot.store.enumconstant.IncomeType;
+import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -35,5 +38,15 @@ public class StaffIncome {
 
     @Column(name = "CREATE_TIME", columnDefinition = "timestamp")
     private Date createTime;
+
+    @Column(name = "INCOME_REMARK")
+    private String incomeRemark;
+
+    @Column(name = "CURRENT_BALANCE", precision=10, scale=2)
+    private Double currentBalance;
+
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "INCOME_TYPE", length = 2)
+    private IncomeType incomeType;
 
 }

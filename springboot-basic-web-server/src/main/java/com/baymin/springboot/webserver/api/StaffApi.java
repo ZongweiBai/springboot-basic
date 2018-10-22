@@ -7,6 +7,7 @@ import com.baymin.springboot.common.util.BigDecimalUtil;
 import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.*;
 import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.IncomeType;
 import com.baymin.springboot.store.payload.OrderCarePlanVo;
 import com.baymin.springboot.store.payload.StaffIncomeInfoVo;
 import com.baymin.springboot.store.payload.StaffRankInfoVo;
@@ -83,7 +84,9 @@ public class StaffApi {
         }
         List<StaffIncome> incomeList = staffIncomeService.queryStaffIncome(staffId);
         double income = staffIncomeService.sumIncomeByDate(staffId, DateUtil.monthFirst(), DateUtil.monthLast());
-        double totalIncome = incomeList.stream().map(StaffIncome::getIncome).reduce(0.0, BigDecimalUtil::add);
+        double totalIncome = incomeList.stream()
+                .filter(staffIncome -> staffIncome.getIncomeType()== IncomeType.INCOME)
+                .map(StaffIncome::getIncome).reduce(0.0, BigDecimalUtil::add);
 
         return new StaffIncomeInfoVo(totalIncome, income, incomeList);
     }

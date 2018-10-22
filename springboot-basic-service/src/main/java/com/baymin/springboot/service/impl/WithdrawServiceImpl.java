@@ -6,9 +6,12 @@ import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.util.BigDecimalUtil;
 import com.baymin.springboot.service.IWithdrawService;
 import com.baymin.springboot.store.entity.QWithdraw;
+import com.baymin.springboot.store.entity.StaffIncome;
 import com.baymin.springboot.store.entity.UserWallet;
 import com.baymin.springboot.store.entity.Withdraw;
+import com.baymin.springboot.store.enumconstant.IncomeType;
 import com.baymin.springboot.store.enumconstant.WithdrawResult;
+import com.baymin.springboot.store.repository.IStaffIncomeRepository;
 import com.baymin.springboot.store.repository.IUserWalletRepository;
 import com.baymin.springboot.store.repository.IWithdrawRepository;
 import com.querydsl.core.BooleanBuilder;
@@ -35,6 +38,9 @@ public class WithdrawServiceImpl implements IWithdrawService {
 
     @Autowired
     private IUserWalletRepository userWalletRepository;
+
+    @Autowired
+    private IStaffIncomeRepository staffIncomeRepository;
 
     @Override
     public void saveWithdraw(Withdraw withdraw) {
@@ -71,6 +77,16 @@ public class WithdrawServiceImpl implements IWithdrawService {
             userWallet.setTotalInWithdrawing(BigDecimalUtil.sub(userWallet.getTotalInWithdrawing(), oldData.getWithdrawAmount()));
             userWallet.setTotalWithdraw(BigDecimalUtil.add(userWallet.getTotalWithdraw(), oldData.getWithdrawAmount()));
             userWalletRepository.save(userWallet);
+
+            StaffIncome staffIncome = new StaffIncome();
+            staffIncome.setCreateTime(new Date());
+            staffIncome.setIncome(oldData.getWithdrawAmount());
+            staffIncome.setOrderTotalFee(0.00D);
+            staffIncome.setStaffId(oldData.getUserId());
+            staffIncome.setCurrentBalance(userWallet.getBalance());
+            staffIncome.setIncomeType(IncomeType.WITHDRAW);
+            staffIncome.setIncomeRemark("账户结算");
+            staffIncomeRepository.save(staffIncome);
         } else if (oldData.getResult() == WithdrawResult.DENY) {
             userWallet.setTotalInWithdrawing(BigDecimalUtil.sub(userWallet.getTotalInWithdrawing(), oldData.getWithdrawAmount()));
             userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), oldData.getWithdrawAmount()));

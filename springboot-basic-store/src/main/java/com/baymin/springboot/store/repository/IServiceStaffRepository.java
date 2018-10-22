@@ -47,4 +47,7 @@ public interface IServiceStaffRepository extends PagingAndSortingRepository<Serv
             "and s.staffStatus = :staffStatus order by s.serviceStatus asc")
     List<ServiceStaff> findByStaffType(@Param("staffType") ServiceStaffType serviceStaffType,
                                        @Param("staffStatus") CommonStatus staffStatus);
+
+    @Query("select s from ServiceStaff s where s.id in :ids")
+    List<ServiceStaff> findByIds(@Param("ids") List<String> staffIds);
 }

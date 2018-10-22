@@ -183,4 +183,10 @@ public class DateUtil {
         return c.getTime();
     }
 
+    public static String getDateFromTimestamp(String timestamp) {
+        long mills = Long.parseLong(timestamp);
+        Date date = new Date(mills);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        return sdf.format(date);
+    }
 }

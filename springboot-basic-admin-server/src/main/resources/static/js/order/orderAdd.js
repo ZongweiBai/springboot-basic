@@ -80,11 +80,11 @@ function initQuestionList() {
                     var CATHETER_CARE = rows.CATHETER_CARE;
                     var ASSIST_WITH_MEDICATION = rows.ASSIST_WITH_MEDICATION;
 
-                    parseQuestion(DISEASES, "checkbox", "DISEASES_div");
-                    parseQuestion(SELF_CARE, "radio", "SELF_CARE_div");
-                    parseQuestion(EATING, "radio", "EATING_div");
-                    parseQuestion(CATHETER_CARE, "checkbox", "CATHETER_CARE_div");
-                    parseQuestion(ASSIST_WITH_MEDICATION, "checkbox", "ASSIST_WITH_MEDICATION_div");
+                    parseQuestion(DISEASES, "checkbox", "DISEASES");
+                    parseQuestion(SELF_CARE, "radio", "SELF_CARE");
+                    parseQuestion(EATING, "radio", "EATING");
+                    parseQuestion(CATHETER_CARE, "checkbox", "CATHETER_CARE");
+                    parseQuestion(ASSIST_WITH_MEDICATION, "checkbox", "ASSIST_WITH_MEDICATION");
                 }
             }
         }
@@ -103,7 +103,12 @@ function parseQuestion(questions, type, divId) {
                 var question = questions[i];
                 content += '<dt>';
                 content += '<label class="">';
-                content += '<input type="checkbox" value="' + question.id + '" name="questions[' + questionIndex + '].id" />' + question.itemName + '</label>';
+                if (divId == 'CATHETER_CARE' || divId == 'ASSIST_WITH_MEDICATION') {
+                    content += '<input onclick="clickQuestion(this, \''+divId+'\');" class="'+divId+'" questionName="'+question.itemName+'" type="checkbox" value="' + question.id + '" name="questions[' + questionIndex + '].id" />';
+                } else {
+                    content += '<input type="checkbox" value="' + question.id + '" name="questions[' + questionIndex + '].id" />';
+                }
+                content += question.itemName + '</label>';
                 content += '</dt>';
                 questionIndex++;
             }
@@ -120,8 +125,33 @@ function parseQuestion(questions, type, divId) {
 
         content += '</dl></dd>';
         content += '</dl>';
-        $("#" + divId).html(content);
+        $("#" + divId + "_div").html(content);
     }
+}
+
+function clickQuestion(obj, type) {
+    var checked = $(obj).prop("checked");
+    var questionName = $(obj).attr("questionName");
+    if (type == 'CATHETER_CARE') {
+        if (checked && questionName == '无') {
+            $('input:checkbox[class=CATHETER_CARE]').prop("checked", false);
+            $(obj).prop("checked", true);
+        } else {
+            $('input:checkbox[class=CATHETER_CARE][questionName=无]').prop("checked", false);
+        }
+    }
+    if (type == 'ASSIST_WITH_MEDICATION') {
+        if (checked && questionName == '无') {
+            $('input:checkbox[class=ASSIST_WITH_MEDICATION]').prop("checked", false);
+            $(obj).prop("checked", true);
+        } else {
+            $('input:checkbox[class=ASSIST_WITH_MEDICATION][questionName=无]').prop("checked", false);
+        }
+    }
+
+    console.log(type);
+    console.log($(obj).prop("checked"));
+    console.log($(obj).attr("questionName"));
 }
 
 function selectUser(userId) {
@@ -184,11 +214,11 @@ function selectProduct(productId) {
 
 var basicItemPrice = 0;
 var itemIndex = 0;
-
+var basicItemPriceMap = new Map();
 function parseBasicItem(basicItems, divId) {
     if (!isEmpty(basicItems)) {
         var content = '';
-        content += '<dl class="permission-list">';
+        content += '<dl class="basic-item-list">';
         content += '<dd><dl class="cl permission-list2">';
         for (var i = 0; i < basicItems.length; i++) {
             var item = basicItems[i];
@@ -197,7 +227,8 @@ function parseBasicItem(basicItems, divId) {
             if (item.checked == true) {
                 content += '<input type="checkbox" value="' + item.id + '" name="basicItems[' + itemIndex + '].id" checked="checked" readonly="readonly" disabled="disabled" />' + item.itemName + '</label>';
             } else {
-                content += '<input type="checkbox" value="' + item.id + '" name="basicItems[' + itemIndex + '].id" />' + item.itemName + '</label>';
+                basicItemPriceMap.put(item.id, item.itemFee);
+                content += '<input class="basic-item-input" onclick="calculateItemPrice();" type="checkbox" value="' + item.id + '" name="basicItems[' + itemIndex + '].id" />' + item.itemName + '</label>';
             }
             content += '</dt>';
             questionIndex++;
@@ -235,6 +266,8 @@ function getTimeStamp(type) {
         var modHours = durationHour % 24;
         if (modHours > 12) {
             serviceDuration = Math.floor(durationDays) + 1;
+        } else if (modHours < 0.5) {
+            serviceDuration = Math.floor(durationDays);
         } else {
             serviceDuration = Math.floor(durationDays) + 0.5;
         }
@@ -244,6 +277,14 @@ function getTimeStamp(type) {
     $("#serviceDuration").val(serviceDuration);
     $("#serviceDurationSpan").html(serviceDuration + " 天");
 
+    calculateTotalFee();
+}
+
+function calculateItemPrice() {
+    basicItemPrice = 0;
+    $('input:checkbox[class=basic-item-input]:checked').each(function(i){
+        basicItemPrice += basicItemPriceMap.get($(this).val());
+    });
     calculateTotalFee();
 }
 

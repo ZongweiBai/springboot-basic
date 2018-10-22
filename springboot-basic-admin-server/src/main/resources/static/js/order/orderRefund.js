@@ -8,6 +8,21 @@ function initForm() {
     $("#form-menu-add").Validform({
         tiptype: 2,
         callback: function (form) {
+            var refundDuration = $("#refundDuration").val();
+            var refundFee = $("#refundFee").val();
+            if (refundDuration > serviceDuration) {
+                if (careType == 'HOSPITAL_CARE' || careType == 'HOME_CARE') {
+                    tip.alertError("退款天数不能大于购买天数！")
+                } else {
+                    tip.alertError("退款次数不能大于购买次数！")
+                }
+                return false;
+            }
+            if (refundFee > totalFee) {
+                tip.alertError("退款金额不能大于订单金额！")
+                return false;
+            }
+
             $.ajax({
                 type: "POST",
                 url: contextPath + "/order/orderRefund",
@@ -36,6 +51,8 @@ function initForm() {
 }
 
 var careType;
+var serviceDuration;
+var totalFee;
 /**
  * 加载信息
  */
@@ -55,7 +72,6 @@ function loadData(orderId) {
                 var info = data.info;
                 var order = info.order;
 
-                careType = order.careType;
                 if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
                     $("#serviceDurationLabel").html("购买天数：");
                     $("#refundDurationLabel").html("退款天数：");
@@ -67,6 +83,10 @@ function loadData(orderId) {
                 $("#orderTime").html(order.orderTime);
                 $("#orderFeeDisplay").html(order.totalFee);
                 $("#serviceDuration").html(orderExt.serviceDuration);
+
+                careType = order.careType;
+                serviceDuration = orderExt.serviceDuration;
+                totalFee = order.totalFee;
             } else {
                 tip.alertError("加载信息失败");
             }

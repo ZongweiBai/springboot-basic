@@ -11,6 +11,7 @@ import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
 import com.baymin.springboot.store.repository.*;
 import com.querydsl.core.BooleanBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,10 +20,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
 import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT_EXIST;
@@ -76,7 +75,30 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
             builder.and(qChange.createTime.gt(minDate));
         }
 
-        return orderStaffChangeRepository.findAll(builder, pageable);
+        Page<OrderStaffChange> page = orderStaffChangeRepository.findAll(builder, pageable);
+        if (CollectionUtils.isNotEmpty(page.getContent())) {
+            List<String> staffIds = new ArrayList<>();
+            page.getContent().forEach(staffChange -> {
+                if (StringUtils.isNotBlank(staffChange.getOldStaffId())) {
+                    staffIds.add(staffChange.getOldStaffId());
+                }
+                if (StringUtils.isNotBlank(staffChange.getNewStaffId())) {
+                    staffIds.add(staffChange.getNewStaffName());
+                }
+            });
+            List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
+            Map<String, String> staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, ServiceStaff::getUserName));
+            page.getContent().forEach(staffChange -> {
+                if (StringUtils.isNotBlank(staffChange.getOldStaffId())) {
+                    staffChange.setOldStaffName(staffMap.get(staffChange.getOldStaffId()));
+                }
+                if (StringUtils.isNotBlank(staffChange.getNewStaffId())) {
+                    staffChange.setNewStaffName(staffMap.get(staffChange.getNewStaffId()));
+                }
+            });
+        }
+
+        return page;
     }
 
     @Override
@@ -153,7 +175,7 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
             builder.and(qInvoice.dealStatus.eq(dealStatus));
         }
         if (StringUtils.isNotBlank(orderId)) {
-            builder.and(qInvoice.orderIds.likeIgnoreCase("%"+orderId+"%"));
+            builder.and(qInvoice.orderIds.likeIgnoreCase("%" + orderId + "%"));
         }
         if (Objects.nonNull(maxDate)) {
             builder.and(qInvoice.createTime.lt(maxDate));

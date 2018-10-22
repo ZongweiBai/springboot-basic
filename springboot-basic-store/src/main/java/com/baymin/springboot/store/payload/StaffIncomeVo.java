@@ -1,6 +1,7 @@
 package com.baymin.springboot.store.payload;
 
 import com.baymin.springboot.store.entity.StaffIncome;
+import com.baymin.springboot.store.enumconstant.IncomeType;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -25,7 +26,13 @@ public class StaffIncomeVo {
     private Double orderTotalFee;
 
     @ApiModelProperty(notes = "实际收入")
-    private Double income;
+    private String income;
+
+    @ApiModelProperty(notes = "收入说明")
+    private String incomeRemark;
+
+    @ApiModelProperty(notes = "实时余额")
+    private Double currentBalance;
 
     @ApiModelProperty(hidden = true)
     private Date createTime;
@@ -38,7 +45,13 @@ public class StaffIncomeVo {
         this.staffId = staffIncome.getStaffId();
         this.orderId = staffIncome.getOrderId();
         this.orderTotalFee = staffIncome.getOrderTotalFee();
-        this.income = staffIncome.getIncome();
+        if (staffIncome.getIncomeType() == IncomeType.INCOME) {
+            this.income = "+" + staffIncome.getIncome();
+        } else {
+            this.income = "-" + staffIncome.getIncome();
+        }
         this.createTime = staffIncome.getCreateTime();
+        this.incomeRemark = staffIncome.getIncomeRemark();
+        this.currentBalance = staffIncome.getCurrentBalance();
     }
 }

@@ -65,4 +65,10 @@ public class OrderStaffChange {
     @Column(name = "DEAL_DESC", length = 1024)
     private String dealDesc;
 
+    @Transient
+    private String oldStaffName;
+
+    @Transient
+    private String newStaffName;
+
 }

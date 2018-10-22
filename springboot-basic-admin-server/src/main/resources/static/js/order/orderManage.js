@@ -141,30 +141,35 @@ function loadTable() {
                 title: '操作',
                 align: 'center',
                 formatter: function (value, row, index) {
+                    var payWay = row.payWay;
                     var status = row.status;
+                    var refundStatus = row.refundStatus;
+                    var refundSuccess = true;
+                    if (isEmpty(refundStatus) || "REJECT" == refundStatus) {
+                        refundSuccess = false;
+                    }
+                    var payTime = row.payTime;
+
                     var content = ''
                     content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewOrderInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
                     if (status == "ORDER_UN_PAY") {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
-                        var payWay = row.payWay;
-                        if (payWay != 'PAY_ONLINE_WITH_WECHAT') {
+                        if (payWay != 'PAY_ONLINE_WITH_WECHAT' && !refundSuccess) {
                             content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
                         }
-                    } else if (status == "ORDER_PAYED") {
+                    } else if (status == "ORDER_PAYED" && !refundSuccess) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
                     } else {
-                        var payWay = row.payWay;
                         var payTime = row.payTime;
                         if (payWay != 'PAY_ONLINE_WITH_WECHAT' && isEmpty(payTime)) {
                             content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
                         }
                     }
 
-                    var refundStatus = row.refundStatus;
-                    if (status != "ORDER_UN_PAY" && status != "ORDER_FINISH" && isEmpty(refundStatus)) {
+                    if (status != "ORDER_UN_PAY" && status != "ORDER_FINISH" && !refundSuccess && !isEmpty(payTime)) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderRefund(\'' + value + '\')" title="退款申请"><i style="font-size: 18px;" class="Hui-iconfont">&#xe628;</i></a>&nbsp;';
                     }
-                    if (status == "ORDER_ASSIGN" || status == "ORDER_PROCESSING") {
+                    if ((status == "ORDER_ASSIGN" || status == "ORDER_PROCESSING") && !refundSuccess) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="staffChange(\'' + value + '\')" title="换人"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
                     }
                     return content;

@@ -80,12 +80,12 @@ function loadTable() {
                 }
             },
             {
-                field: 'oldStaffId',
+                field: 'oldStaffName',
                 title: '更换前护工',
                 align: 'center'
             },
             {
-                field: 'newStaffId',
+                field: 'newStaffName',
                 title: '更换后护工',
                 align: 'center'
             },

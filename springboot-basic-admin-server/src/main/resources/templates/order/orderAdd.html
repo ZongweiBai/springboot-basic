@@ -176,16 +176,22 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-2"><span class="c-red">*</span>购买时长：</label>
+            <label class="form-label col-2"><span class="c-red">*</span>购买开始时间：</label>
             <div class="formControls col-3">
                 <input type="text" onchange="getTimeStamp('1');"
                        onfocus="WdatePicker({dateFmt:'yyyy-MM-d HH:mm:ss',minDate:'%y-%M-%d'})" id="datemin"
-                       class="input-text Wdate" style="width: 45%;">
-                &nbsp;&nbsp;至&nbsp;&nbsp;
+                       class="input-text Wdate">
+            </div>
+            <label class="form-label col-2"><span class="c-red">*</span>购买结束时间：</label>
+            <div class="formControls col-3">
                 <input type="text" onchange="getTimeStamp('2');"
                        onfocus="WdatePicker({dateFmt:'yyyy-MM-d HH:mm:ss',minDate:'#F{$dp.$D(\'datemin\')}'})" id="datemax"
-                       class="input-text Wdate" style="width: 45%;">
+                       class="input-text Wdate">
             </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
             <label class="form-label col-2"><span class="c-red">*</span>总时长：</label>
             <div class="formControls col-3">
                 <span id="serviceDurationSpan">0 天</span>

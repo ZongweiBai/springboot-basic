@@ -8,6 +8,21 @@ function applyFund() {
     $("#form-menu-add").Validform({
         tiptype: 2,
         callback: function (form) {
+            var refundDuration = $("#refundDuration").val();
+            var refundFee = $("#refundFee").val();
+            if (refundDuration > serviceDuration) {
+                if (careType == 'HOSPITAL_CARE' || careType == 'HOME_CARE') {
+                    tip.alertError("退款天数不能大于购买天数！")
+                } else {
+                    tip.alertError("退款次数不能大于购买次数！")
+                }
+                return false;
+            }
+            if (refundFee > totalFee) {
+                tip.alertError("退款金额不能大于订单金额！")
+                return false;
+            }
+
             $.ajax({
                 type: "POST",
                 url: contextPath + "afterSales/dealOrderRefund",
@@ -69,6 +84,9 @@ function rejectFund() {
     });
 }
 
+var careType;
+var serviceDuration;
+var totalFee;
 function loadDataInfo(refundId) {
     $.ajax({
         type: "GET",
@@ -103,15 +121,19 @@ function loadDataInfo(refundId) {
                 }
                 $("#dealStatusTd").html(dealStatusTd);
                 $("#orderIdTd").html(order.id);
-                $("#totalFee").html(order.totalFee);
+                $("#totalFee").html(order.totalFee + " 元");
                 $("#createTime").html(refund.createTime);
+                    $("#refundFeeTd").html(refund.refundFee + " 元");
                 if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
-                    $("#refundFeeTd").html(refund.refundFee + " 天");
+                    $("#serviceDuration").html(orderExt.serviceDuration + "天");
                 } else {
-                    $("#refundFeeTd").html(refund.refundFee + " 次");
+                    $("#serviceDuration").html(orderExt.serviceDuration + "次");
                 }
                 $("#refundDesc").html(refund.refundDesc);
-                $("#serviceDuration").html(orderExt.serviceDuration);
+
+                careType = order.careType;
+                serviceDuration = orderExt.serviceDuration;
+                totalFee = order.totalFee;
 
                 $("#id").val(refund.id);
                 $("#refundDuration").val(refund.refundDuration);
