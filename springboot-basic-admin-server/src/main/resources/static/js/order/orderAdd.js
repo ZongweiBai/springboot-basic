@@ -148,10 +148,6 @@ function clickQuestion(obj, type) {
             $('input:checkbox[class=ASSIST_WITH_MEDICATION][questionName=无]').prop("checked", false);
         }
     }
-
-    console.log(type);
-    console.log($(obj).prop("checked"));
-    console.log($(obj).attr("questionName"));
 }
 
 function selectUser(userId) {

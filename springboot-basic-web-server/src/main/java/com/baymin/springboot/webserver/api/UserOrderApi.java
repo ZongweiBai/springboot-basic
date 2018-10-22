@@ -146,6 +146,7 @@ public class UserOrderApi {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
         orderRefund.setApplyType("USER");
+
         return orderRefundService.saveOrderRefund(orderRefund);
     }
 

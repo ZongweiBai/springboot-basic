@@ -19,6 +19,7 @@ public class StaffIncomeInfoVo {
     @ApiModelProperty(notes = "当月收入")
     private Double monthlyIncome;
 
+    @ApiModelProperty(notes = "收入明细")
     private List<StaffIncomeVo> incomeVoList;
 
     public StaffIncomeInfoVo(double totalIncome, double income, List<StaffIncome> incomeList) {
@@ -29,6 +30,7 @@ public class StaffIncomeInfoVo {
             for (StaffIncome staffIncome : incomeList) {
                 incomeVos.add(new StaffIncomeVo(staffIncome));
             }
+            this.incomeVoList = incomeVos;
         }
     }
 }

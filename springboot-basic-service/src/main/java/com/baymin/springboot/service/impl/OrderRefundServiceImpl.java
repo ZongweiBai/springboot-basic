@@ -61,6 +61,17 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
 
+        if (order.getTotalFee() < orderRefund.getRefundFee()) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "退款金额不能大于订单金额"));
+        }
+
+        OrderExt orderExt = orderExtRepository.findByOrderId(order.getId());
+        if (Objects.nonNull(orderExt)) {
+            if (orderExt.getServiceDuration() < orderRefund.getRefundDuration()) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "退款数量不能大于订单数量"));
+            }
+        }
+
         // save orderRefundRequest
         orderRefund.setCareType(order.getCareType());
         orderRefund.setDealTime(new Date());

@@ -442,6 +442,12 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.isNull(order)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
+        if (order.getStatus() != OrderStatus.ORDER_PROCESSING) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单不处于服务中状态，不能完成"));
+        }
+        if (Objects.nonNull(order.getRefundStatus()) && order.getRefundStatus() == CommonDealStatus.APPLY) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "尚有退款未处理，不能完成订单"));
+        }
 
         // 修改订单
         order.setCloseTime(new Date());
@@ -451,7 +457,11 @@ public class OrderServiceImpl implements IOrderService {
         // 修改用户订单数
         UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
         if (Objects.nonNull(userProfile)) {
-            userProfile.setOrderCount(userProfile.getOrderCount() + 1);
+            if (Objects.isNull(userProfile.getOrderCount())) {
+                userProfile.setOrderCount(1);
+            } else {
+                userProfile.setOrderCount(userProfile.getOrderCount() + 1);
+            }
             userProfileRepository.save(userProfile);
         }
 
@@ -459,7 +469,11 @@ public class OrderServiceImpl implements IOrderService {
             ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
             if (Objects.nonNull(staff)) {
                 // 释放护士/护工的服务状态
-                staff.setServiceCount(staff.getServiceCount() + 1);
+                if (Objects.isNull(staff.getServiceCount())) {
+                    staff.setServiceCount(1);
+                } else {
+                    staff.setServiceCount(staff.getServiceCount() + 1);
+                }
                 staff.setServiceStatus(ServiceStatus.FREE);
                 serviceStaffRepository.save(staff);
 
