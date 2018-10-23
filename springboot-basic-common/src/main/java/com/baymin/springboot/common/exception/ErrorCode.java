@@ -6,6 +6,7 @@ package com.baymin.springboot.common.exception;
 public enum ErrorCode {
 
     invalid_request,
+    order_already_payed,
     unauthorized,
     server_error,
     temporarily_unavailable,

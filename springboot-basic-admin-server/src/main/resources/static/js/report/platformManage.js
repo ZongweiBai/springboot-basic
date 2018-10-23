@@ -1,0 +1,133 @@
+$().ready(function () {
+    // 加载所有订单统计
+    loadAllTable();
+    
+    // 加载速递订单统计
+    loadTable();
+
+    // 加载商城订单统计
+    loadMallTable();
+});
+
+function loadAllTable() {
+    $('#allOrderTable').bootstrapTable({
+        url: contextPath + "/order/statisticsController/statisticsOrderForPage",
+        dataType: "json",
+        method: "POST",
+        contentType: "application/x-www-form-urlencoded",
+        queryParams: function (params) {
+            var paramsMap = {
+                limit: params.limit,  //页面大小
+                offset: params.offset,
+                datemin: $("#datemin").val(),
+                datemax: $("#datemax").val(),
+                queryType: 3
+            };
+            return paramsMap;
+        },
+        pageNumber: 1,
+        pageSize: 10,//单页记录数
+        pageList: [10, 20, 30, 50],//分页步进值
+        pagination: true, //分页
+        sidePagination: "server", //服务端处理分页
+        columns: [
+            {
+                field: 'totalMoney',
+                title: '平台订单总金额（元）',
+                align: 'center'
+            },
+            {
+                field: 'avgMoney',
+                title: '平台订单平均金额（元）',
+                align: 'center'
+            },
+            {
+                field: 'orderCount',
+                title: '平台总订单数',
+                align: 'center'
+            }
+        ]
+    });
+}
+
+function loadTable() {
+    $('#menuTable').bootstrapTable({
+        url: contextPath + "/order/statisticsController/statisticsOrderForPage",
+        dataType: "json",
+        method: "POST",
+        contentType: "application/x-www-form-urlencoded",
+        queryParams: function (params) {
+            var paramsMap = {
+                limit: params.limit,  //页面大小
+                offset: params.offset,
+                datemin: $("#datemin").val(),
+                datemax: $("#datemax").val(),
+                queryType: 1
+            };
+            return paramsMap;
+        },
+        pageNumber: 1,
+        pageSize: 10,//单页记录数
+        pageList: [10, 20, 30, 50],//分页步进值
+        pagination: true, //分页
+        sidePagination: "server", //服务端处理分页
+        columns: [
+            {
+                field: 'totalMoney',
+                title: '速递订单总金额（元）',
+                align: 'center'
+            },
+            {
+                field: 'avgMoney',
+                title: '速递订单平均金额（元）',
+                align: 'center'
+            },
+            {
+                field: 'orderCount',
+                title: '速递总订单数',
+                align: 'center'
+            }
+        ]
+    });
+}
+
+function loadMallTable() {
+    $('#mallOrderTable').bootstrapTable({
+        url: contextPath + "/order/statisticsController/statisticsOrderForPage",
+        dataType: "json",
+        method: "POST",
+        contentType: "application/x-www-form-urlencoded",
+        queryParams: function (params) {
+            var paramsMap = {
+                limit: params.limit,  //页面大小
+                offset: params.offset,
+                datemin: $("#malldatemin").val(),
+                datemax: $("#malldatemax").val(),
+                queryType: 2
+            };
+            return paramsMap;
+        },
+        pageNumber: 1,
+        pageSize: 10,//单页记录数
+        pageList: [10, 20, 30, 50],//分页步进值
+        pagination: true, //分页
+        sidePagination: "server", //服务端处理分页
+        columns: [
+            {
+                field: 'totalMoney',
+                title: '商城订单总金额（元）',
+                align: 'center'
+            },
+            {
+                field: 'avgMoney',
+                title: '商城订单平均金额（元）',
+                align: 'center'
+            },
+            {
+                field: 'orderCount',
+                title: '商城总订单数',
+                align: 'center'
+            }
+        ]
+    });
+}

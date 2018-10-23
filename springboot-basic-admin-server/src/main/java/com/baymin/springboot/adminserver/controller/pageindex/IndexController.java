@@ -378,4 +378,12 @@ public class IndexController {
         return "hospital/addHospital";
     }
 
+    /**
+     * ===========================报表中心入口================================
+     */
+    @GetMapping("/index/report/platform/manage")
+    public String managePlatformReport() {
+        return "report/platformManage";
+    }
+
 }

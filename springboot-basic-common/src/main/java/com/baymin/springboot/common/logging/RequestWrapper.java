@@ -4,9 +4,7 @@ import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 /**
  * Created by ebaizon on 1/29/2018.
@@ -17,6 +15,11 @@ public class RequestWrapper extends HttpServletRequestWrapper {
     public RequestWrapper(HttpServletRequest request, byte[] payload) {
         super(request);
         inputStream = new ByteArrayInputStream(payload);
+    }
+
+    @Override
+    public BufferedReader getReader() throws IOException {
+        return new BufferedReader(new InputStreamReader(getInputStream()));
     }
 
     @Override

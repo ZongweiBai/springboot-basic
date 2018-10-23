@@ -10,15 +10,16 @@ import com.baymin.springboot.store.payload.ServiceProductVo;
 import com.baymin.springboot.store.repository.IOrderExtRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -81,12 +82,12 @@ public class OrderDaoImpl implements IOrderDao {
             }
         }
 
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");
 
-        JPAQuery<Order> jpaQuery = queryFactory.select(qOrder)
-                .from(qOrder)
-                .where(predicate);
-
-        return jpaQuery.fetch();
+        Iterable<Order> iterable = orderRepository.findAll(predicate, sort);
+        List<Order> orderList = new ArrayList<>();
+        iterable.forEach(orderList::add);
+        return orderList;
     }
 
     @Override

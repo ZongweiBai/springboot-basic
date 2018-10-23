@@ -47,7 +47,8 @@ public class Config implements WebMvcConfigurer {
                         "/api/login/smscode",
                         "/api/token/refresh",
                         "/wechat/*",
-                        "/api/wechat/*");
+                        "/api/wechat/pay/notify",
+                        "/api/wechat/openId");
     }
 
 }

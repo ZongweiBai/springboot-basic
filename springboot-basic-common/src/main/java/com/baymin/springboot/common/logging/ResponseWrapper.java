@@ -25,7 +25,6 @@ public class ResponseWrapper extends HttpServletResponseWrapper {
         writer = new PrintWriter(bos);
     }
 
-
     @Override
     public ServletOutputStream getOutputStream() throws IOException {
         return new ServletOutputStream() {

@@ -18,6 +18,7 @@ import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
 import com.baymin.springboot.service.*;
 import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.PayRequestVo;
 import com.baymin.springboot.store.payload.TicketRequestVo;
@@ -166,6 +167,9 @@ public class WechatApi {
         if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单支付方式不是微信支付，不能发起线上支付"));
         }
+        if (order.getStatus() != OrderStatus.ORDER_UN_PAY && Objects.nonNull(order.getPayTime())) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.order_already_payed.name(), "订单已支付成功！"));
+        }
 
         Map<String, Object> resultMap;
         UserProfile user = userProfileService.findById(userId);
@@ -179,8 +183,8 @@ public class WechatApi {
 
     @ApiOperation(value = "微信支付回调接口")
     @RequestMapping(value = "/pay/notify", method = RequestMethod.POST)
-    @ResponseBody
-    public void notifyPayResult(HttpServletRequest request, HttpServletResponse response) throws Exception {
+    @ResponseBody()
+    public String notifyPayResult(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // 获取收到的报文
         BufferedReader reader = request.getReader();
         String line;
@@ -198,43 +202,43 @@ public class WechatApi {
 
                 PayRecord payRecord = payRecordService.getRecordByTradeNo(resData.getOut_trade_no());
                 if (payRecord == null) {
+                    logger.error("支付记录不存在");
                     protocolData.setReturn_code(WXResCommonData.FAIL_RETURN_CODE);
                     protocolData.setReturn_msg(WXResCommonData.FAIL_RESULT_CODE);
-                    returnToWechat(response, protocolData);
-                    return;
+                    return returnToWechat(response, protocolData);
                 }
                 if (payRecord.getPayResult()) {
+                    logger.info("订单{}已支付成功", payRecord.getOrderId());
                     protocolData.setReturn_code(WXResCommonData.SUCCESS_RETURN_CODE);
                     protocolData.setReturn_msg(WXResCommonData.SUCCESS_RESULT_CODE);
-                    returnToWechat(response, protocolData);
-                    return;
+                    return returnToWechat(response, protocolData);
                 }
 
                 payRecord.setTransactionId(resData.getTransaction_id());
                 payRecordService.orderPaySuccess(payRecord);
 
-                returnToWechat(response, protocolData);
+                return returnToWechat(response, protocolData);
 
             } else {
                 protocolData.setReturn_code(WXResCommonData.FAIL_RETURN_CODE);
                 protocolData.setReturn_msg(WXResCommonData.FAIL_RESULT_CODE);
-                returnToWechat(response, protocolData);
+                return returnToWechat(response, protocolData);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("error occurred when wechatpay notify");
             protocolData.setReturn_code(WXResCommonData.FAIL_RETURN_CODE);
             protocolData.setReturn_msg(WXResCommonData.FAIL_RESULT_CODE);
-            returnToWechat(response, protocolData);
+            return returnToWechat(response, protocolData);
         }
 
     }
 
-    private void returnToWechat(HttpServletResponse response, WXProtocolData wxData) throws IOException {
+    private String returnToWechat(HttpServletResponse response, WXProtocolData wxData) throws IOException {
+        response.setContentType("text/xml");
         XStream xStreamForRequestPostData = new XStream(new DomDriver("UTF-8", new XmlFriendlyNameCoder("-_", "_")));
         String rtWeiXinStr = xStreamForRequestPostData.toXML(wxData);
-        logger.error("商户处理后同步返回给微信参数【" + rtWeiXinStr + "】");
-        response.setContentType("text/xml;charset=UTF-8");
-        response.getWriter().write(rtWeiXinStr);
+        logger.info("商户处理后同步返回给微信参数【" + rtWeiXinStr + "】");
+        return rtWeiXinStr;
     }
 
     private JsApiOrderReqData dealWechatOrderResponse(HttpServletResponse response, Map<String, Object> resultMap) {
