@@ -112,9 +112,9 @@ public class OrderServiceImpl implements IOrderService {
         } else {
             PayWay payWay = PayWay.valueOf(request.getPayway());
             order.setPayWay(payWay);
-            order.setPayTime(new Date());
+//            order.setPayTime(new Date());
             order.setOrderSource("PC");
-            order.setStatus(OrderStatus.ORDER_PAYED);
+            order.setStatus(OrderStatus.ORDER_UN_PAY);
         }
         order.setServiceProductId(request.getProductId());
         order.setBasicItemInfo(request.getBasicItems());
