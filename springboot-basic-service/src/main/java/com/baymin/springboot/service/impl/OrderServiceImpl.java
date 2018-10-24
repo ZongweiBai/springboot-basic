@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
@@ -315,7 +316,43 @@ public class OrderServiceImpl implements IOrderService {
             builder.and(qOrder.orderSource.eq(orderSource));
         }
 
-        return orderRepository.findAll(builder, pageable);
+        Page<Order> page = orderRepository.findAll(builder, pageable);
+        if (CollectionUtils.isNotEmpty(page.getContent())) {
+            List<String> staffIds = new ArrayList<>();
+            List<String> adminIds = new ArrayList<>();
+            page.getContent().forEach(order -> {
+                if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                    staffIds.add(order.getServiceStaffId());
+                }
+                if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                    adminIds.add(order.getServiceAdminId());
+                }
+            });
+
+            Map<String, ServiceStaff> staffMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(staffIds)) {
+                List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
+                staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, Function.identity()));
+            }
+
+            Map<String, Admin> adminMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(adminIds)) {
+                List<Admin> adminList = adminRepository.findByIds(adminIds);
+                adminMap = adminList.stream().collect(Collectors.toMap(Admin::getId, Function.identity()));
+            }
+            Map<String, ServiceStaff> finalStaffMap = staffMap;
+            Map<String, Admin> finalAdminMap = adminMap;
+            page.getContent().forEach(order -> {
+                if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                    order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
+                }
+                if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                    order.setAdmin(finalAdminMap.get(order.getServiceAdminId()));
+                }
+            });
+        }
+
+        return page;
     }
 
     @Override

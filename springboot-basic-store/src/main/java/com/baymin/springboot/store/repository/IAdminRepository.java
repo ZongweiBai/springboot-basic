@@ -13,4 +13,7 @@ public interface IAdminRepository extends PagingAndSortingRepository<Admin, Stri
 
     @Query("select vo from Admin vo where vo.roleId in :roleIds order by vo.createTime asc")
     List<Admin> findByRoleIds(@Param("roleIds") List<String> roleIds);
+
+    @Query("select vo from Admin vo where vo.id in :ids order by vo.createTime asc")
+    List<Admin> findByIds(@Param("ids") List<String> adminIds);
 }

@@ -133,4 +133,12 @@ public class Order implements Serializable {
     @Transient
     private OrderExt orderExt;
 
+    @ApiModelProperty(hidden = true)
+    @Transient
+    private ServiceStaff serviceStaff;
+
+    @ApiModelProperty(hidden = true)
+    @Transient
+    private Admin admin;
+
 }

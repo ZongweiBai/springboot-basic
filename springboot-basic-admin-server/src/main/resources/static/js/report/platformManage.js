@@ -11,7 +11,7 @@ $().ready(function () {
 
 function loadAllTable() {
     $('#allOrderTable').bootstrapTable({
-        url: contextPath + "/order/statisticsController/statisticsOrderForPage",
+        url: contextPath + "report/queryPlatformOrderReport",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
@@ -32,18 +32,38 @@ function loadAllTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
-                field: 'totalMoney',
-                title: '平台订单总金额（元）',
+                field: 'orderTotalFee',
+                title: '服务订单总额',
                 align: 'center'
             },
             {
-                field: 'avgMoney',
-                title: '平台订单平均金额（元）',
+                field: 'validOrderCount',
+                title: '有效订单总数',
                 align: 'center'
             },
             {
-                field: 'orderCount',
-                title: '平台总订单数',
+                field: 'validOrderTotalFee',
+                title: '有效订单总额',
+                align: 'center'
+            },
+            {
+                field: 'invalidOrderCount',
+                title: '无效订单总数(关闭或取消)',
+                align: 'center'
+            },
+            {
+                field: 'invalidOrderTotalFee',
+                title: '无效订单总额',
+                align: 'center'
+            },
+            {
+                field: 'refundOrderCount',
+                title: '退款订单总数',
+                align: 'center'
+            },
+            {
+                field: 'refundOrderTotalFee',
+                title: '退款订单总额',
                 align: 'center'
             }
         ]

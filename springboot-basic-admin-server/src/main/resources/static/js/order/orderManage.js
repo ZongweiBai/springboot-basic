@@ -101,6 +101,28 @@ function loadTable() {
                 }
             },
             {
+                field: 'serviceStaff',
+                title: '指派护工',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (isEmpty(value)) {
+                        return "-";
+                    }
+                    return value.userName;
+                }
+            },
+            {
+                field: 'admin',
+                title: '监督人员',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (isEmpty(value)) {
+                        return "-";
+                    }
+                    return value.adminName;
+                }
+            },
+            {
                 field: 'status',
                 title: '订单状态',
                 align: 'center',

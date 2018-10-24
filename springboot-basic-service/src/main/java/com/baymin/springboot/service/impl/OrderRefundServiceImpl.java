@@ -153,6 +153,9 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
     @Override
     public void updateOrderRefund(String refundId, CommonDealStatus dealStatus, String dealDesc) {
         OrderRefund refund = orderRefundRepository.findById(refundId).orElse(null);
+        if (Objects.isNull(refund)) {
+            return;
+        }
         refund.setDealStatus(dealStatus);
         if (Objects.nonNull(dealDesc)) {
             refund.setDealDesc(dealDesc);
