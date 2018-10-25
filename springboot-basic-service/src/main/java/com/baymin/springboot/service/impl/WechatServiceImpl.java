@@ -8,6 +8,7 @@ import com.baymin.springboot.pay.wechat.param.pojo.BasicTokenResponse;
 import com.baymin.springboot.pay.wechat.param.pojo.JsapiTicketResponse;
 import com.baymin.springboot.service.IWechatService;
 import com.baymin.springboot.store.payload.TicketRequestVo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,9 +16,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import static com.baymin.springboot.common.constant.Constant.WechatTemplate.T_MSG_REDIRECT_URL;
+
+@Slf4j
 @Service
 @Transactional
 public class WechatServiceImpl implements IWechatService {
@@ -55,5 +60,15 @@ public class WechatServiceImpl implements IWechatService {
             accessToken = basicToken.getAccessToken();
         }
         return accessToken;
+    }
+
+    @Override
+    public void sendTemplateMsg(String idpId, String templateId, Map<String, String> extension) {
+        try {
+            String accessToken = getBasicAccessToken();
+            WechatUtil.sendModelMsg(accessToken, idpId, templateId, T_MSG_REDIRECT_URL, extension);
+        } catch (Exception e) {
+            log.error("error occurred when send wechat template msg, templateId:{}", templateId);
+        }
     }
 }

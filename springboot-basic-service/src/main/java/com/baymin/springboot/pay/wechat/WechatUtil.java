@@ -82,7 +82,7 @@ public class WechatUtil {
         extension.forEach((key, value) -> {
             Map<String, String> extensionMap = new HashMap<>();
             extensionMap.put("value", value);
-            extensionMap.put("color", "#173177");
+//            extensionMap.put("color", "#173177");
             contentMap.put(key, extensionMap);
         });
 
@@ -154,7 +154,7 @@ public class WechatUtil {
     }
 
     public static void main(String[] args) {
-//        WechatUtil.getBasicToken();
+//        BasicTokenResponse token = WechatUtil.getBasicToken();
 
         /**
          *您好，本次服务已结束，谢谢您的支持，请对我们本次服务给予评价
@@ -164,15 +164,40 @@ public class WechatUtil {
          * 订单号:{{orderId.DATA}}
          */
 
-        String accessToken = "14_q291U-9pAFPesnDGVbW8FeXPBOtoOrm2LgswmNvplGEPkzvrg3fY-mpzHVKaCNJnP4rfPzOr0iWxif_pDsuKr0lnylJ6PKp7Rqo56UHr3Om1v-1sllONGsBahYF8j9xDnfEes641f-NKg-1oSEVgAHACOF";
-        String openId = "oecPZ5v-AAcSBE0ftO0gY54Lh1Po";
-        String templateId = "vdCaNcWdA1oJE4CU8bG_j9OkAaT7T7H8d1dvoM2DAmM";
-        String redirectUrl = "http://www.baidu.com";
+        String accessToken = "15_lCSn-CKHBKS0yNvSjqB3P6LT6IAqBJtm_a7v1S2ebW3S77W9CGv8VprnnEXwhiOYYXv2gjT8XT4XO3cEayqtwWOJd4ZiwR-Qk-HbrxDksrIlk1lAtSORwl5CK9cHSKfAHABME";
+//        System.out.println(token.getAccessToken());
+        String openId = "o2DIYuA77RP9afhMXKl2pRpW_LJU";
+        String redirectUrl = "http://dms.ecare-easy.com/";
         Map<String, String> extension = new HashMap<>();
-        extension.put("userName", "Baizongwei");
-        extension.put("userMobile", "18666177436");
-        extension.put("userAddr", "广州市天河区 南村镇 16号");
-        extension.put("orderId", "5555004545");
+//        String templateId = "9yiC4eqAVxSyIU6x91h_Ost-QAKil2JN7ZOekQm08SI";
+//        extension.put("first", "xxx，您好。您的个人网报申请未能通过审核");
+//        extension.put("keyword1", "2018-10-25 12:12:13");
+//        extension.put("keyword2", "资料不全");
+//        extension.put("remark", "点击查看详情");
+
+//        String templateId = "YoLZUeVY-096cPDvenNaXuf6i11HHJSCAFx9Hqv2NaY";
+//        extension.put("first", "您好，您的申请已通过");
+//        extension.put("keyword1", "张三");
+//        extension.put("keyword2", "2017年7月10号");
+//        extension.put("keyword3", "已通过");
+//        extension.put("remark", "点击查看详情");
+
+//        String templateId = "Qxirwkn6aueTH-Ux6g_c4LSeZQxr7x3Zs1yinuNjoq0";
+//        extension.put("first", "订单完成指派通知");
+//        extension.put("keyword1", "订单服务");
+//        extension.put("keyword2", "2017年7月10号");
+//        extension.put("keyword3", "订单号XXXX，完成服务人员调度");
+//        extension.put("keyword4", "上门服务人员XXXXX,上门服务时间XXXX");
+//        extension.put("remark", "点击查看详情");
+
+        String templateId = "f_-2w5cfGdOmcBiZKmdxDvpPo8y7iMoSiVnETZZ81DQ";
+        extension.put("first", "服务已结束，请您评价！");
+        extension.put("keyword1", "小王");
+        extension.put("keyword2", "老年心肺疾病康复");
+        extension.put("keyword3", "凤凰养老服务机构");
+        extension.put("keyword4", "2018-05-02");
+        extension.put("remark", "点击评价我们的服务，感谢您的使用！");
+
         ModelMsgResponse response = WechatUtil.sendModelMsg(accessToken, openId, templateId, redirectUrl, extension);
         log.debug("返回值：{}", response);
     }

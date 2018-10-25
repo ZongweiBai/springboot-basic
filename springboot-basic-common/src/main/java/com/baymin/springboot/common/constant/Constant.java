@@ -35,6 +35,14 @@ public interface Constant {
         String ORDER_USER_REG = "SMS_146802494";  //用户注册验证
     }
 
+    interface WechatTemplate {
+        String T_REQUEST_DENY = "9yiC4eqAVxSyIU6x91h_Ost-QAKil2JN7ZOekQm08SI"; // 换人或者退款申请不通过消息模板
+        String T_REQUEST_AGREE = "YoLZUeVY-096cPDvenNaXuf6i11HHJSCAFx9Hqv2NaY"; // 换人或者退款申请通过消息模板
+        String T_ORDER_ASSIGNED = "Qxirwkn6aueTH-Ux6g_c4LSeZQxr7x3Zs1yinuNjoq0"; // 订单完成指派通知用户
+        String T_ORDER_COMPLETED = "f_-2w5cfGdOmcBiZKmdxDvpPo8y7iMoSiVnETZZ81DQ";   // 订单完成评价提醒通知用户
+        String T_MSG_REDIRECT_URL = "http://dms.ecare-easy.com/";
+    }
+
     interface JWTAPI {
         String JWT_ID = "I_AM_ROBOT";
         String JWT_SECRET = "7786df7fc3a34e26a61c034d5ec8245d";

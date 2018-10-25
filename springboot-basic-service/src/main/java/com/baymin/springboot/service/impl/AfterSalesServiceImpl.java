@@ -4,8 +4,10 @@ import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
+import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IAfterSalesService;
 import com.baymin.springboot.service.ISmsSendRecordService;
+import com.baymin.springboot.service.IWechatService;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.ServiceStatus;
@@ -56,6 +58,9 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
 
     @Autowired
     private ISmsSendRecordService smsSendRecordService;
+
+    @Autowired
+    private IWechatService wechatService;
 
     @Override
     public Page<OrderStaffChange> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId) {
@@ -230,6 +235,16 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
                 templateParam.put("orderno", oldData.getOrderId());
                 templateParam.put("name", userProfile.getNickName());
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_CHANGE_AGREE, templateParam);
+
+                if (StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    Map<String, String> extension = new HashMap<>();
+                    extension.put("first", "您好，您的换人申请已通过");
+                    extension.put("keyword1", userProfile.getNickName());
+                    extension.put("keyword2", DateUtil.formatDate(new Date(), "yyyy年MM月dd号"));
+                    extension.put("keyword3", "已通过");
+                    extension.put("remark", "点击查看详情");
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_AGREE, extension);
+                }
             }
         } else {
             // 换人申请审核不通过
@@ -239,6 +254,15 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
                 templateParam.put("orderNo", oldData.getOrderId());
                 templateParam.put("reason", change.getDealDesc());
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_CHANGE_REJECT, templateParam);
+
+                if (StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    Map<String, String> extension = new HashMap<>();
+                    extension.put("first", userProfile.getNickName() + "，您好。您的换人申请未能通过审核");
+                    extension.put("keyword1", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
+                    extension.put("keyword2", change.getDealDesc());
+                    extension.put("remark", "点击查看详情");
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_DENY, extension);
+                }
             }
         }
         oldData.setDealDesc(change.getDealDesc());

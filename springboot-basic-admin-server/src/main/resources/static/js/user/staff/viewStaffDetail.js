@@ -83,6 +83,7 @@ function loadUserInfo(staffId) {
                             status = "已完成";
                         }
                         orderTBody += '<tr class="text-c">';
+                        orderTBody += '<td id="viewOrder"><a href="javascript:void(0);" onclick="viewOrderDetail(\''+order.id+'\')">查看详情</a></td>';
                         orderTBody += '<td id="orderId">'+order.id+'</td>';
                         orderTBody += '<td id="careType">'+careType+'</td>';
                         orderTBody += '<td id="orderTime">'+order.orderTime+'</td>';
@@ -109,4 +110,8 @@ function fillImageUpload(fileNames) {
     content += "</a>";
     content += "</span>";
     $("#headerImgDiv").html(content);
+}
+
+function viewOrderDetail(orderId) {
+    tip.openIframe("订单详情", contextPath + 'index/order/detail?orderId=' + orderId);
 }

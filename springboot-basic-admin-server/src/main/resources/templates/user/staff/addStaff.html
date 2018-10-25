@@ -62,7 +62,7 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>护理经验：</label>
+            <label class="form-label col-3"><span class="c-red">*</span>护理经验（单位：年）：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="experience" name="experience"
                        datatype="n" nullmsg="护理经验不能为空">
@@ -71,28 +71,28 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>身高：</label>
+            <label class="form-label col-3"><span class="c-red"></span>身高（单位：CM）：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="height" name="height"
-                       datatype="n" nullmsg="身高不能为空">
+                       datatype="n" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>体重：</label>
+            <label class="form-label col-3"><span class="c-red"></span>体重：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="weight" name="weight"
-                       datatype="n" nullmsg="体重不能为空">
+                       datatype="n" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl" id="passwordDiv">
-            <label class="form-label col-3"><span class="c-red">*</span>民族：</label>
+            <label class="form-label col-3"><span class="c-red"></span>民族：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="nationality" name="nationality"
-                       datatype="*2-16" nullmsg="民族不能为空">
+                       datatype="*1-16" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
@@ -123,8 +123,12 @@
         <div class="row cl">
             <label class="form-label col-3"><span class="c-red">*</span>普通话：</label>
             <div class="formControls col-5">
-                <input type="text" class="input-text" value="" placeholder="" id="mandarin" name="mandarin"
-                       datatype="*" nullmsg="普通话不能为空">
+                <select class="input-text" id="mandarin" name="mandarin"
+                        datatype="*" nullmsg="普通话不能为空">
+                    <option value="一般">一般</option>
+                    <option value="熟悉">熟悉</option>
+                    <option value="精通">精通</option>
+                </select>
             </div>
             <div class="col-2"></div>
         </div>
@@ -172,28 +176,28 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>健康证：</label>
+            <label class="form-label col-3"><span class="c-red"></span>健康证：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="healthCardId" name="healthCardId"
-                       datatype="*" nullmsg="健康证不能为空">
+                       datatype="*" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>养老护理员职业资格证：</label>
+            <label class="form-label col-3"><span class="c-red"></span>养老护理员职业资格证：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="pensionCardId" name="pensionCardId"
-                       datatype="*" nullmsg="养老护理员职业资格证不能为空">
+                       datatype="*" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>医疗照护职业资格证：</label>
+            <label class="form-label col-3"><span class="c-red"></span>医疗照护职业资格证：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="healthCareCardId" name="healthCareCardId"
-                       datatype="*" nullmsg="医疗照护职业资格证不能为空">
+                       datatype="*" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>

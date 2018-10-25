@@ -6,8 +6,10 @@ import com.baymin.springboot.common.exception.ErrorCode;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.util.BigDecimalUtil;
+import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.service.ISmsSendRecordService;
+import com.baymin.springboot.service.IWechatService;
 import com.baymin.springboot.store.dao.IInvoiceDao;
 import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
@@ -94,6 +96,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     private IUserWalletRepository userWalletRepository;
+
+    @Autowired
+    private IWechatService wechatService;
 
     @Override
     public Order saveUserOrder(UserOrderVo request) {
@@ -399,8 +404,15 @@ public class OrderServiceImpl implements IOrderService {
         templateParam.put("orderno", orderId);
         smsSendRecordService.addSmsSendRecord(staff.getMobile(), Constant.AliyunAPI.ORDER_ASSING, templateParam);
 
-        if (staff.getAssignOrderNotification()) {
-            // TODO 发送模板消息，通知护士有订单指派
+        if (staff.getAssignOrderNotification() && StringUtils.isNotBlank(staff.getIdpId())) {
+            Map<String, String> extension = new HashMap<>();
+            extension.put("first", "订单完成指派通知");
+            extension.put("keyword1", "订单服务");
+            extension.put("keyword2", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
+            extension.put("keyword3", "订单号" + orderId + "，完成服务人员调度");
+            extension.put("keyword4", "上门服务人员" + staff.getUserName());
+            extension.put("remark", "点击查看详情");
+            wechatService.sendTemplateMsg(staff.getIdpId(), Constant.WechatTemplate.T_ORDER_ASSIGNED, extension);
         }
     }
 
@@ -547,6 +559,17 @@ public class OrderServiceImpl implements IOrderService {
                 staffIncome.setIncomeType(IncomeType.INCOME);
                 staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
                 staffIncomeRepository.save(staffIncome);
+
+                if (Objects.nonNull(userProfile) && StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    Map<String, String> extension = new HashMap<>();
+                    extension.put("first", "服务已结束，请您评价！");
+                    extension.put("keyword1", staff.getUserName());
+                    extension.put("keyword2", order.getCareType().getName());
+                    extension.put("keyword3", "一家依护");
+                    extension.put("keyword4", DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
+                    extension.put("remark", "点击查看详情");
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_ORDER_COMPLETED, extension);
+                }
             }
         }
     }
