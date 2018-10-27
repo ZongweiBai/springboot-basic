@@ -50,6 +50,17 @@ function loadTable() {
                 }
             },
             {
+                field: 'userProfile',
+                title: '用户账号',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (!isEmpty(value)) {
+                        return value.account;
+                    }
+                    return "";
+                }
+            },
+            {
                 field: 'createTime',
                 title: '评价时间',
                 align: 'center',
@@ -67,7 +78,7 @@ function loadTable() {
                 title: '评价星级',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    return value+"星";
+                    return value + "星";
                 }
             },
             {
@@ -130,7 +141,7 @@ function dealInfo(evaluateId) {
 }
 
 function deleteInfo(evaluateId) {
-    tip.confirm("确定要删除吗？删除后无法恢复！",function () {
+    tip.confirm("确定要删除吗？删除后无法恢复！", function () {
         $.ajax({
             type: "GET",
             url: contextPath + "/afterSales/deleteEvaluate",

@@ -15,7 +15,7 @@
     <title>数据统计</title>
 </head>
 <body>
-<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 报表中心 <span class="c-gray en">&gt;</span> 平台统计
+<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 报表中心 <span class="c-gray en">&gt;</span> 订单统计
 </nav>
 <div class="pd-20">
 
@@ -26,6 +26,14 @@
     </div>
     <form id="allOrderForm" name="menuForm" onsubmit="$('#allOrderTable').bootstrapTable('refresh');return false;" method="post">
         <div style="margin-top: 10px;margin-bottom: 10px;">
+            服务名称:
+            <select class="input-text" style="width: 120px;" id="careType">
+                <option value="">选择服务名称</option>
+                <option value="HOSPITAL_CARE">医院陪护</option>
+                <option value="HOME_CARE">居家照护</option>
+                <option value="REHABILITATION">康复护理</option>
+            </select>
+
             日期筛选：
             <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'allDatemax\')||\'%y-%M-%d\'}'})" id="allDatemin"
                    class="input-text Wdate" style="width:120px;">
@@ -33,55 +41,18 @@
             <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'allDatemin\')}',maxDate:'%y-%M-%d'})"
                    id="allDatemax" class="input-text Wdate" style="width:120px;">
             <button type="submit" class="btn btn-success"><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>查询</button>
+
+            <button type="button" class="btn btn-success" onclick="downloadExcel();"><i class="Hui-iconfont">&#xe644;</i>导出Excel</button>
         </div>
     </form>
     <table id="allOrderTable" class="table table-border table-bordered table-bg">
 
     </table>
 
-    <div class="cl pd-5 bg-1 bk-gray mt-20">
-        <span>
-            用户统计
-		</span>
-    </div>
-    <form id="menuForm" name="menuForm" onsubmit="$('#menuTable').bootstrapTable('refresh');return false;" method="post">
-        <div style="margin-top: 10px;margin-bottom: 10px;">
-            日期筛选：
-            <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin"
-                   class="input-text Wdate" style="width:120px;">
-            -
-            <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})"
-                   id="datemax" class="input-text Wdate" style="width:120px;">
-            <button type="submit" class="btn btn-success"><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>查询</button>
-        </div>
-    </form>
-    <table id="menuTable" class="table table-border table-bordered table-bg">
-
-    </table>
-
-    <div class="cl pd-5 bg-1 bk-gray mt-20">
-        <span>
-            照护师统计
-		</span>
-    </div>
-    <form id="mallOrderForm" name="menuForm" onsubmit="$('#mallOrderTable').bootstrapTable('refresh');return false;" method="post">
-        <div style="margin-top: 10px;margin-bottom: 10px;">
-            日期筛选：
-            <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'malldatemax\')||\'%y-%M-%d\'}'})"
-                   id="malldatemin" class="input-text Wdate" style="width:120px;">
-            -
-            <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'malldatemin\')}',maxDate:'%y-%M-%d'})"
-                   id="malldatemax" class="input-text Wdate" style="width:120px;">
-            <button type="submit" class="btn btn-success"><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>查询</button>
-        </div>
-    </form>
-    <table id="mallOrderTable" class="table table-border table-bordered table-bg">
-
-    </table>
 </div>
 <script type="text/javascript" src="lib/bootstrap-table/bootstrap-table.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table.min.js}"></script>
 <script type="text/javascript" src="lib/bootstrap-table/bootstrap-table-zh-CN.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
 <script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
-<script type="text/javascript" src="js/report/platformManage.js" th:src="@{/js/report/platformManage.js}"></script>
+<script type="text/javascript" src="js/report/orderManage.js" th:src="@{/js/report/orderManage.js}"></script>
 </body>
 </html>

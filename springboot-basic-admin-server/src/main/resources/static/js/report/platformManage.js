@@ -1,11 +1,11 @@
 $().ready(function () {
-    // 加载所有订单统计
+    // 订单统计
     loadAllTable();
     
-    // 加载速递订单统计
+    // 用户统计
     loadTable();
 
-    // 加载商城订单统计
+    // 照护师统计
     loadMallTable();
 });
 
@@ -19,8 +19,8 @@ function loadAllTable() {
             var paramsMap = {
                 limit: params.limit,  //页面大小
                 offset: params.offset,
-                datemin: $("#datemin").val(),
-                datemax: $("#datemax").val(),
+                datemin: $("#allDatemin").val(),
+                datemax: $("#allDatemax").val(),
                 queryType: 3
             };
             return paramsMap;
@@ -72,7 +72,7 @@ function loadAllTable() {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/order/statisticsController/statisticsOrderForPage",
+        url: contextPath + "report/queryUserInfoReport",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
@@ -81,8 +81,7 @@ function loadTable() {
                 limit: params.limit,  //页面大小
                 offset: params.offset,
                 datemin: $("#datemin").val(),
-                datemax: $("#datemax").val(),
-                queryType: 1
+                datemax: $("#datemax").val()
             };
             return paramsMap;
         },
@@ -93,18 +92,13 @@ function loadTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
-                field: 'totalMoney',
-                title: '速递订单总金额（元）',
+                field: 'userCount',
+                title: '用户总数',
                 align: 'center'
             },
             {
-                field: 'avgMoney',
-                title: '速递订单平均金额（元）',
-                align: 'center'
-            },
-            {
-                field: 'orderCount',
-                title: '速递总订单数',
+                field: 'userHaveOrderCount',
+                title: '有订单用户数',
                 align: 'center'
             }
         ]
@@ -113,7 +107,7 @@ function loadTable() {
 
 function loadMallTable() {
     $('#mallOrderTable').bootstrapTable({
-        url: contextPath + "/order/statisticsController/statisticsOrderForPage",
+        url: contextPath + "report/queryServiceStaffReport",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
@@ -122,8 +116,7 @@ function loadMallTable() {
                 limit: params.limit,  //页面大小
                 offset: params.offset,
                 datemin: $("#malldatemin").val(),
-                datemax: $("#malldatemax").val(),
-                queryType: 2
+                datemax: $("#malldatemax").val()
             };
             return paramsMap;
         },
@@ -134,18 +127,13 @@ function loadMallTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
-                field: 'totalMoney',
-                title: '商城订单总金额（元）',
+                field: 'staffCount',
+                title: '照护师总数',
                 align: 'center'
             },
             {
-                field: 'avgMoney',
-                title: '商城订单平均金额（元）',
-                align: 'center'
-            },
-            {
-                field: 'orderCount',
-                title: '商城总订单数',
+                field: 'staffHaveOrderCount',
+                title: '服务订单数',
                 align: 'center'
             }
         ]

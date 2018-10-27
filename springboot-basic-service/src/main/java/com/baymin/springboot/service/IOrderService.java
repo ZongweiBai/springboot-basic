@@ -3,8 +3,8 @@ package com.baymin.springboot.service;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.payload.UserOrderVo;
 import com.baymin.springboot.store.payload.OrderDetailVo;
+import com.baymin.springboot.store.payload.UserOrderVo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -28,7 +28,7 @@ public interface IOrderService {
 
     Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource);
 
-    Map<String,Object> getOrderDetail(String orderId);
+    Map<String, Object> getOrderDetail(String orderId);
 
     void assignOrderStaff(String orderId, String staffId, String adminId);
 
@@ -45,4 +45,6 @@ public interface IOrderService {
     List<OrderStaffChange> queryUserStaffChange(String userId);
 
     void orderCompleted(String orderId);
+
+    List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate);
 }

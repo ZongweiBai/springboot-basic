@@ -88,11 +88,11 @@ public class LoginManagementApi {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
 
-//        String smsCodeInDB = redisService.get(userAccount + "_" + "login_sms_code");
-//        if (!StringUtils.equalsIgnoreCase(smsCode, smsCodeInDB)) {
-//            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_SMS_CODE));
-//        }
-//        redisService.delete(userAccount + "_" + "login_sms_code");
+        String smsCodeInDB = redisService.get(userAccount + "_" + "login_sms_code");
+        if (!StringUtils.equalsIgnoreCase(smsCode, smsCodeInDB)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_SMS_CODE));
+        }
+        redisService.delete(userAccount + "_" + "login_sms_code");
 
         TokenVo tokenVo;
         try {

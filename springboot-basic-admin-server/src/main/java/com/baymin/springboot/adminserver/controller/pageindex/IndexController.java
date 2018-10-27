@@ -407,4 +407,14 @@ public class IndexController {
         return "report/platformManage";
     }
 
+    @GetMapping("/index/report/order/manage")
+    public String manageOrderReport() {
+        return "report/orderManage";
+    }
+
+    @GetMapping("/index/report/evaluate/manage")
+    public String manageEvaluateReport() {
+        return "report/evaluateManage";
+    }
+
 }

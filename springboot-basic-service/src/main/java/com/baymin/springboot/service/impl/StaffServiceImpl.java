@@ -76,7 +76,7 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setCreateTime(new Date());
             serviceStaff.setServiceStatus(ServiceStatus.FREE);
             serviceStaff.setServiceCount(0);
-            serviceStaff.setAssignOrderNotification(false);
+            serviceStaff.setAssignOrderNotification(true);
         }
 
         List<Area> areaList = areaRepository.findByParentId("0");

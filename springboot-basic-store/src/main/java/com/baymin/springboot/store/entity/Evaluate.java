@@ -71,4 +71,8 @@ public class Evaluate implements Serializable {
     @Column(name = "USER_ID", length = 32)
     private String userId;
 
+    @ApiModelProperty(hidden = true)
+    @Transient
+    private UserProfile userProfile;
+
 }

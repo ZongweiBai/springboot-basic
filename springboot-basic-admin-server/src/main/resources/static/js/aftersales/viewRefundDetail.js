@@ -137,7 +137,9 @@ function loadDataInfo(refundId) {
                     $("#refundDurationTd").html(refund.refundDuration + "次");
                 }
                 if (!isEmpty(refund.beginRefundPeriod) && !isEmpty(refund.endRefundPeriod)) {
-                    $("#refundPeriod").html(refund.beginRefundPeriod + "至" + refund.endRefundPeriod);
+                    var begin = parseInt(refund.beginRefundPeriod);
+                    var end = parseInt(refund.endRefundPeriod);
+                    $("#refundPeriod").html(getSmpFormatDateByLong(begin, true) + " 至 " + getSmpFormatDateByLong(end, true));
                 }
 
                 careType = order.careType;

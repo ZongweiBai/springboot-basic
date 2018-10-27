@@ -18,11 +18,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
@@ -141,7 +143,66 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
             builder.and(qEvaluate.createTime.gt(minDate));
         }
 
-        return evaluateRepository.findAll(builder, pageable);
+        Page<Evaluate> page = evaluateRepository.findAll(builder, pageable);
+        if (CollectionUtils.isNotEmpty(page.getContent())) {
+            List<String> userIds = new ArrayList<>();
+            page.getContent().forEach(evaluate -> {
+                if (StringUtils.isNotBlank(evaluate.getUserId())) {
+                    userIds.add(evaluate.getUserId());
+                }
+            });
+
+            List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+            Map<String, UserProfile> userMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, Function.identity()));
+
+            page.getContent().forEach(evaluate -> {
+                if (StringUtils.isNotBlank(evaluate.getUserId())) {
+                    evaluate.setUserProfile(userMap.get(evaluate.getUserId()));
+                }
+            });
+        }
+        return page;
+    }
+
+    @Override
+    public List<Evaluate> queryEvaluateList(Integer grade, String orderId, Date maxDate, Date minDate) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QEvaluate qEvaluate = QEvaluate.evaluate;
+
+        if (Objects.nonNull(grade)) {
+            builder.and(qEvaluate.grade.eq(grade));
+        }
+        if (StringUtils.isNotBlank(orderId)) {
+            builder.and(qEvaluate.orderId.eq(orderId));
+        }
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qEvaluate.createTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qEvaluate.createTime.gt(minDate));
+        }
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
+
+        Iterable<Evaluate> evaluates = evaluateRepository.findAll(builder, sort);
+        List<Evaluate> evaluateList = new ArrayList<>();
+        List<String> userIds = new ArrayList<>();
+        evaluates.forEach(evaluate -> {
+            if (StringUtils.isNotBlank(evaluate.getUserId())) {
+                userIds.add(evaluate.getUserId());
+            }
+        });
+
+        List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+        Map<String, UserProfile> userMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, Function.identity()));
+
+        evaluates.forEach(evaluate -> {
+            if (StringUtils.isNotBlank(evaluate.getUserId())) {
+                evaluate.setUserProfile(userMap.get(evaluate.getUserId()));
+            }
+            evaluateList.add(evaluate);
+        });
+        return evaluateList;
     }
 
     @Override
@@ -249,7 +310,7 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
             // 换人申请审核通过
             if (Objects.nonNull(userProfile)) {
                 Map<String, String> templateParam = new HashMap<>();
-                templateParam.put("orderno", oldData.getOrderId());
+                templateParam.put("orderNo", oldData.getOrderId());
                 templateParam.put("name", userProfile.getNickName());
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_CHANGE_AGREE, templateParam);
 

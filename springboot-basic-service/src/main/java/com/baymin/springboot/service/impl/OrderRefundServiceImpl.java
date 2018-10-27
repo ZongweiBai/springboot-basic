@@ -129,7 +129,7 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
             // 退款申请审核通过
             if (orderRefund.getDealStatus() == CommonDealStatus.AGREE) {
                 Map<String, String> templateParam = new HashMap<>();
-                templateParam.put("orderno", oldData.getOrderId());
+                templateParam.put("orderNo", oldData.getOrderId());
                 templateParam.put("name", userProfile.getNickName());
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_REFUND_AGREE, templateParam);
 

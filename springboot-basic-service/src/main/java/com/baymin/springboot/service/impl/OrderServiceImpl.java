@@ -27,7 +27,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,7 +38,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
-import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT_EXIST;
 import static com.baymin.springboot.store.enumconstant.CareType.HOME_CARE;
 import static com.baymin.springboot.store.enumconstant.CareType.HOSPITAL_CARE;
 
@@ -100,6 +101,9 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     private IWechatService wechatService;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public Order saveUserOrder(UserOrderVo request) {
@@ -366,6 +370,63 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QOrder qOrder = QOrder.order;
+
+        if (Objects.nonNull(careType)) {
+            builder.and(qOrder.careType.eq(careType));
+        }
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qOrder.orderTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qOrder.orderTime.gt(minDate));
+        }
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");
+
+        Iterable<Order> iterable = orderRepository.findAll(builder, sort);
+
+        List<Order> orderList = new ArrayList<>();
+
+        List<String> staffIds = new ArrayList<>();
+        List<String> adminIds = new ArrayList<>();
+        iterable.forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                staffIds.add(order.getServiceStaffId());
+            }
+            if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                adminIds.add(order.getServiceAdminId());
+            }
+        });
+
+        Map<String, ServiceStaff> staffMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(staffIds)) {
+            List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
+            staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, Function.identity()));
+        }
+
+        Map<String, Admin> adminMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(adminIds)) {
+            List<Admin> adminList = adminRepository.findByIds(adminIds);
+            adminMap = adminList.stream().collect(Collectors.toMap(Admin::getId, Function.identity()));
+        }
+        Map<String, ServiceStaff> finalStaffMap = staffMap;
+        Map<String, Admin> finalAdminMap = adminMap;
+        iterable.forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
+            }
+            if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                order.setAdmin(finalAdminMap.get(order.getServiceAdminId()));
+            }
+            orderList.add(order);
+        });
+        return orderList;
+    }
+
+    @Override
     public Map<String, Object> getOrderDetail(String orderId) {
         Map<String, Object> detailMap = new HashMap<>();
         Order order = orderRepository.findById(orderId).orElse(null);
@@ -535,7 +596,14 @@ public class OrderServiceImpl implements IOrderService {
                 List<CommonDealStatus> dealStatuses = new ArrayList<>();
                 dealStatuses.add(CommonDealStatus.AGREE);
                 dealStatuses.add(CommonDealStatus.COMPLETED);
-                Double refundFee = orderRefundRepository.sumRefundFeeByOrderId(orderId, dealStatuses);
+
+                StringBuilder sqlBuilder = new StringBuilder("select CAST(COALESCE(sum(t.REFUND_FEE), 0) AS DECIMAL(18,2)) ");
+                sqlBuilder.append("from T_ORDER_REFUND t where 1=1 ");
+                sqlBuilder.append("and t.ORDER_ID = ? ");
+                sqlBuilder.append("and t.DEAL_STATUS in (?,?)");
+
+                double refundFee = jdbcTemplate.queryForObject(sqlBuilder.toString(),
+                        new Object[]{orderId, CommonDealStatus.AGREE.getIndex(), CommonDealStatus.COMPLETED.getIndex()}, Double.class);
 
                 double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);
                 double realIncome = BigDecimalUtil.mul(realFee, 0.8);
@@ -578,4 +646,5 @@ public class OrderServiceImpl implements IOrderService {
             }
         }
     }
+
 }

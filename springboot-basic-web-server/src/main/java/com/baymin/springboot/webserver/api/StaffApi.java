@@ -30,7 +30,7 @@ import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_RE
 @Api(value = "护士/护工接口", tags = "护士/护工接口")
 @RestController
 @RequestMapping(path = "/api/staff")
-public class StaffApi {
+public class  StaffApi {
 
     @Autowired
     private IOrderService orderService;
