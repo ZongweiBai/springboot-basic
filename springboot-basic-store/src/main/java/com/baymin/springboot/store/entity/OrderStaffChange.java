@@ -71,4 +71,7 @@ public class OrderStaffChange {
     @Transient
     private String newStaffName;
 
+    @Transient
+    private String userName;
+
 }

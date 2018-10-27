@@ -145,6 +145,10 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
             }
             // 退款申请审核不通过
             else if (orderRefund.getDealStatus() == CommonDealStatus.REJECT) {
+                if (StringUtils.isBlank(orderRefund.getDealDesc())) {
+                    orderRefund.setDealDesc("后台审核不通过");
+                }
+
                 Map<String, String> templateParam = new HashMap<>();
                 templateParam.put("name", userProfile.getNickName());
                 templateParam.put("orderNo", oldData.getOrderId());

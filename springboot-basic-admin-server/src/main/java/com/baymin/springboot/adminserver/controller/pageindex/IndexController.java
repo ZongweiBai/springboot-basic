@@ -285,6 +285,27 @@ public class IndexController {
         return "aftersales/staffchange/viewStaffchangeDetail";
     }
 
+    @GetMapping("/index/aftersales/evaluate/manage")
+    public String manageEvaluate() {
+        return "aftersales/evaluate/evaluateManage";
+    }
+
+    @GetMapping("/index/aftersales/evaluate/detail")
+    public String evaluateDetail(String evaluateId, Model model) {
+        if (Objects.nonNull(evaluateId)) {
+            model.addAttribute("evaluateId", evaluateId);
+        }
+        return "aftersales/evaluate/viewEvaluateDetail";
+    }
+
+    @GetMapping("/index/aftersales/evaluate/deal")
+    public String evaluateDeal(String evaluateId, Model model) {
+        if (Objects.nonNull(evaluateId)) {
+            model.addAttribute("evaluateId", evaluateId);
+        }
+        return "aftersales/evaluate/dealEvaluate";
+    }
+
     /**
      * ===========================财务管理入口================================
      */

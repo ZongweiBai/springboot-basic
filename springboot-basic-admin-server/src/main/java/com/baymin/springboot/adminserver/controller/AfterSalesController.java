@@ -43,7 +43,7 @@ public class AfterSalesController {
     @ResponseBody
     @PostMapping(value = "queryStaffchangeForPage")
     public Map<String, Object> queryStaffchangeForPage(Pageable pageable, CommonDealStatus dealStatus, String orderId,
-                                                    String datemin, String datemax, HttpServletRequest request) {
+                                                       String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
@@ -73,7 +73,7 @@ public class AfterSalesController {
     @ResponseBody
     @PostMapping(value = "queryRefundForPage")
     public Map<String, Object> queryRefundForPage(Pageable pageable, CommonDealStatus dealStatus, String orderId,
-                                                    String datemin, String datemax, HttpServletRequest request) {
+                                                  String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
@@ -134,17 +134,57 @@ public class AfterSalesController {
 
     @ResponseBody
     @PostMapping(value = "queryEvaluateForPage")
-    public Map<String, Object> queryEvaluatePage(Pageable pageable, Integer grade, String orderId,
-                                                    String datemin, String datemax, HttpServletRequest request) {
+    public Map<String, Object> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus,
+                                                 String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 new Sort(Sort.Direction.DESC, "createTime"));
-        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageRequest, grade, orderId, maxDate, minDate);
+        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageRequest, grade, orderId, auditStatus, maxDate, minDate);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @GetMapping(value = "getEvaluateInfo")
+    public Map<String, Object> getEvaluateInfo(String evaluateId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            Evaluate evaluate = afterSalesService.getEvaluateInfo(evaluateId);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.INFO, evaluate);
+        } catch (Exception e) {
+            log.error("获取评价详情出错", e);
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @GetMapping(value = "deleteEvaluate")
+    public Map<String, Object> deleteEvaluate(String evaluateId, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        afterSalesService.deleteEvaluate(evaluateId);
+        resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "dealEvaluate")
+    public Map<String, Object> dealEvaluate(Evaluate evaluate, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            afterSalesService.dealEvaluate(evaluate);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            log.error("审核订单评价出错", e);
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
         return resultMap;
     }
 

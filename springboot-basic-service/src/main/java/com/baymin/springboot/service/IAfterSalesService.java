@@ -14,7 +14,7 @@ import java.util.Map;
 public interface IAfterSalesService {
     Page<OrderStaffChange> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId);
 
-    Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, Date maxDate, Date minDate);
+    Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus, Date maxDate, Date minDate);
 
     Page<OrderRefund> queryRefundPage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId);
 
@@ -29,4 +29,10 @@ public interface IAfterSalesService {
     Page<Invoice> queryInvoicePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId);
 
     void updateInvoice(String invoiceId, CommonDealStatus dealStatus);
+
+    void deleteEvaluate(String evaluateId);
+
+    Evaluate getEvaluateInfo(String evaluateId);
+
+    void dealEvaluate(Evaluate evaluate);
 }

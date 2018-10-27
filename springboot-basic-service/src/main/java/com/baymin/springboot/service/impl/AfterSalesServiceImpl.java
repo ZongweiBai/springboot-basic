@@ -83,16 +83,25 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
         Page<OrderStaffChange> page = orderStaffChangeRepository.findAll(builder, pageable);
         if (CollectionUtils.isNotEmpty(page.getContent())) {
             List<String> staffIds = new ArrayList<>();
+            List<String> userIds = new ArrayList<>();
             page.getContent().forEach(staffChange -> {
                 if (StringUtils.isNotBlank(staffChange.getOldStaffId())) {
                     staffIds.add(staffChange.getOldStaffId());
                 }
                 if (StringUtils.isNotBlank(staffChange.getNewStaffId())) {
-                    staffIds.add(staffChange.getNewStaffName());
+                    staffIds.add(staffChange.getNewStaffId());
+                }
+                if (StringUtils.isNotBlank(staffChange.getUserId())) {
+                    userIds.add(staffChange.getUserId());
                 }
             });
+
             List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
             Map<String, String> staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, ServiceStaff::getUserName));
+
+            List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+            Map<String, String> userMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, UserProfile::getNickName));
+
             page.getContent().forEach(staffChange -> {
                 if (StringUtils.isNotBlank(staffChange.getOldStaffId())) {
                     staffChange.setOldStaffName(staffMap.get(staffChange.getOldStaffId()));
@@ -100,14 +109,19 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
                 if (StringUtils.isNotBlank(staffChange.getNewStaffId())) {
                     staffChange.setNewStaffName(staffMap.get(staffChange.getNewStaffId()));
                 }
+                if (StringUtils.isNotBlank(staffChange.getUserId())) {
+                    staffChange.setUserName(userMap.get(staffChange.getUserId()));
+                }
             });
+
+
         }
 
         return page;
     }
 
     @Override
-    public Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, Date maxDate, Date minDate) {
+    public Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus, Date maxDate, Date minDate) {
         BooleanBuilder builder = new BooleanBuilder();
         QEvaluate qEvaluate = QEvaluate.evaluate;
 
@@ -116,6 +130,9 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
         }
         if (StringUtils.isNotBlank(orderId)) {
             builder.and(qEvaluate.orderId.eq(orderId));
+        }
+        if (Objects.nonNull(auditStatus)) {
+            builder.and(qEvaluate.auditStatus.eq(auditStatus));
         }
         if (Objects.nonNull(maxDate)) {
             builder.and(qEvaluate.createTime.lt(maxDate));
@@ -247,6 +264,10 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
                 }
             }
         } else {
+            if (StringUtils.isBlank(change.getDealDesc())) {
+                change.setDealDesc("后台审核不通过");
+            }
+
             // 换人申请审核不通过
             if (Objects.nonNull(userProfile)) {
                 Map<String, String> templateParam = new HashMap<>();
@@ -295,5 +316,26 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
     @Override
     public void updateInvoice(String invoiceId, CommonDealStatus dealStatus) {
         invoiceRepository.updateDealStatus(invoiceId, dealStatus, new Date());
+    }
+
+    @Override
+    public void deleteEvaluate(String evaluateId) {
+        evaluateRepository.deleteById(evaluateId);
+    }
+
+    @Override
+    public Evaluate getEvaluateInfo(String evaluateId) {
+        return evaluateRepository.findById(evaluateId).orElse(null);
+    }
+
+    @Override
+    public void dealEvaluate(Evaluate evaluate) {
+        Evaluate oldDate = getEvaluateInfo(evaluate.getId());
+        if (Objects.nonNull(oldDate)) {
+            oldDate.setAuditStatus(evaluate.getAuditStatus());
+            oldDate.setAuditDesc(evaluate.getAuditDesc());
+            oldDate.setAuditTime(new Date());
+            evaluateRepository.save(oldDate);
+        }
     }
 }

@@ -36,6 +36,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
+import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT_EXIST;
 import static com.baymin.springboot.store.enumconstant.CareType.HOME_CARE;
 import static com.baymin.springboot.store.enumconstant.CareType.HOSPITAL_CARE;
 
@@ -262,14 +263,18 @@ public class OrderServiceImpl implements IOrderService {
 
     @Override
     public void orderEvaluate(Evaluate evaluate) {
+        Order order = orderRepository.findById(evaluate.getOrderId()).orElse(null);
+        if (Objects.isNull(order)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
+        }
+
+        evaluate.setCareType(order.getCareType());
         evaluate.setCreateTime(new Date());
+        evaluate.setAuditStatus(CommonDealStatus.APPLY);
         evaluateRepository.save(evaluate);
 
-        Order order = orderRepository.findById(evaluate.getOrderId()).orElse(null);
-        if (Objects.nonNull(order)) {
-            order.setEvaluated(true);
-            orderRepository.save(order);
-        }
+        order.setEvaluated(true);
+        orderRepository.save(order);
     }
 
     @Override

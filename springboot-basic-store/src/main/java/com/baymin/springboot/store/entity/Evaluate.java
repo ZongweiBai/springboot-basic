@@ -1,11 +1,14 @@
 package com.baymin.springboot.store.entity;
 
+import com.baymin.springboot.store.enumconstant.CareType;
+import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -32,6 +35,11 @@ public class Evaluate implements Serializable {
     @Column(name = "ORDER_ID", length = 32)
     private String orderId;
 
+    @ApiModelProperty(notes = "陪护类型", hidden = true)
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "CARE_TYPE")
+    private CareType careType;
+
     @ApiModelProperty(notes = "评分等级 1-5星")
     @Column(name = "GRADE")
     private Integer grade = 5;
@@ -44,6 +52,20 @@ public class Evaluate implements Serializable {
     @Column(name = "CREATE_TIME")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
+
+    @ApiModelProperty(hidden = true, notes = "审核状态")
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "DEAL_STATUS", length = 2)
+    private CommonDealStatus auditStatus;
+
+    @ApiModelProperty(hidden = true, notes = "审核时间")
+    @Column(name = "AUDIT_TIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date auditTime;
+
+    @ApiModelProperty(hidden = true, notes = "审核备注")
+    @Column(name = "AUDIT_DESC", length = 1024)
+    private String auditDesc;
 
     @ApiModelProperty(notes = "用户ID")
     @Column(name = "USER_ID", length = 32)

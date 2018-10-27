@@ -51,11 +51,11 @@ function applyFund() {
 }
 
 function rejectFund() {
-    var dealDesc = $("#dealDesc").val();
-    if (dealDesc == "") {
-        tip.alertError("处理备注不能为空")
-        return;
-    }
+    // var dealDesc = $("#dealDesc").val();
+    // if (dealDesc == "") {
+    //     tip.alertError("处理备注不能为空")
+    //     return;
+    // }
     $.ajax({
         type: "POST",
         url: contextPath + "afterSales/dealOrderRefund",
@@ -87,6 +87,7 @@ function rejectFund() {
 var careType;
 var serviceDuration;
 var totalFee;
+
 function loadDataInfo(refundId) {
     $.ajax({
         type: "GET",
@@ -108,7 +109,7 @@ function loadDataInfo(refundId) {
                 var orderExt = info.orderExt;
                 var refund = info.refund;
 
-                $("#refundId").html(refund.id);
+                $("#refundId").html(order.id);
                 var dealStatusTd = "";
                 if (refund.dealStatus == "APPLY") {
                     dealStatusTd = "已申请";
@@ -123,13 +124,21 @@ function loadDataInfo(refundId) {
                 $("#orderIdTd").html(order.id);
                 $("#totalFee").html(order.totalFee + " 元");
                 $("#createTime").html(refund.createTime);
-                    $("#refundFeeTd").html(refund.refundFee + " 元");
+                $("#refundFeeTd").html(refund.refundFee + " 元");
                 if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
                     $("#serviceDuration").html(orderExt.serviceDuration + "天");
                 } else {
                     $("#serviceDuration").html(orderExt.serviceDuration + "次");
                 }
                 $("#refundDesc").html(refund.refundDesc);
+                if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
+                    $("#refundDurationTd").html(refund.refundDuration + "天");
+                } else {
+                    $("#refundDurationTd").html(refund.refundDuration + "次");
+                }
+                if (!isEmpty(refund.beginRefundPeriod) && !isEmpty(refund.endRefundPeriod)) {
+                    $("#refundPeriod").html(refund.beginRefundPeriod + "至" + refund.endRefundPeriod);
+                }
 
                 careType = order.careType;
                 serviceDuration = orderExt.serviceDuration;
