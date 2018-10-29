@@ -63,10 +63,10 @@ public class WechatServiceImpl implements IWechatService {
     }
 
     @Override
-    public void sendTemplateMsg(String idpId, String templateId, Map<String, String> extension) {
+    public void sendTemplateMsg(String idpId, String templateId, String redirectUrl, Map<String, String> extension) {
         try {
             String accessToken = getBasicAccessToken();
-            WechatUtil.sendModelMsg(accessToken, idpId, templateId, T_MSG_REDIRECT_URL, extension);
+            WechatUtil.sendModelMsg(accessToken, idpId, templateId, redirectUrl, extension);
         } catch (Exception e) {
             log.error("error occurred when send wechat template msg, templateId:{}", templateId);
         }

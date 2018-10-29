@@ -17,4 +17,7 @@ public class LoginRequestVo {
     @ApiModelProperty(notes = "微信ID")
     String wechatId;
 
+    @ApiModelProperty(notes = "用户真实姓名")
+    String realUserName;
+
 }

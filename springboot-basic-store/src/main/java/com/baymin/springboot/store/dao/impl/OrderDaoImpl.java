@@ -9,6 +9,7 @@ import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.ServiceProductVo;
 import com.baymin.springboot.store.repository.IOrderExtRepository;
 import com.baymin.springboot.store.repository.IOrderRepository;
+import com.baymin.springboot.store.repository.IServiceStaffRepository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.apache.commons.lang3.StringUtils;
@@ -41,6 +42,9 @@ public class OrderDaoImpl implements IOrderDao {
 
     @Autowired
     private IOrderExtRepository orderExtRepository;
+
+    @Autowired
+    private IServiceStaffRepository serviceStaffRepository;
 
     @Override
     public Order saveUserOrder(Order order, OrderExt orderExt) {
@@ -111,10 +115,16 @@ public class OrderDaoImpl implements IOrderDao {
                 .where(qProduct.id.eq(order.getServiceProductId()))
                 .fetchOne();
 
+        ServiceStaff staff = null;
+        if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+            staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+        }
+
         OrderDetailVo detail = new OrderDetailVo();
         detail.setOrder(order);
         detail.setOrderExt(orderExt);
         detail.setServiceProduct(new ServiceProductVo(product, null));
+        detail.setServiceStaff(staff);
         return detail;
     }
 }

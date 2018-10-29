@@ -34,6 +34,16 @@
                 <option value="REHABILITATION">康复护理</option>
             </select>
 
+            订单状态:
+            <select class="input-text" style="width: 120px;" id="status">
+                <option value="">选择订单状态</option>
+                <option value="ORDER_UN_PAY">已下单待付款</option>
+                <option value="ORDER_PAYED">已付款待指派</option>
+                <option value="ORDER_ASSIGN">已指派待服务</option>
+                <option value="ORDER_PROCESSING">服务中</option>
+                <option value="ORDER_FINISH">已完成</option>
+            </select>
+
             日期筛选：
             <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'allDatemax\')||\'%y-%M-%d\'}'})" id="allDatemin"
                    class="input-text Wdate" style="width:120px;">

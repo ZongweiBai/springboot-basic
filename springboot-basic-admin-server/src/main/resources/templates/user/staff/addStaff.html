@@ -62,10 +62,10 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>护理经验（单位：年）：</label>
+            <label class="form-label col-3"><span class="c-red"></span>护理经验（单位：年）：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="experience" name="experience"
-                       datatype="n" nullmsg="护理经验不能为空">
+                       datatype="n" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
@@ -98,14 +98,14 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>籍贯：</label>
+            <label class="form-label col-3"><span class="c-red"></span>籍贯：</label>
             <div class="formControls col-5">
                 <select class="select input-text" style="width: 48%" id="birthplacePid" name="birthplacePid"
-                        datatype="*" onchange="selectProvince(this.value, '1')">
+                        datatype="*" ignore="ignore" onchange="selectProvince(this.value, '1')">
                     <option value="">选择省份</option>
                 </select>
                 <select class="select input-text" style="width: 48%" id="birthplaceCid" name="birthplaceCid"
-                        datatype="*" >
+                        datatype="*" ignore="ignore" >
                     <option value="">选择城市</option>
                 </select>
             </div>
@@ -113,18 +113,18 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>方言：</label>
+            <label class="form-label col-3"><span class="c-red"></span>方言：</label>
             <div class="formControls col-5">
-                <input type="text" class="input-text" value="" placeholder="" id="localism" name="localism">
+                <input type="text" class="input-text" value="" placeholder="" id="localism" name="localism" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>普通话：</label>
+            <label class="form-label col-3"><span class="c-red"></span>普通话：</label>
             <div class="formControls col-5">
                 <select class="input-text" id="mandarin" name="mandarin"
-                        datatype="*" nullmsg="普通话不能为空">
+                        datatype="*" ignore="ignore">
                     <option value="一般">一般</option>
                     <option value="熟悉">熟悉</option>
                     <option value="精通">精通</option>
@@ -134,14 +134,14 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>护理城市：</label>
+            <label class="form-label col-3"><span class="c-red"></span>护理城市：</label>
             <div class="formControls col-5">
                 <select class="select input-text" style="width: 48%" id="locationPid" name="locationPid"
-                        datatype="*" onchange="selectProvince(this.value, '2')">
+                        datatype="*" onchange="selectProvince(this.value, '2')" ignore="ignore">
                     <option value="">选择省份</option>
                 </select>
                 <select class="select input-text" style="width: 48%;" id="locationCid" name="locationCid"
-                        datatype="*" >
+                        datatype="*" ignore="ignore">
                     <option value="">选择城市</option>
                 </select>
             </div>
@@ -149,19 +149,19 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>优先服务类型：</label>
+            <label class="form-label col-3"><span class="c-red"></span>优先服务类型：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="firstSkill" name="firstSkill"
-                       datatype="*" nullmsg="优先服务类型不能为空">
+                       datatype="*" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>护理特长：</label>
+            <label class="form-label col-3"><span class="c-red"></span>护理特长：</label>
             <div class="formControls col-5">
                 <input type="text" class="input-text" value="" placeholder="" id="specialty" name="specialty"
-                       datatype="*" nullmsg="护理特长不能为空">
+                       datatype="*" ignore="ignore">
             </div>
             <div class="col-2"></div>
         </div>

@@ -51,7 +51,7 @@ function applyFund() {
 }
 
 function rejectFund() {
-    // var dealDesc = $("#dealDesc").val();
+    var dealDesc = $("#dealDesc").val();
     // if (dealDesc == "") {
     //     tip.alertError("处理备注不能为空")
     //     return;

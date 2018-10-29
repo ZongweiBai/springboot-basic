@@ -113,6 +113,10 @@ public class Order implements Serializable {
     @Column(name = "REFUND_STATUS", length = 2)
     private CommonDealStatus refundStatus;
 
+    @ApiModelProperty(notes = "是否全额退款")
+    @Column(name = "FULL_REFUND")
+    private Boolean fullRefund;
+
     @ApiModelProperty(notes = "护士/护工换人状态")
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "STAFF_CHANGE_STATUS", length = 2)

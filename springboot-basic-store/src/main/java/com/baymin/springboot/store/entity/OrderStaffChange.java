@@ -65,12 +65,15 @@ public class OrderStaffChange {
     @Column(name = "DEAL_DESC", length = 1024)
     private String dealDesc;
 
+    @ApiModelProperty(hidden = true)
     @Transient
     private String oldStaffName;
 
+    @ApiModelProperty(hidden = true)
     @Transient
     private String newStaffName;
 
+    @ApiModelProperty(hidden = true)
     @Transient
     private String userName;
 

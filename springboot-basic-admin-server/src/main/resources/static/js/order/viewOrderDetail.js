@@ -55,6 +55,7 @@ function loadDataInfo(orderId) {
                 $("#careType").html(careType);
                 if (!isEmpty(userProfile)) {
                     $("#userName").html(userProfile.nickName);
+                    $("#actualName").html(userProfile.actualName);
                     $("#userMobile").html(userProfile.account);
                 }
                 $("#orderTime").html(order.orderTime);

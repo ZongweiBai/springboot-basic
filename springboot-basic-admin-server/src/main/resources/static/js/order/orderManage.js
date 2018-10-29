@@ -146,12 +146,13 @@ function loadTable() {
                 title: '退款状态',
                 align: 'center',
                 formatter: function (value, row, index) {
+                    var fullRecord = (row.fullRecord == true ? "全额退款" : "部分退款")
                     if (value == "APPLY") {
-                        return "退款待处理";
+                        return "退款待处理 | " + fullRecord;
                     } else if (value == "AGREE") {
-                        return "退款审核通过";
+                        return "退款审核通过 | " + fullRecord;
                     } else if (value == "COMPLETED") {
-                        return "退款已拨款";
+                        return "退款已拨款 | " + fullRecord;
                     } else if (value == "REJECT") {
                         return "退款申请驳回";
                     }
@@ -166,8 +167,9 @@ function loadTable() {
                     var payWay = row.payWay;
                     var status = row.status;
                     var refundStatus = row.refundStatus;
+                    var fullRecord = row.fullRecord;
                     var refundSuccess = true;
-                    if (isEmpty(refundStatus) || "REJECT" == refundStatus) {
+                    if (isEmpty(refundStatus) || "REJECT" == refundStatus || fullRecord != true) {
                         refundSuccess = false;
                     }
                     var payTime = row.payTime;

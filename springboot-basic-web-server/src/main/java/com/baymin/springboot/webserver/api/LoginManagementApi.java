@@ -83,8 +83,10 @@ public class LoginManagementApi {
         String userAccount = loginRequest.getAccount();
         String smsCode = loginRequest.getSmsCode();
         String wechatId = loginRequest.getWechatId();
+        String realUserName = loginRequest.getRealUserName();
 
-        if (StringUtils.isBlank(userAccount) || (StringUtils.isBlank(smsCode)) || StringUtils.isBlank(wechatId)) {
+        if (StringUtils.isBlank(userAccount) || (StringUtils.isBlank(smsCode))
+                || StringUtils.isBlank(wechatId)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
 
@@ -126,6 +128,7 @@ public class LoginManagementApi {
                     }
                     userProfile.setImgUrl(userInfo.getHeadimgurl());
                 }
+                userProfile.setActualName(realUserName);
                 userProfile.setLastLoginTime(new Date());
                 userProfileService.saveUserProfile(userProfile);
 

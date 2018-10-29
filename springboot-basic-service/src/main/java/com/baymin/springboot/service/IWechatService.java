@@ -10,5 +10,5 @@ public interface IWechatService {
 
     String getJsapiTicket(TicketRequestVo requestVo);
 
-    void sendTemplateMsg(String idpId, String templateId, Map<String, String> extension);
+    void sendTemplateMsg(String idpId, String templateId, String redirectUrl, Map<String, String> extension);
 }

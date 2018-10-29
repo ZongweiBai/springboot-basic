@@ -37,6 +37,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.baymin.springboot.common.constant.Constant.WechatTemplate.T_MSG_REDIRECT_URL;
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
 import static com.baymin.springboot.store.enumconstant.CareType.HOME_CARE;
 import static com.baymin.springboot.store.enumconstant.CareType.HOSPITAL_CARE;
@@ -470,7 +471,20 @@ public class OrderServiceImpl implements IOrderService {
         templateParam.put("orderno", orderId);
         smsSendRecordService.addSmsSendRecord(staff.getMobile(), Constant.AliyunAPI.ORDER_ASSING, templateParam);
 
-        if (staff.getAssignOrderNotification() && StringUtils.isNotBlank(staff.getIdpId())) {
+//        if (staff.getAssignOrderNotification() && StringUtils.isNotBlank(staff.getIdpId())) {
+//            Map<String, String> extension = new HashMap<>();
+//            extension.put("first", "订单完成指派通知");
+//            extension.put("keyword1", "订单服务");
+//            extension.put("keyword2", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
+//            extension.put("keyword3", "订单号" + orderId + "，完成服务人员调度");
+//            extension.put("keyword4", "上门服务人员" + staff.getUserName());
+//            extension.put("remark", "点击查看详情");
+//            wechatService.sendTemplateMsg(staff.getIdpId(), Constant.WechatTemplate.T_ORDER_ASSIGNED, extension);
+//        }
+
+        UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
+        if (Objects.nonNull(userProfile) && StringUtils.isNotBlank(userProfile.getIdpId())) {
+            String redirectUrl = T_MSG_REDIRECT_URL + "#/orderDetail?id=" + orderId;
             Map<String, String> extension = new HashMap<>();
             extension.put("first", "订单完成指派通知");
             extension.put("keyword1", "订单服务");
@@ -478,7 +492,7 @@ public class OrderServiceImpl implements IOrderService {
             extension.put("keyword3", "订单号" + orderId + "，完成服务人员调度");
             extension.put("keyword4", "上门服务人员" + staff.getUserName());
             extension.put("remark", "点击查看详情");
-            wechatService.sendTemplateMsg(staff.getIdpId(), Constant.WechatTemplate.T_ORDER_ASSIGNED, extension);
+            wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_ORDER_ASSIGNED, redirectUrl, extension);
         }
     }
 
@@ -513,6 +527,7 @@ public class OrderServiceImpl implements IOrderService {
         staffChange.setCreateTime(new Date());
         if (Objects.isNull(staffChange.getDealStatus())) {
             staffChange.setDealStatus(CommonDealStatus.APPLY);
+            staffChange.setOldStaffId(order.getServiceStaffId());
 
             order.setStaffChangeStatus(CommonDealStatus.APPLY);
             orderRepository.save(order);
@@ -634,6 +649,7 @@ public class OrderServiceImpl implements IOrderService {
                 staffIncomeRepository.save(staffIncome);
 
                 if (Objects.nonNull(userProfile) && StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    String redirectUrl = T_MSG_REDIRECT_URL + "#/orderDetail?id=" + orderId;
                     Map<String, String> extension = new HashMap<>();
                     extension.put("first", "服务已结束，请您评价！");
                     extension.put("keyword1", staff.getUserName());
@@ -641,7 +657,7 @@ public class OrderServiceImpl implements IOrderService {
                     extension.put("keyword3", "一家依护");
                     extension.put("keyword4", DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
                     extension.put("remark", "点击查看详情");
-                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_ORDER_COMPLETED, extension);
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_ORDER_COMPLETED, redirectUrl, extension);
                 }
             }
         }

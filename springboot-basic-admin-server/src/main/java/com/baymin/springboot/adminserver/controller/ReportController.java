@@ -9,6 +9,7 @@ import com.baymin.springboot.service.IReportService;
 import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.enumconstant.CareType;
+import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.payload.report.PlatformOrderReport;
 import com.baymin.springboot.store.payload.report.ServiceStaffReport;
 import com.baymin.springboot.store.payload.report.UserInfoReport;
@@ -92,14 +93,14 @@ public class ReportController {
 
     @ResponseBody
     @PostMapping(value = "queryOrderReport")
-    public Map<String, Object> queryOrderReport(Pageable pageable, CareType careType,
+    public Map<String, Object> queryOrderReport(Pageable pageable, CareType careType, OrderStatus status,
                                                 String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
-        Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, null, null, careType, maxDate, minDate, null, null);
+        Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, status, null, careType, maxDate, minDate, null, null);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

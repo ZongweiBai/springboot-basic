@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
+import static com.baymin.springboot.common.constant.Constant.WechatTemplate.T_MSG_REDIRECT_URL;
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
 import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT_EXIST;
 
@@ -81,14 +82,23 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
         orderRefund.setCareType(order.getCareType());
         orderRefund.setDealTime(new Date());
         orderRefund.setCreateTime(new Date());
-        if (orderRefund.getRefundFee() == null) {
-            double refundFee = calcRefundFee(orderRefund, order);
-            orderRefund.setRefundFee(refundFee);
-        }
         if (StringUtils.equals("SYS", orderRefund.getApplyType())) {
             orderRefund.setDealStatus(CommonDealStatus.AGREE);
+            if (orderRefund.getRefundFee().equals(order.getTotalFee())) {
+                order.setFullRefund(true);
+            } else {
+                order.setFullRefund(false);
+            }
         } else {
-            orderRefund.setDealStatus(CommonDealStatus.APPLY);
+            if (orderExt.getServiceDuration().equals(orderRefund.getRefundDuration())) {
+                orderRefund.setRefundFee(order.getTotalFee());
+                order.setFullRefund(true);
+            } else {
+                double refundFee = calcRefundFee(orderRefund, order);
+                orderRefund.setRefundFee(refundFee);
+                orderRefund.setDealStatus(CommonDealStatus.APPLY);
+                order.setFullRefund(false);
+            }
         }
         orderRefund.setUserId(order.getOrderUserId());
         orderRefundRepository.save(orderRefund);
@@ -105,6 +115,11 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
         if (Objects.isNull(oldData)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), RECORD_NOT_EXIST));
         }
+        Order order = orderRepository.findById(oldData.getOrderId()).orElse(null);
+        if (Objects.isNull(order)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
+        }
+
         oldData.setDealDesc(orderRefund.getDealDesc());
         oldData.setDealStatus(orderRefund.getDealStatus());
         if (orderRefund.getDealStatus() == CommonDealStatus.AGREE ||
@@ -112,17 +127,18 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
             oldData.setRefundDuration(orderRefund.getRefundDuration());
             oldData.setRefundFee(orderRefund.getRefundFee());
             orderRefund.setDealTime(new Date());
+
+            order.setFullRefund(orderRefund.getRefundFee().equals(order.getTotalFee()));
         }
         if (orderRefund.getDealStatus() == CommonDealStatus.COMPLETED) {
             oldData.setRefundTime(new Date());
+
+            order.setFullRefund(null);
         }
         orderRefundRepository.save(oldData);
 
-        Order order = orderRepository.findById(oldData.getOrderId()).orElse(null);
-        if (Objects.nonNull(order)) {
-            order.setRefundStatus(orderRefund.getDealStatus());
-            orderRepository.save(order);
-        }
+        order.setRefundStatus(orderRefund.getDealStatus());
+        orderRepository.save(order);
 
         UserProfile userProfile = userProfileRepository.findById(oldData.getUserId()).orElse(null);
         if (Objects.nonNull(userProfile)) {
@@ -134,13 +150,14 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_REFUND_AGREE, templateParam);
 
                 if (StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    String redirectUrl = T_MSG_REDIRECT_URL + "#/applylist";
                     Map<String, String> extension = new HashMap<>();
                     extension.put("first", "您好，您的退款申请已通过");
                     extension.put("keyword1", userProfile.getNickName());
                     extension.put("keyword2", DateUtil.formatDate(new Date(), "yyyy年MM月dd号"));
                     extension.put("keyword3", "已通过");
                     extension.put("remark", "点击查看详情");
-                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_AGREE, extension);
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_AGREE, redirectUrl, extension);
                 }
             }
             // 退款申请审核不通过
@@ -156,12 +173,13 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_REFUND_REJECT, templateParam);
 
                 if (StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    String redirectUrl = T_MSG_REDIRECT_URL + "#/applylist";
                     Map<String, String> extension = new HashMap<>();
                     extension.put("first", userProfile.getNickName() + "，您好。您的退款申请未能通过审核");
                     extension.put("keyword1", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
                     extension.put("keyword2", orderRefund.getDealDesc());
                     extension.put("remark", "点击查看详情");
-                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_DENY, extension);
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_DENY, redirectUrl, extension);
                 }
             }
         }

@@ -16,6 +16,7 @@ function loadAllTable() {
                 page: params.offset / params.limit,
                 datemin: $("#allDatemin").val(),
                 datemax: $("#allDatemax").val(),
+                status: $("#status").val(),
                 careType: $("#careType").val()
             };
             return paramsMap;

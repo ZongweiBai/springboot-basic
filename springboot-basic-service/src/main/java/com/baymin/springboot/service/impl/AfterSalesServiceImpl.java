@@ -27,6 +27,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.baymin.springboot.common.constant.Constant.WechatTemplate.T_MSG_REDIRECT_URL;
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
 import static com.baymin.springboot.common.exception.ErrorDescription.RECORD_NOT_EXIST;
 
@@ -315,13 +316,14 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_CHANGE_AGREE, templateParam);
 
                 if (StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    String redirectUrl = T_MSG_REDIRECT_URL + "#/applylist?t=user";
                     Map<String, String> extension = new HashMap<>();
                     extension.put("first", "您好，您的换人申请已通过");
                     extension.put("keyword1", userProfile.getNickName());
                     extension.put("keyword2", DateUtil.formatDate(new Date(), "yyyy年MM月dd号"));
                     extension.put("keyword3", "已通过");
                     extension.put("remark", "点击查看详情");
-                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_AGREE, extension);
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_AGREE, redirectUrl, extension);
                 }
             }
         } else {
@@ -338,12 +340,13 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
                 smsSendRecordService.addSmsSendRecord(userProfile.getAccount(), Constant.AliyunAPI.ORDER_CHANGE_REJECT, templateParam);
 
                 if (StringUtils.isNotBlank(userProfile.getIdpId())) {
+                    String redirectUrl = T_MSG_REDIRECT_URL + "#/applylist?t=user";
                     Map<String, String> extension = new HashMap<>();
                     extension.put("first", userProfile.getNickName() + "，您好。您的换人申请未能通过审核");
                     extension.put("keyword1", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
                     extension.put("keyword2", change.getDealDesc());
                     extension.put("remark", "点击查看详情");
-                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_DENY, extension);
+                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_DENY, redirectUrl, extension);
                 }
             }
         }
