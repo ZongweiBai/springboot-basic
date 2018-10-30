@@ -166,38 +166,35 @@ function loadTable() {
                 formatter: function (value, row, index) {
                     var payWay = row.payWay;
                     var status = row.status;
-                    var refundStatus = row.refundStatus;
-                    var fullRecord = row.fullRecord;
-                    var refundSuccess = true;
-                    if (isEmpty(refundStatus) || "REJECT" == refundStatus || fullRecord != true) {
-                        refundSuccess = false;
+                    var refundEd = true;
+                    if (isEmpty(row.refundStatus)) {
+                        refundEd = false;
                     }
                     var payTime = row.payTime;
-
-                    var content = ''
-                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewOrderInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
-                    if (status == "ORDER_UN_PAY") {
-                        if (payWay != 'PAY_ONLINE_WITH_WECHAT') {
-                            content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
-                        }
-                        if (payWay != 'PAY_ONLINE_WITH_WECHAT' && !refundSuccess) {
-                            content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
-                        }
-                    } else if (status == "ORDER_PAYED" && !refundSuccess) {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
-                    } else {
-                        var payTime = row.payTime;
-                        if (payWay != 'PAY_ONLINE_WITH_WECHAT' && isEmpty(payTime)) {
-                            content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
-                        }
+                    var staffChanged = true;
+                    if (isEmpty(row.staffChangeStatus)) {
+                        staffChanged = false;
                     }
 
-                    if (status != "ORDER_UN_PAY" && status != "ORDER_FINISH" && !refundSuccess && !isEmpty(payTime)) {
+                    var content = '';
+                    content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewOrderInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
+
+                    if (payWay != 'PAY_ONLINE_WITH_WECHAT' && (status == "ORDER_UN_PAY" || isEmpty(payTime))) {
+                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
+                    }
+
+                    if (status == "ORDER_PAYED" && !refundEd) {
+                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
+                    }
+
+                    if (status != "ORDER_FINISH" && !refundEd && !isEmpty(payTime)) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderRefund(\'' + value + '\')" title="退款申请"><i style="font-size: 18px;" class="Hui-iconfont">&#xe628;</i></a>&nbsp;';
                     }
-                    if ((status == "ORDER_ASSIGN" || status == "ORDER_PROCESSING") && !refundSuccess) {
+
+                    if (status == "ORDER_PROCESSING" && !refundEd && !staffChanged) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="staffChange(\'' + value + '\')" title="换人"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
                     }
+
                     return content;
                 }
             }

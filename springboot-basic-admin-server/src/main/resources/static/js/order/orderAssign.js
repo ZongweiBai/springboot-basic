@@ -61,6 +61,14 @@ function loadData(orderId) {
                 var order = info.order;
                 $("#id").val(order.id);
                 $("#orderId").html(order.id);
+
+                if (order.careType == 'HOSPITAL_CARE') {
+                    var content = '<option value="">选择护工</option>';
+                    content += '<option value="WORKER">护工</option>';
+                    $("#serviceStaffType").html(content);
+                    $("#serviceStaffType").val("WORKER");
+                    selectStaff('WORKER');
+                }
             } else {
                 tip.alertError("加载订单信息失败");
             }

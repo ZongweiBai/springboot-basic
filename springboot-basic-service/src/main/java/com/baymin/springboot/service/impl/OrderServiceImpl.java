@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
@@ -87,9 +88,6 @@ public class OrderServiceImpl implements IOrderService {
 
     @Autowired
     private ISmsSendRecordService smsSendRecordService;
-
-    @Autowired
-    private IOrderRefundRepository orderRefundRepository;
 
     @Autowired
     private IStaffIncomeRepository staffIncomeRepository;
@@ -303,7 +301,24 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource) {
+    public Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource, String account, String address) {
+
+        String userId = null;
+        if (StringUtils.isNotBlank(account)) {
+            UserProfile profile = userProfileRepository.findByAccount(account);
+            if (Objects.isNull(profile)) {
+                return (PageImpl) new PageImpl<>(new ArrayList<>(), pageable, 0);
+            }
+            userId = profile.getId();
+        }
+        List<String> orderIds = null;
+        if (StringUtils.isNotBlank(address)) {
+            orderIds = jdbcTemplate.queryForList("select t.ORDER_ID from T_ORDER_EXT t where INSTR(t.SERVICE_ADDRESS, '?') > 0", new Object[]{address.trim()}, String.class);
+            if (CollectionUtils.isEmpty(orderIds)) {
+                return (PageImpl) new PageImpl<>(new ArrayList<>(), pageable, 0);
+            }
+        }
+
         BooleanBuilder builder = new BooleanBuilder();
         QOrder qOrder = QOrder.order;
 
@@ -329,6 +344,12 @@ public class OrderServiceImpl implements IOrderService {
         }
         if (StringUtils.isNotBlank(orderSource)) {
             builder.and(qOrder.orderSource.eq(orderSource));
+        }
+        if (StringUtils.isNotBlank(userId)) {
+            builder.and(qOrder.orderUserId.eq(userId));
+        }
+        if (CollectionUtils.isNotEmpty(orderIds)) {
+            builder.and(qOrder.id.in(orderIds));
         }
 
         Page<Order> page = orderRepository.findAll(builder, pageable);
@@ -371,7 +392,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate) {
+    public List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate, OrderStatus status) {
         BooleanBuilder builder = new BooleanBuilder();
         QOrder qOrder = QOrder.order;
 
@@ -383,6 +404,9 @@ public class OrderServiceImpl implements IOrderService {
         }
         if (Objects.nonNull(minDate)) {
             builder.and(qOrder.orderTime.gt(minDate));
+        }
+        if (Objects.nonNull(status)) {
+            builder.and(qOrder.status.eq(status));
         }
 
         Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");

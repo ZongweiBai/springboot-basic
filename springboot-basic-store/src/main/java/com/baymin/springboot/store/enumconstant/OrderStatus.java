@@ -12,6 +12,7 @@ public enum OrderStatus implements IBaseDbEnum {
     ORDER_ASSIGN("已指派待服务", 2),
     ORDER_PROCESSING("服务中", 3),
     ORDER_FINISH("已完成", 4),
+    ORDER_FULL_REFUND("已全额退款", -98),
     ORDER_CANCELED("已取消", -99);
 
     OrderStatus(String name, int index) {

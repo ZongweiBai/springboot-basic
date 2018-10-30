@@ -100,7 +100,7 @@ public class ReportController {
         Date minDate = DateUtil.dayBegin(datemin);
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
-        Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, status, null, careType, maxDate, minDate, null, null);
+        Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, status, null, careType, maxDate, minDate, null, null, null, null);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -149,12 +149,12 @@ public class ReportController {
      * 导出订单统计信息
      */
     @RequestMapping(value = "downloadOrder", method = RequestMethod.GET)
-    public void downloadOrder(String datemin, String datemax, CareType careType,
+    public void downloadOrder(String datemin, String datemax, CareType careType, OrderStatus status,
                               HttpServletRequest request, HttpServletResponse response) throws Exception {
         Date minDate = DateUtil.dayBegin(datemin);
         Date maxDate = DateUtil.dayEnd(datemax);
 
-        List<Order> queryResult = orderService.queryOrderForList(careType, maxDate, minDate);
+        List<Order> queryResult = orderService.queryOrderForList(careType, maxDate, minDate, status);
 
         List<String> titleList = new ArrayList<>();
         titleList.add("订单号");

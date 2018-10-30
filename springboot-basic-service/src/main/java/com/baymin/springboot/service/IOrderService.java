@@ -26,7 +26,7 @@ public interface IOrderService {
 
     void saveInvoiceRequest(Invoice invoice);
 
-    Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource);
+    Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource, String account, String address);
 
     Map<String, Object> getOrderDetail(String orderId);
 
@@ -46,5 +46,5 @@ public interface IOrderService {
 
     void orderCompleted(String orderId);
 
-    List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate);
+    List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate, OrderStatus status);
 }
