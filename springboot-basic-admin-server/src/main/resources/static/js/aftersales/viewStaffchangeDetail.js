@@ -117,6 +117,8 @@ function loadDataInfo(changeId) {
                     status = "服务中";
                 } else if (order.status == "ORDER_FINISH") {
                     status = "已完成";
+                } else if (order.status == "ORDER_FULL_REFUND") {
+                    status = "已全额退款";
                 }
                 $("#orderId").html(order.id);
                 $("#careType").html(careType);

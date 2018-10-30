@@ -81,6 +81,8 @@ function loadUserInfo(staffId) {
                             status = "服务中";
                         } else if (order.status == "ORDER_FINISH") {
                             status = "已完成";
+                        } else if (order.status == "ORDER_FULL_REFUND") {
+                            status = "已全额退款";
                         }
                         orderTBody += '<tr class="text-c">';
                         orderTBody += '<td id="viewOrder"><a href="javascript:void(0);" onclick="viewOrderDetail(\''+order.id+'\')">查看详情</a></td>';

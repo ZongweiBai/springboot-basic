@@ -313,7 +313,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         List<String> orderIds = null;
         if (StringUtils.isNotBlank(address)) {
-            orderIds = jdbcTemplate.queryForList("select t.ORDER_ID from T_ORDER_EXT t where INSTR(t.SERVICE_ADDRESS, '?') > 0", new Object[]{address.trim()}, String.class);
+            orderIds = jdbcTemplate.queryForList("select t.ORDER_ID from T_ORDER_EXT t where INSTR(t.SERVICE_ADDRESS, ?) > 0", new Object[]{address.trim()}, String.class);
             if (CollectionUtils.isEmpty(orderIds)) {
                 return (PageImpl) new PageImpl<>(new ArrayList<>(), pageable, 0);
             }
@@ -356,12 +356,19 @@ public class OrderServiceImpl implements IOrderService {
         if (CollectionUtils.isNotEmpty(page.getContent())) {
             List<String> staffIds = new ArrayList<>();
             List<String> adminIds = new ArrayList<>();
+            List<String> userIds = new ArrayList<>();
+            List<String> resultOrderIds = new ArrayList<>();
+
             page.getContent().forEach(order -> {
+                resultOrderIds.add(order.getId());
                 if (StringUtils.isNotBlank(order.getServiceStaffId())) {
                     staffIds.add(order.getServiceStaffId());
                 }
                 if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                     adminIds.add(order.getServiceAdminId());
+                }
+                if (StringUtils.isNotBlank(order.getOrderUserId())) {
+                    userIds.add(order.getOrderUserId());
                 }
             });
 
@@ -376,8 +383,23 @@ public class OrderServiceImpl implements IOrderService {
                 List<Admin> adminList = adminRepository.findByIds(adminIds);
                 adminMap = adminList.stream().collect(Collectors.toMap(Admin::getId, Function.identity()));
             }
+
+            Map<String, UserProfile> userMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(userIds)) {
+                List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+                userMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, Function.identity()));
+            }
+
+            Map<String, OrderExt> orderExtMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(resultOrderIds)) {
+                List<OrderExt> orderExtList = orderExtRepository.findByOrderIds(resultOrderIds);
+                orderExtMap = orderExtList.stream().collect(Collectors.toMap(OrderExt::getOrderId, Function.identity()));
+            }
+
             Map<String, ServiceStaff> finalStaffMap = staffMap;
             Map<String, Admin> finalAdminMap = adminMap;
+            Map<String, OrderExt> finalOrderExtMap = orderExtMap;
+            Map<String, UserProfile> finalUserMap = userMap;
             page.getContent().forEach(order -> {
                 if (StringUtils.isNotBlank(order.getServiceStaffId())) {
                     order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
@@ -385,6 +407,10 @@ public class OrderServiceImpl implements IOrderService {
                 if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                     order.setAdmin(finalAdminMap.get(order.getServiceAdminId()));
                 }
+                if (StringUtils.isNotBlank(order.getOrderUserId())) {
+                    order.setUserProfile(finalUserMap.get(order.getOrderUserId()));
+                }
+                order.setOrderExt(finalOrderExtMap.get(order.getId()));
             });
         }
 

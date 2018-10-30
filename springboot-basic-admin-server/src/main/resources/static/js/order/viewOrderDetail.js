@@ -50,6 +50,8 @@ function loadDataInfo(orderId) {
                     status = "服务中";
                 } else if (order.status == "ORDER_FINISH") {
                     status = "已完成";
+                } else if (order.status == "ORDER_FULL_REFUND") {
+                    status = "已全额退款";
                 }
                 $("#orderId").html(order.id);
                 $("#careType").html(careType);
@@ -64,6 +66,65 @@ function loadDataInfo(orderId) {
                 $("#payWay").html(payWay);
                 $("#payTime").html(order.payTime);
                 $("#serviceAddress").html(orderExt.serviceAddress);
+
+                $("#serviceStartTime").html(orderExt.serviceStartTime);
+                $("#serviceEndDate").html(orderExt.serviceEndDate);
+                if (!isEmpty(orderExt.serviceDuration)) {
+                    $("#serviceDuration").html(orderExt.serviceDuration + " 天");
+                }
+                if (!isEmpty(orderExt.serviceNumber)) {
+                    $("#serviceDuration").html(orderExt.serviceNumber + " 次");
+                }
+                $("#contact").html(orderExt.contact);
+                $("#contactMobile").html(orderExt.contactMobile);
+                var patientInfo = orderExt.patientInfo;
+                if (!isEmpty(patientInfo)) {
+                    var DISEASES = patientInfo.DISEASES;
+                    if (!isEmpty(DISEASES)) {
+                        var DISEASES_TD = '';
+                        DISEASES.forEach(function(item,index) {
+                            DISEASES_TD += item.itemName + "<br>";
+                        })
+                        $("#DISEASES").html(DISEASES_TD);
+                    }
+
+                    var SELF_CARE = patientInfo.SELF_CARE;
+                    if (!isEmpty(SELF_CARE)) {
+                        var SELF_CARE_TD = '';
+                        SELF_CARE.forEach(function(item,index) {
+                            SELF_CARE_TD += item.itemName + "<br>";
+                        })
+                        $("#SELF_CARE").html(SELF_CARE_TD);
+                    }
+
+                    var EATING = patientInfo.EATING;
+                    if (!isEmpty(EATING)) {
+                        var EATING_TD = '';
+                        EATING.forEach(function(item,index) {
+                            EATING_TD += item.itemName + "<br>";
+                        })
+                        $("#EATING").html(EATING_TD);
+                    }
+
+                    var CATHETER_CARE = patientInfo.CATHETER_CARE;
+                    if (!isEmpty(CATHETER_CARE)) {
+                        var CATHETER_CARE_TD = '';
+                        CATHETER_CARE.forEach(function(item,index) {
+                            CATHETER_CARE_TD += item.itemName + "<br>";
+                        })
+                        $("#CATHETER_CARE").html(CATHETER_CARE_TD);
+                    }
+
+                    var ASSIST_WITH_MEDICATION = patientInfo.ASSIST_WITH_MEDICATION;
+                    if (!isEmpty(ASSIST_WITH_MEDICATION)) {
+                        var ASSIST_WITH_MEDICATION_TD = '';
+                        ASSIST_WITH_MEDICATION.forEach(function(item,index) {
+                            ASSIST_WITH_MEDICATION_TD += item.itemName + "<br>";
+                        })
+                        $("#ASSIST_WITH_MEDICATION").html(ASSIST_WITH_MEDICATION_TD);
+                    }
+                }
+
 
                 var invoice = info.invoice;
                 if (invoice != null) {

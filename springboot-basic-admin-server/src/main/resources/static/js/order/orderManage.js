@@ -19,7 +19,9 @@ function loadTable() {
                 payStatus: $("#payStatus").val(),
                 orderSource: $("#orderSource").val(),
                 datemin: $("#datemin").val(),
-                datemax: $("#datemax").val()
+                datemax: $("#datemax").val(),
+                account: $("#account").val(),
+                address: $("#address").val()
             };
             return paramsMap;
         },
@@ -74,6 +76,30 @@ function loadTable() {
                         return "自主下单";
                     } else {
                         return "代下单";
+                    }
+                }
+            },
+            {
+                field: 'userProfile',
+                title: '下单用户',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (!isEmpty(value)) {
+                        return value.account;
+                    } else {
+                        return "-";
+                    }
+                }
+            },
+            {
+                field: 'orderExt',
+                title: '服务地址',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (!isEmpty(value)) {
+                        return value.serviceAddress;
+                    } else {
+                        return "-";
                     }
                 }
             },
@@ -137,6 +163,8 @@ function loadTable() {
                         return "服务中";
                     } else if (value == "ORDER_FINISH") {
                         return "已完成";
+                    } else if (value == "ORDER_FULL_REFUND") {
+                        return "已全额退款";
                     }
                     return "";
                 }
@@ -183,7 +211,7 @@ function loadTable() {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
                     }
 
-                    if (status == "ORDER_PAYED" && !refundEd) {
+                    if (status == "ORDER_PAYED") {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
                     }
 

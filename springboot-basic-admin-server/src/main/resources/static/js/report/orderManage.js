@@ -67,6 +67,8 @@ function loadAllTable() {
                         return "服务中";
                     } else if (value == "ORDER_FINISH") {
                         return "已完成";
+                    } else if (value == "ORDER_FULL_REFUND") {
+                        return "已全额退款";
                     }
                     return "";
                 }

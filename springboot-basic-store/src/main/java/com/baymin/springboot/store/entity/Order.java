@@ -137,6 +137,10 @@ public class Order implements Serializable {
     @Transient
     private OrderExt orderExt;
 
+    @ApiModelProperty(notes = "用户信息", hidden = true)
+    @Transient
+    private UserProfile userProfile;
+
     @ApiModelProperty(hidden = true)
     @Transient
     private ServiceStaff serviceStaff;
