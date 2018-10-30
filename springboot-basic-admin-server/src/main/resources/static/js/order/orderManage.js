@@ -174,13 +174,13 @@ function loadTable() {
                 title: '退款状态',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    var fullRecord = (row.fullRecord == true ? "全额退款" : "部分退款")
+                    var fullRefund = (row.fullRefund == true ? "全额退款" : "部分退款");
                     if (value == "APPLY") {
-                        return "退款待处理 | " + fullRecord;
+                        return "退款待处理 | " + fullRefund;
                     } else if (value == "AGREE") {
-                        return "退款审核通过 | " + fullRecord;
+                        return "退款审核通过 | " + fullRefund;
                     } else if (value == "COMPLETED") {
-                        return "退款已拨款 | " + fullRecord;
+                        return "退款已拨款 | " + fullRefund;
                     } else if (value == "REJECT") {
                         return "退款申请驳回";
                     }
@@ -215,7 +215,7 @@ function loadTable() {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
                     }
 
-                    if (status != "ORDER_FINISH" && !refundEd && !isEmpty(payTime)) {
+                    if (status != "ORDER_FINISH" && status != "ORDER_FULL_REFUND" && status != "ORDER_CANCELED" && !refundEd && !isEmpty(payTime)) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderRefund(\'' + value + '\')" title="退款申请"><i style="font-size: 18px;" class="Hui-iconfont">&#xe628;</i></a>&nbsp;';
                     }
 

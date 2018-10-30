@@ -108,8 +108,17 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
         orderRefund.setUserId(order.getOrderUserId());
         orderRefundRepository.save(orderRefund);
 
-        order.setRefundStatus(orderRefund.getDealStatus());
-        orderRepository.save(order);
+        if (order.getFullRefund() && StringUtils.equals("SYS", orderRefund.getApplyType())) {
+            order.setRefundStatus(orderRefund.getDealStatus());
+            order.setStatus(OrderStatus.ORDER_FULL_REFUND);
+            order.setCloseTime(new Date());
+            orderRepository.save(order);
+
+            fullRefundOrder(order);
+        } else {
+            order.setRefundStatus(orderRefund.getDealStatus());
+            orderRepository.save(order);
+        }
 
         return orderRefund;
     }
@@ -155,58 +164,7 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
         orderRepository.save(order);
 
         if (order.getStatus() == OrderStatus.ORDER_FULL_REFUND) {
-            // 修改用户订单数
-            UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
-            if (Objects.nonNull(userProfile)) {
-                if (Objects.isNull(userProfile.getOrderCount())) {
-                    userProfile.setOrderCount(1);
-                } else {
-                    userProfile.setOrderCount(userProfile.getOrderCount() + 1);
-                }
-                userProfileRepository.save(userProfile);
-            }
-
-            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
-                ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
-                if (Objects.nonNull(staff)) {
-                    // 释放护士/护工的服务状态
-                    if (Objects.isNull(staff.getServiceCount())) {
-                        staff.setServiceCount(1);
-                    } else {
-                        staff.setServiceCount(staff.getServiceCount() + 1);
-                    }
-                    staff.setServiceStatus(ServiceStatus.FREE);
-                    serviceStaffRepository.save(staff);
-
-                    // 计算护士/护工收入并记录
-                    double realIncome = 0.00D;
-
-                    UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
-                    if (Objects.isNull(userWallet)) {
-                        userWallet = new UserWallet();
-                        userWallet.setUserId(staff.getId());
-                        userWallet.setUserType("S");
-                        userWallet.setBalance(0.0);
-                        userWallet.setTotalIncome(0.0);
-                        userWallet.setTotalWithdraw(0.0);
-                        userWallet.setTotalInWithdrawing(0.0);
-                    }
-                    userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
-                    userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
-                    userWalletRepository.save(userWallet);
-
-                    StaffIncome staffIncome = new StaffIncome();
-                    staffIncome.setCreateTime(new Date());
-                    staffIncome.setIncome(realIncome);
-                    staffIncome.setOrderId(order.getId());
-                    staffIncome.setOrderTotalFee(order.getTotalFee());
-                    staffIncome.setStaffId(order.getServiceStaffId());
-                    staffIncome.setCurrentBalance(userWallet.getBalance());
-                    staffIncome.setIncomeType(IncomeType.INCOME);
-                    staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
-                    staffIncomeRepository.save(staffIncome);
-                }
-            }
+            fullRefundOrder(order);
         }
 
         UserProfile userProfile = userProfileRepository.findById(oldData.getUserId()).orElse(null);
@@ -250,6 +208,61 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
                     extension.put("remark", "点击查看详情");
                     wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_REQUEST_DENY, redirectUrl, extension);
                 }
+            }
+        }
+    }
+
+    private void fullRefundOrder(Order order) {
+        // 修改用户订单数
+        UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
+        if (Objects.nonNull(userProfile)) {
+            if (Objects.isNull(userProfile.getOrderCount())) {
+                userProfile.setOrderCount(1);
+            } else {
+                userProfile.setOrderCount(userProfile.getOrderCount() + 1);
+            }
+            userProfileRepository.save(userProfile);
+        }
+
+        if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+            ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+            if (Objects.nonNull(staff)) {
+                // 释放护士/护工的服务状态
+                if (Objects.isNull(staff.getServiceCount())) {
+                    staff.setServiceCount(1);
+                } else {
+                    staff.setServiceCount(staff.getServiceCount() + 1);
+                }
+                staff.setServiceStatus(ServiceStatus.FREE);
+                serviceStaffRepository.save(staff);
+
+                // 计算护士/护工收入并记录
+                double realIncome = 0.00D;
+
+                UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
+                if (Objects.isNull(userWallet)) {
+                    userWallet = new UserWallet();
+                    userWallet.setUserId(staff.getId());
+                    userWallet.setUserType("S");
+                    userWallet.setBalance(0.0);
+                    userWallet.setTotalIncome(0.0);
+                    userWallet.setTotalWithdraw(0.0);
+                    userWallet.setTotalInWithdrawing(0.0);
+                }
+                userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
+                userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
+                userWalletRepository.save(userWallet);
+
+                StaffIncome staffIncome = new StaffIncome();
+                staffIncome.setCreateTime(new Date());
+                staffIncome.setIncome(realIncome);
+                staffIncome.setOrderId(order.getId());
+                staffIncome.setOrderTotalFee(order.getTotalFee());
+                staffIncome.setStaffId(order.getServiceStaffId());
+                staffIncome.setCurrentBalance(userWallet.getBalance());
+                staffIncome.setIncomeType(IncomeType.INCOME);
+                staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
+                staffIncomeRepository.save(staffIncome);
             }
         }
     }
