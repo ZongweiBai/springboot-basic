@@ -65,6 +65,7 @@ public class StaffServiceImpl implements IStaffService {
             ServiceStaff oldData = serviceStaffRepository.findById(serviceStaff.getId()).orElse(null);
             serviceStaff.setCreateTime(oldData.getCreateTime());
             serviceStaff.setServiceCount(oldData.getServiceCount());
+            serviceStaff.setServiceOrderCount(oldData.getServiceOrderCount());
             serviceStaff.setStaffStatus(oldData.getStaffStatus());
             serviceStaff.setServiceStatus(oldData.getServiceStatus());
             serviceStaff.setAssignOrderNotification(oldData.getAssignOrderNotification());
@@ -76,6 +77,7 @@ public class StaffServiceImpl implements IStaffService {
             serviceStaff.setCreateTime(new Date());
             serviceStaff.setServiceStatus(ServiceStatus.FREE);
             serviceStaff.setServiceCount(0);
+            serviceStaff.setServiceOrderCount(0);
             serviceStaff.setAssignOrderNotification(true);
         }
 

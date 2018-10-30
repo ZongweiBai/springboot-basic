@@ -513,6 +513,7 @@ public class OrderServiceImpl implements IOrderService {
         order.setServiceAdminId(adminId);
         orderRepository.save(order);
 
+        staff.setServiceOrderCount(staff.getServiceOrderCount() + 1);
         staff.setServiceStatus(ServiceStatus.ASSIGNED);
         serviceStaffRepository.save(staff);
 
@@ -520,17 +521,6 @@ public class OrderServiceImpl implements IOrderService {
         Map<String, String> templateParam = new HashMap<>();
         templateParam.put("orderno", orderId);
         smsSendRecordService.addSmsSendRecord(staff.getMobile(), Constant.AliyunAPI.ORDER_ASSING, templateParam);
-
-//        if (staff.getAssignOrderNotification() && StringUtils.isNotBlank(staff.getIdpId())) {
-//            Map<String, String> extension = new HashMap<>();
-//            extension.put("first", "订单完成指派通知");
-//            extension.put("keyword1", "订单服务");
-//            extension.put("keyword2", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
-//            extension.put("keyword3", "订单号" + orderId + "，完成服务人员调度");
-//            extension.put("keyword4", "上门服务人员" + staff.getUserName());
-//            extension.put("remark", "点击查看详情");
-//            wechatService.sendTemplateMsg(staff.getIdpId(), Constant.WechatTemplate.T_ORDER_ASSIGNED, extension);
-//        }
 
         UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
         if (Objects.nonNull(userProfile) && StringUtils.isNotBlank(userProfile.getIdpId())) {
@@ -587,8 +577,22 @@ public class OrderServiceImpl implements IOrderService {
             order.setServiceStaffId(staffChange.getNewStaffId());
             orderRepository.save(order);
 
-            serviceStaffRepository.updateServiceStatus(staffChange.getOldStaffId(), ServiceStatus.FREE);
-            serviceStaffRepository.updateServiceStatus(staffChange.getNewStaffId(), ServiceStatus.ASSIGNED);
+            ServiceStaff oldStaff = serviceStaffRepository.findById(staffChange.getOldStaffId()).orElse(null);
+            if (Objects.nonNull(oldStaff)) {
+                oldStaff.setServiceOrderCount(oldStaff.getServiceOrderCount() - 1);
+                if (oldStaff.getServiceOrderCount() <= 0) {
+                    oldStaff.setServiceOrderCount(0);
+                    oldStaff.setServiceStatus(ServiceStatus.FREE);
+                }
+                serviceStaffRepository.save(oldStaff);
+            }
+
+            ServiceStaff newStaff = serviceStaffRepository.findById(staffChange.getNewStaffId()).orElse(null);
+            if (Objects.nonNull(newStaff)) {
+                newStaff.setServiceStatus(ServiceStatus.IN_SERVICE);
+                newStaff.setServiceOrderCount(newStaff.getServiceOrderCount() + 1);
+                serviceStaffRepository.save(newStaff);
+            }
         }
         orderStaffChangeRepository.save(staffChange);
     }
@@ -654,7 +658,11 @@ public class OrderServiceImpl implements IOrderService {
                 } else {
                     staff.setServiceCount(staff.getServiceCount() + 1);
                 }
-                staff.setServiceStatus(ServiceStatus.FREE);
+                staff.setServiceOrderCount(staff.getServiceOrderCount() - 1);
+                if (staff.getServiceOrderCount() <= 0) {
+                    staff.setServiceOrderCount(0);
+                    staff.setServiceStatus(ServiceStatus.FREE);
+                }
                 serviceStaffRepository.save(staff);
 
                 // 计算护士/护工收入并记录

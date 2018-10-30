@@ -233,7 +233,11 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
                 } else {
                     staff.setServiceCount(staff.getServiceCount() + 1);
                 }
-                staff.setServiceStatus(ServiceStatus.FREE);
+                staff.setServiceOrderCount(staff.getServiceOrderCount() - 1);
+                if (staff.getServiceOrderCount() <= 0) {
+                    staff.setServiceOrderCount(0);
+                    staff.setServiceStatus(ServiceStatus.FREE);
+                }
                 serviceStaffRepository.save(staff);
 
                 // 计算护士/护工收入并记录

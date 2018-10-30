@@ -133,6 +133,10 @@ public class ServiceStaff {
     @Column(name = "SERVICE_STATUS")
     private ServiceStatus serviceStatus;
 
+    @ApiModelProperty(notes = "当前服务订单数")
+    @Column(name = "SERVICE_ORDER_COUNT", precision = 4, scale = 0)
+    private Integer serviceOrderCount;
+
     @ApiModelProperty(notes = "状态", hidden = true)
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "STAFF_STATUS")
