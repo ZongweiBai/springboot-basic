@@ -14,6 +14,7 @@ import com.baymin.springboot.store.repository.IWechatUserInfoRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.common.collect.Lists;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.Expressions;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -87,7 +88,7 @@ public class UserProfileServiceImpl implements IUserProfileService {
 
         BooleanBuilder predicate = new BooleanBuilder();
         if (StringUtils.isNotBlank(nickName)) {
-            predicate.and(qUserProfile.nickName.eq(nickName));
+            predicate.and(qUserProfile.nickName.likeIgnoreCase(Expressions.asString("%").concat(nickName).concat("%")));
         }
         if (StringUtils.isNotBlank(account)) {
             predicate.and(qUserProfile.account.eq(account));

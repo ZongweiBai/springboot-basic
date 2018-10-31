@@ -29,6 +29,14 @@
 		<div style="margin-top: 10px;margin-bottom: 10px;">
 			手机号码：
             <input type="text" class="input-text" style="width:120px" placeholder="输入手机号码" id="userAccount" name="userAccount">
+			姓名：
+			<input type="text" class="input-text" style="width:120px" placeholder="输入姓名" id="nickName" name="nickName">
+			性别：
+			<select class="input-text" style="width: 120px;" id="sex" name="sex">
+				<option value="">选择性别</option>
+				<option value="M">男</option>
+				<option value="F">女</option>
+			</select>
 			注册时间：
 			<input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin" class="input-text Wdate" style="width:120px;">
 			-

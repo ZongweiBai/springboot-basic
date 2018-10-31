@@ -19,7 +19,9 @@ function loadTable() {
                 page: params.offset / params.limit,
                 sort: params.sort,
                 order: params.order,
-                userAccount: $("#userAccount").val(),
+                account: $("#userAccount").val(),
+                nickName: $("#nickName").val(),
+                sex: $("#sex").val(),
                 datemin: $("#datemin").val(),
                 datemax: $("#datemax").val()
             };
@@ -53,7 +55,7 @@ function loadTable() {
             },
             {
                 field: 'sex',
-                title: '微信昵称',
+                title: '性别',
                 align: 'center',
                 formatter: function (value, row, index) {
                     if (value == "M") {
@@ -74,6 +76,17 @@ function loadTable() {
                 align: 'center',
                 formatter: function (value, row, index) {
                     return getFormatDateByLong(value, "yyyy-MM-dd hh:mm:ss");
+                }
+            },
+            {
+                field: 'idpId',
+                title: '是否绑定微信',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (isEmpty(value)) {
+                        return "未绑定";
+                    }
+                    return "已绑定";
                 }
             },
             {
