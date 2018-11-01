@@ -194,6 +194,7 @@ function loadTable() {
                 formatter: function (value, row, index) {
                     var payWay = row.payWay;
                     var status = row.status;
+                    var serviceStaffId = row.serviceStaffId;
                     var refundEd = true;
                     if (isEmpty(row.refundStatus)) {
                         refundEd = false;
@@ -211,11 +212,13 @@ function loadTable() {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
                     }
 
-                    if (status == "ORDER_PAYED") {
+                    if ((payWay == 'PAY_ONLINE_WITH_WECHAT' && status == "ORDER_PAYED" && isEmpty(serviceStaffId)) ||
+                        (payWay != 'PAY_ONLINE_WITH_WECHAT' && isEmpty(serviceStaffId))) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderAssign(\'' + value + '\')" title="指派"><i style="font-size: 18px;" class="Hui-iconfont">&#xe645;</i></a>&nbsp;';
                     }
 
-                    if (status != "ORDER_FINISH" && status != "ORDER_FULL_REFUND" && status != "ORDER_CANCELED" && !refundEd && !isEmpty(payTime)) {
+                    if (status != "ORDER_FINISH" && status != "ORDER_FULL_REFUND" &&
+                        status != "ORDER_CANCELED" && !refundEd && !isEmpty(payTime)) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="orderRefund(\'' + value + '\')" title="退款申请"><i style="font-size: 18px;" class="Hui-iconfont">&#xe628;</i></a>&nbsp;';
                     }
 
