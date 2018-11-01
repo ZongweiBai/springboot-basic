@@ -215,6 +215,10 @@ public class OrderServiceImpl implements IOrderService {
                 if (Objects.nonNull(orderExt)) {
                     order.setOrderExt(orderExt);
                 }
+                if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                    ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+                    order.setServiceStaff(Objects.nonNull(staff) ? staff : null);
+                }
             }
         }
         return orderList;
