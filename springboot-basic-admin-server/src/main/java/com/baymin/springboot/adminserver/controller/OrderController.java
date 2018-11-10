@@ -10,6 +10,7 @@ import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.payload.UserOrderVo;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -179,6 +180,11 @@ public class OrderController {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             List<Question> questions = userOrderVo.getQuestions();
+            if (CollectionUtils.isEmpty(questions)) {
+                resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+                resultMap.put(WebConstant.MESSAGE, "请选择用户基本情况");
+                return resultMap;
+            }
             List<String> questionIds = questions.stream().filter(question -> StringUtils.isNotBlank(question.getId()))
                     .map(Question::getId).collect(Collectors.toList());
             List<Question> questionList = questionService.getQuestionByIds(questionIds);

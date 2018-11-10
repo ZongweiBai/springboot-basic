@@ -150,10 +150,10 @@ public class OrderServiceImpl implements IOrderService {
         orderExt.setServiceAddress(request.getServiceAddress());
         orderExt.setServiceDuration(request.getServiceDuration());
         orderExt.setServiceNumber(request.getServiceNumber());
-        orderExt.setServiceStartTime(new Date(request.getServiceStartDate()));
-        orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
 
         if (HOSPITAL_CARE == request.getOrderType() || HOME_CARE == request.getOrderType()) {
+            orderExt.setServiceStartTime(new Date(request.getServiceStartDate()));
+            orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
             Map<String, Object> patientInfo = new HashMap<>();
             if (CollectionUtils.isNotEmpty(request.getQuestions())) {
                 Map<String, List<Question>> questionMap = request.getQuestions().stream().collect(Collectors.groupingBy(Question::getQuestionType));
