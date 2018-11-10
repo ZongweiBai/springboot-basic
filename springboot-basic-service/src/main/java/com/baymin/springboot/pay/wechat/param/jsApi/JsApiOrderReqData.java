@@ -5,6 +5,8 @@ import com.baymin.springboot.pay.wechat.param.Signature;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import java.util.Map;
  * @date: 2016年1月21日 下午5:04:55
  * @version V1.0
  */
+@Data
 @ApiModel(description = "微信JS支付所需信息")
 public class JsApiOrderReqData {
 
@@ -27,69 +30,28 @@ public class JsApiOrderReqData {
 	private String packageInfo;
 	private String signType = "MD5";
 	private String paySign;
+
+	@ApiModelProperty(notes = "扫码支付二维码图片URL")
+	private String nativePayQrcode;
 	
 	public JsApiOrderReqData() {
 		super();
 	}
 	
 	public JsApiOrderReqData(UnifiedOrderResData resData, String key) {
-		setAppId(resData.getAppid());
-		setNonceStr(RandomStringGenerator.getRandomStringByLength(32));
-		setPackageInfo("prepay_id="+resData.getPrepay_id());
-		setTimeStamp(String.valueOf(System.currentTimeMillis()/1000));
-		setSignType("MD5");
-		String sign = Signature.getSign(toMap(), key);
-		setPaySign(sign);
+		if (StringUtils.equals(resData.getTrade_type(), "JSAPI")) {
+			setAppId(resData.getAppid());
+			setNonceStr(RandomStringGenerator.getRandomStringByLength(32));
+			setPackageInfo("prepay_id=" + resData.getPrepay_id());
+			setTimeStamp(String.valueOf(System.currentTimeMillis() / 1000));
+			setSignType("MD5");
+			String sign = Signature.getSign(toMap(), key);
+			setPaySign(sign);
+		} else {
+			setNativePayQrcode(resData.getCode_url());
+		}
 	}
 
-	public String getAppId() {
-		return appId;
-	}
-
-	public void setAppId(String appId) {
-		this.appId = appId;
-	}
-
-	public String getTimeStamp() {
-		return timeStamp;
-	}
-
-	public void setTimeStamp(String timeStamp) {
-		this.timeStamp = timeStamp;
-	}
-
-	public String getNonceStr() {
-		return nonceStr;
-	}
-
-	public void setNonceStr(String nonceStr) {
-		this.nonceStr = nonceStr;
-	}
-
-	public String getPackageInfo() {
-		return packageInfo;
-	}
-
-	public void setPackageInfo(String packageInfo) {
-		this.packageInfo = packageInfo;
-	}
-
-	public String getSignType() {
-		return signType;
-	}
-
-	public void setSignType(String signType) {
-		this.signType = signType;
-	}
-
-	public String getPaySign() {
-		return paySign;
-	}
-
-	public void setPaySign(String paySign) {
-		this.paySign = paySign;
-	}
-	
 	public Map<String, Object> toMap() {
 		Map<String, Object> map = new HashMap<String, Object>();
 		Field[] fields = this.getClass().getDeclaredFields();

@@ -11,7 +11,7 @@ public interface IPayRecordService {
     /**
      * 微信商品支付
      */
-    Map<String, Object> payOrderWithWeChat(UserProfile user, Order order, String appID, String mchID, String key);
+    Map<String, Object> payOrderWithWeChat(String payType, UserProfile user, Order order, String appID, String mchID, String key);
 
     /**
      * 支付成功回调

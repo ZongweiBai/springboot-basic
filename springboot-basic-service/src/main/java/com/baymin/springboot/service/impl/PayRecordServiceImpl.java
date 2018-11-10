@@ -12,6 +12,7 @@ import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.repository.IOrderRepository;
 import com.baymin.springboot.store.repository.IPayRecordRepository;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * 支付记录service
@@ -35,15 +37,22 @@ public class PayRecordServiceImpl implements IPayRecordService {
     private IPayRecordRepository payRecordRepository;
 
     @Override
-    public Map<String, Object> payOrderWithWeChat(final UserProfile user, Order order, String appID, String mchID, String key) {
+    public Map<String, Object> payOrderWithWeChat(String payType, final UserProfile user, Order order, String appID, String mchID, String key) {
         final Map<String, Object> reMap = new HashMap<>();
 
         final double totalFee = order.getTotalFee();
 
         String channelCode = "FMY_CARE";
+        String idpId = null;
+        if (StringUtils.isBlank(payType)) {
+            payType = "JSAPI";
+        }
+        if (StringUtils.equals("JSAPI", payType)) {
+            idpId = user.getIdpId();
+        }
 
         try {
-            final UnifiedOrderReqData reqData = new UnifiedOrderReqData(null, "JSAPI", order.getId(), (int) (totalFee * 100), appID, mchID, key, channelCode, user.getIdpId());
+            UnifiedOrderReqData reqData = new UnifiedOrderReqData(null, payType, order.getId(), (int) (totalFee * 100), appID, mchID, key, channelCode, idpId, order.getId());
             new UnifiedOrderService().doService(reqData, new UnifiedOrderService.ResultListener() {
                 @Override
                 public void onFailByReturnCodeError(UnifiedOrderResData resData) {
@@ -67,7 +76,11 @@ public class PayRecordServiceImpl implements IPayRecordService {
                 public void onUnifiedOrderSuccess(UnifiedOrderResData resData) {
                     // 在系统生成预支付订单
                     PayRecord payRecord = new PayRecord();
-                    payRecord.setPayerUserId(user.getId());
+                    if (Objects.nonNull(user)) {
+                        payRecord.setPayerUserId(user.getId());
+                    } else {
+                        payRecord.setPayerUserId(order.getOrderUserId());
+                    }
                     payRecord.setCreateTime(new Date());
                     payRecord.setPayFee(totalFee);
                     payRecord.setPayResult(false);

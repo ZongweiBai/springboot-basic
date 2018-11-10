@@ -28,8 +28,8 @@ public class UnifiedOrderReqData {
 	private String time_expire; // 非必填	交易结束时间，格式为yyyyMMddHHmmss
 	private String goods_tag; // 非必填	商品标记，代金券或立减优惠功能的参数，说明详见代金券或立减优惠
 	private String notify_url; // 必填	通知地址，接收微信支付异步通知回调地址
-	private String trade_type; // 必填	交易类型，取值如下：JSAPI，NATIVE，APP，WAP
-	private String product_id; // 非必填	商品ID，当trade_type=NATIVE，此参数必传。此id为二维码中包含的商品ID，商户自行定义
+	private String trade_type; // 必填	交易类型，取值如下：JSAPI 公众号支付，NATIVE 扫码支付，APP，WAP
+	private String product_id; // 非必填	商品ID，当trade_type=NATIVE（即扫码支付），此参数必传。此id为二维码中包含的商品ID，商户自行定义
 	private String limit_pay; // 非必填	指定支付方式，no_credit--指定不能使用信用卡支付
 	private String openid; // 非必填	当trade_type=JSAPI，此参数必传，用户在商户appid下的唯一标识
 	
@@ -37,9 +37,9 @@ public class UnifiedOrderReqData {
 		super();
 	}
 	
-	public UnifiedOrderReqData(String deviceInfo, String tradeType, 
-			String body, int totalFree, String appID, String mchID, 
-			String key, String channelCode, String openId) {
+	public UnifiedOrderReqData(String deviceInfo, String tradeType,
+							   String body, int totalFree, String appID, String mchID,
+							   String key, String channelCode, String openId, String productId) {
 		setAppid(appID);
 		System.out.println("appID:"+appID);
 		setMch_id(mchID);
@@ -62,6 +62,8 @@ public class UnifiedOrderReqData {
 		System.out.println("Trade_type:"+getTrade_type());
 		setOpenid(openId);
 		System.out.println("openId:"+openId);
+		setProduct_id(productId);
+		System.out.println("productId:"+productId);
 		String sign = Signature.getSign(toMap(), key);
 		setSign(sign);
 		System.out.println("sign:"+sign);
