@@ -161,15 +161,20 @@ public class WechatApi {
         String orderId = requestVo.getOrderId();
         String userId = requestVo.getUserId();
         String payType = requestVo.getPayType();
+        if (StringUtils.isBlank(payType)) {
+            payType = "JSAPI";
+        }
 
         Order order = orderService.queryOrderById(orderId);
         if (Objects.isNull(order)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
-        if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT) {
-            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单支付方式不是微信支付，不能发起线上支付"));
+        if (StringUtils.equals("JSAPI", payType)) {
+            if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单支付方式不是微信支付，不能发起线上支付"));
+            }
         }
-        if (order.getStatus() != OrderStatus.ORDER_UN_PAY && Objects.nonNull(order.getPayTime())) {
+        if (Objects.nonNull(order.getPayTime())) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.order_already_payed.name(), "订单已支付成功！"));
         }
 

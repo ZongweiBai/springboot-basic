@@ -547,7 +547,9 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.isNull(order)) {
             return;
         }
-        order.setStatus(OrderStatus.ORDER_PAYED);
+        if (order.getStatus() == OrderStatus.ORDER_UN_PAY) {
+            order.setStatus(OrderStatus.ORDER_PAYED);
+        }
         order.setPayWay(payRecord.getPayWay());
         order.setPayTime(new Date());
         orderRepository.save(order);

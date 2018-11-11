@@ -108,11 +108,14 @@ public class PayRecordServiceImpl implements IPayRecordService {
     @Override
     public void orderPaySuccess(PayRecord payRecord) {
         Order order = orderRepository.findById(payRecord.getOrderId()).orElse(null);
-
         // 更新订单成功
-        order.setPayTime(new Date());
-        order.setStatus(OrderStatus.ORDER_PAYED);
-        orderRepository.save(order);
+        if (Objects.nonNull(order)) {
+            order.setPayTime(new Date());
+            if (order.getStatus() == OrderStatus.ORDER_UN_PAY) {
+                order.setStatus(OrderStatus.ORDER_PAYED);
+            }
+            orderRepository.save(order);
+        }
 
         // 修改支付记录为成功
         payRecord.setResultDesc("支付成功");
