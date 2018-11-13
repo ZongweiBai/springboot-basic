@@ -10,13 +10,19 @@ function initForm() {
     $("#form-menu-add").Validform({
         tiptype: 2,
         callback: function (form) {
+            var nurseId = $("#nurseId").val();
+            if (careType == 'HOME_CARE' && isEmpty(nurseId)) {
+                tip.alertError("请选择护士！");
+                return false;
+            }
             $.ajax({
                 type: "POST",
                 url: contextPath + "/order/assignOrderStaff",
                 data: {
                     "orderId": $("#orderId").html(),
                     "staffId": $("#serviceStaffId").val(),
-                    "adminId": $("#serviceAdminId").val()
+                    "adminId": $("#serviceAdminId").val(),
+                    "nurseId": nurseId
                 },
                 beforeSend: function () {
                     tip.showLoading();
@@ -41,6 +47,7 @@ function initForm() {
     });
 }
 
+var careType;
 /**
  * 加载信息
  */
@@ -62,12 +69,22 @@ function loadData(orderId) {
                 $("#id").val(order.id);
                 $("#orderId").html(order.id);
 
+                careType = order.careType;
                 if (order.careType == 'HOSPITAL_CARE') {
                     var content = '<option value="">选择护工</option>';
                     content += '<option value="WORKER">护工</option>';
                     $("#serviceStaffType").html(content);
                     $("#serviceStaffType").val("WORKER");
+                    $("#staffSelectDiv").hide();
+                    $("#staffSelectSpan").html("选择护工");
                     selectStaff('WORKER');
+                } else if (order.careType == 'HOME_CARE') {
+                    $("#staffSelectDiv").hide();
+                    selectStaff('WORKER');
+
+                    $("#staffSelectSpan").html("选择护工");
+                    $("#nurseSelectDiv").show();
+                    selectNurse();
                 }
             } else {
                 tip.alertError("加载订单信息失败");
@@ -113,6 +130,36 @@ function selectStaff(staffType) {
             }
         });
     }
+}
+
+function selectNurse() {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "/staff/queryStaffByType",
+        data: {
+            "serviceStaffType": "NURSE"
+        },
+        beforeSend: function () {
+            tip.showLoading();
+        },
+        success: function (data) {
+            tip.hideLoading();
+            if (data.result == 200) {
+                $("#nurseId").empty();
+                var rows = data.rows;
+                for (var i = 0; i < rows.length; i++) {
+                    var staff = rows[i];
+                    $("#nurseId").append('<option value="' + staff.id + '">' + staff.userName + '-' + staff.mobile + '</option>');
+                }
+            } else {
+                tip.alertError("加载护士信息失败");
+            }
+        },
+        error: function () {
+            tip.hideLoading();
+            tip.alertError("加载护士信息失败");
+        }
+    });
 }
 
 function loadAdminData() {

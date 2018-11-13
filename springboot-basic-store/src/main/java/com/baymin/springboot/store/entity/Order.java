@@ -26,17 +26,19 @@ public class Order implements Serializable {
     @ApiModelProperty(notes = "订单ID")
     @Id
     @Column(name = "ID", length = 32)
-    /*@GeneratedValue(strategy = GenerationType.TABLE, generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "uuid")*/
     private String id;
 
     @ApiModelProperty(notes = "用户ID")
     @Column(name = "ORDER_USER_ID", length = 32)
     private String orderUserId;
 
-    @ApiModelProperty(notes = "服务人员ID")
+    @ApiModelProperty(notes = "服务人员ID(护工)")
     @Column(name = "SERVICE_STAFF_ID", length = 32)
     private String serviceStaffId;
+
+    @ApiModelProperty(notes = "服务人员ID(护士)")
+    @Column(name = "NURSE_ID", length = 32)
+    private String nurseId;
 
     @ApiModelProperty(notes = "服务监督人员ID", hidden = true)
     @Column(name = "SERVICE_ADMIN_ID", length = 32)
@@ -144,6 +146,10 @@ public class Order implements Serializable {
     @ApiModelProperty(hidden = true)
     @Transient
     private ServiceStaff serviceStaff;
+
+    @ApiModelProperty(hidden = true)
+    @Transient
+    private ServiceStaff nurseStaff;
 
     @ApiModelProperty(hidden = true)
     @Transient

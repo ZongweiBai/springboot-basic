@@ -30,7 +30,7 @@ public interface IOrderService {
 
     Map<String, Object> getOrderDetail(String orderId);
 
-    void assignOrderStaff(String orderId, String staffId, String adminId);
+    void assignOrderStaff(String orderId, String staffId, String adminId, String nurseId);
 
     void offlinePay(PayRecord payRecord);
 

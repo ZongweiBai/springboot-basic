@@ -24,7 +24,7 @@
             </div>
         </div>
 
-        <div class="row cl">
+        <div class="row cl" id="staffSelectDiv">
             <label class="form-label col-3"><span class="c-red">*</span>护士/护工筛选：</label>
             <div class="formControls col-7">
                 <select class="input-text" style="width: 120px;" id="serviceStaffType" name="serviceStaffType"
@@ -37,9 +37,18 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>选择护士/护工：</label>
+            <label class="form-label col-3"><span class="c-red">*</span><span id="staffSelectSpan">选择护士/护工：</span></label>
             <div class="formControls col-7">
                 <select class="input-text" style="width: 120px;" id="serviceStaffId" name="serviceStaffId" datatype="*">
+                    <option value="">筛选</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="row cl" id="nurseSelectDiv" style="display: none;">
+            <label class="form-label col-3"><span class="c-red">*</span>选择护士：</label>
+            <div class="formControls col-7">
+                <select class="input-text" style="width: 120px;" id="nurseId" name="nurseId" >
                     <option value="">筛选</option>
                 </select>
             </div>

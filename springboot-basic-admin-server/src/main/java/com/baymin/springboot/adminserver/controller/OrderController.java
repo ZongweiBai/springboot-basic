@@ -108,10 +108,10 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "assignOrderStaff")
-    public Map<String, Object> assignOrderStaff(String orderId, String staffId, String adminId, HttpServletRequest request) {
+    public Map<String, Object> assignOrderStaff(String orderId, String staffId, String adminId, String nurseId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            orderService.assignOrderStaff(orderId, staffId, adminId);
+            orderService.assignOrderStaff(orderId, staffId, adminId, nurseId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

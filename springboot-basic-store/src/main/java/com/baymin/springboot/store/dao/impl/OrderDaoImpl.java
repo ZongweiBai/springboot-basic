@@ -76,7 +76,7 @@ public class OrderDaoImpl implements IOrderDao {
                 }
             }
         } else {
-            predicate.and(qOrder.serviceStaffId.eq(userId));
+            predicate.and(qOrder.serviceStaffId.eq(userId).or(qOrder.nurseId.eq(userId)));
             if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
                 predicate.and(qOrder.status.eq(OrderStatus.ORDER_ASSIGN));
             } else if (StringUtils.equals(RequestConstant.ORDER_PROCESSING, status)) {

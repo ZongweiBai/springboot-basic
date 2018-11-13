@@ -24,6 +24,7 @@ function loadDataInfo(orderId) {
                 var order = info.order;
                 var orderExt = info.orderExt;
                 var userProfile = info.user;
+                var product = info.product;
 
                 var careType = "";
                 if (order.careType == "HOSPITAL_CARE") {
@@ -32,6 +33,9 @@ function loadDataInfo(orderId) {
                     careType = "居家照护";
                 } else if (order.careType == "REHABILITATION") {
                     careType = "康复护理";
+                    if (!isEmpty(product)) {
+                        careType += "/" + product.productName;
+                    }
                 }
                 var payWay = "";
                 if (order.payWay == "PAY_ONLINE_WITH_WECHAT") {

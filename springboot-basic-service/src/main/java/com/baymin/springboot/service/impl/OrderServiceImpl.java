@@ -503,16 +503,31 @@ public class OrderServiceImpl implements IOrderService {
             }
         }
 
+        if (Objects.nonNull(order) && StringUtils.isNotBlank(order.getServiceProductId())) {
+            ServiceProduct product = serviceProductRepository.findById(order.getServiceProductId()).orElse(null);
+            if (Objects.nonNull(product)) {
+                detailMap.put("product", product);
+            }
+        }
+
         return detailMap;
     }
 
     @Override
-    public void assignOrderStaff(String orderId, String staffId, String adminId) {
+    public void assignOrderStaff(String orderId, String staffId, String adminId, String nurseId) {
         Order order = orderRepository.findById(orderId).orElse(null);
         ServiceStaff staff = serviceStaffRepository.findById(staffId).orElse(null);
         if (Objects.isNull(order) || Objects.isNull(staff)) {
             return;
         }
+        ServiceStaff nurseStaff = null;
+        if (StringUtils.isNotBlank(nurseId)) {
+            nurseStaff = serviceStaffRepository.findById(nurseId).orElse(null);
+            if (Objects.nonNull(nurseStaff)) {
+                order.setNurseId(nurseId);
+            }
+        }
+
         order.setServiceStaffId(staffId);
         order.setStatus(OrderStatus.ORDER_ASSIGN);
         order.setServiceAdminId(adminId);
@@ -526,6 +541,9 @@ public class OrderServiceImpl implements IOrderService {
         Map<String, String> templateParam = new HashMap<>();
         templateParam.put("orderno", orderId);
         smsSendRecordService.addSmsSendRecord(staff.getMobile(), Constant.AliyunAPI.ORDER_ASSING, templateParam);
+        if (Objects.nonNull(nurseStaff) && StringUtils.isNotBlank(nurseStaff.getMobile())) {
+            smsSendRecordService.addSmsSendRecord(nurseStaff.getMobile(), Constant.AliyunAPI.ORDER_ASSING, templateParam);
+        }
 
         UserProfile userProfile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
         if (Objects.nonNull(userProfile) && StringUtils.isNotBlank(userProfile.getIdpId())) {
@@ -535,7 +553,11 @@ public class OrderServiceImpl implements IOrderService {
             extension.put("keyword1", "订单服务");
             extension.put("keyword2", DateUtil.formatDate(new Date(), "yyyy-MM-dd HH:mm:ss"));
             extension.put("keyword3", "订单号" + orderId + "，完成服务人员调度");
-            extension.put("keyword4", "上门服务人员" + staff.getUserName());
+            if (Objects.isNull(nurseStaff)) {
+                extension.put("keyword4", "上门服务人员" + staff.getUserName());
+            } else {
+                extension.put("keyword4", "上门服务护工人员：" + staff.getUserName() + ";上门服务护士人员：" + nurseStaff.getUserName());
+            }
             extension.put("remark", "点击查看详情");
             wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_ORDER_ASSIGNED, redirectUrl, extension);
         }
