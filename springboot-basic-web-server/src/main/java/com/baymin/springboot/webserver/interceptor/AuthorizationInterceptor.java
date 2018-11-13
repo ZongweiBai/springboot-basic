@@ -10,6 +10,7 @@ import com.baymin.springboot.service.IStaffService;
 import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.ServiceStaff;
 import com.baymin.springboot.store.entity.UserProfile;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -69,8 +70,8 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                 }
             } else if (StringUtils.equals("S", userType)) {
                 ServiceStaff staff = staffService.findById(String.valueOf(accountMap.get("userId")));
-                if (staff == null) {
-                    log.error("护士/护工ID：{}无法找到", accountFromHeader);
+                if (staff == null || staff.getStaffStatus() == CommonStatus.DELETE) {
+                    log.error("护士/护工ID：{}无法找到或者已被删除", accountFromHeader);
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     throw new WebServerException(HttpStatus.UNAUTHORIZED, new ErrorInfo(ErrorCode.unauthorized.name(), ErrorDescription.TOKEN_INVALID));
                 }
