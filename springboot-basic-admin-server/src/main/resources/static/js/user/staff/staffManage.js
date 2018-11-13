@@ -12,7 +12,7 @@ function loadTable() {
         queryParams: function (params) {
             var paramsMap = {
                 size: params.limit,  //页面大小
-                page: params.offset/params.limit,
+                page: params.offset / params.limit,
                 sort: params.sort,
                 order: params.order,
                 userName: $("#userName").val(),
@@ -31,6 +31,17 @@ function loadTable() {
                 field: 'id',
                 title: '编号',
                 align: 'center'
+            },
+            {
+                field: 'serviceStaffType',
+                title: '服务人员类型',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == 'NURSE') {
+                        return "护士";
+                    }
+                    return "护工";
+                }
             },
             {
                 field: 'userName',
@@ -67,6 +78,9 @@ function loadTable() {
                 title: '护理经验',
                 align: 'center',
                 formatter: function (value, row, index) {
+                    if (isEmpty(value)) {
+                        return "-";
+                    }
                     return value + "年";
                 }
             },
@@ -118,7 +132,7 @@ function editStaffInfo(staffId) {
  * 删除
  */
 function deleteStaffInfo(staffId) {
-    tip.confirm("确定要删除吗？删除后无法恢复！",function () {
+    tip.confirm("确定要删除吗？删除后无法恢复！", function () {
         $.ajax({
             type: "GET",
             url: contextPath + "/staff/deleteStaff",

@@ -55,6 +55,7 @@ public class ServiceProductVo {
         this.createTime = product.getCreateTime();
         this.serviceTips = product.getServiceTips();
         this.appointmentNotice = product.getAppointmentNotice();
+        this.productPrice = product.getProductPrice();
         if (Objects.nonNull(itemMap) && !itemMap.isEmpty()) {
             this.itemMap = itemMap;
         }

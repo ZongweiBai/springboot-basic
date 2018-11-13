@@ -18,6 +18,7 @@ import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
 import com.baymin.springboot.service.*;
 import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.PayRequestVo;
@@ -98,7 +99,7 @@ public class WechatApi {
                     WechatUserInfo wechatUserInfo = userProfileService.saveWechatUserInfo(userInfoResponse);
 
                     ServiceStaff staff = staffService.findByIdpId(wechatUserInfo.getOpenid());
-                    if (Objects.nonNull(staff)) {
+                    if (Objects.nonNull(staff) && staff.getStaffStatus() != CommonStatus.DELETE) {
                         staff.setIdpId(wechatUserInfo.getOpenid());
                         staff.setImgUrl(wechatUserInfo.getHeadimgurl());
                         staffService.updateStaff(staff);
@@ -160,25 +161,36 @@ public class WechatApi {
 
         String orderId = requestVo.getOrderId();
         String userId = requestVo.getUserId();
+        String payType = requestVo.getPayType();
+        if (StringUtils.isBlank(payType)) {
+            payType = "JSAPI";
+        }
+
         Order order = orderService.queryOrderById(orderId);
         if (Objects.isNull(order)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), ORDER_INFO_NOT_CORRECT));
         }
-        if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT) {
-            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单支付方式不是微信支付，不能发起线上支付"));
+        if (StringUtils.equals("JSAPI", payType)) {
+            if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单支付方式不是微信支付，不能发起线上支付"));
+            }
         }
-        if (order.getStatus() != OrderStatus.ORDER_UN_PAY && Objects.nonNull(order.getPayTime())) {
+        if (Objects.nonNull(order.getPayTime())) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.order_already_payed.name(), "订单已支付成功！"));
         }
 
         Map<String, Object> resultMap;
-        UserProfile user = userProfileService.findById(userId);
+        UserProfile user = null;
 
-        if (Objects.isNull(user) || StringUtils.isBlank(user.getIdpId())) {
-            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        if (!StringUtils.equals("NATIVE", payType)) {
+            user = userProfileService.findById(userId);
+            if (Objects.isNull(user) || StringUtils.isBlank(user.getIdpId())) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "您尚未绑定微信，请重新登录"));
+            }
         }
-        resultMap = payRecordService.payOrderWithWeChat(user, order, WechatConfig.AppID, WechatConfig.mchID, WechatConfig.key);
-        return dealWechatOrderResponse(response, resultMap);
+
+        resultMap = payRecordService.payOrderWithWeChat(payType, user, order, WechatConfig.AppID, WechatConfig.mchID, WechatConfig.key);
+        return dealWechatOrderResponse(resultMap);
     }
 
     @ApiOperation(value = "微信支付回调接口")
@@ -196,7 +208,7 @@ public class WechatApi {
             }
             request.getReader().close();
             String notifyStr = inputString.toString();
-            logger.error("微信支付结果通知【" + notifyStr + "】");
+            logger.debug("微信支付结果通知【" + notifyStr + "】");
             PayNotifyReqData resData = (PayNotifyReqData) Util.getObjectFromXML(notifyStr, PayNotifyReqData.class);
             if ("SUCCESS".equalsIgnoreCase(resData.getResult_code())) {
 
@@ -241,7 +253,7 @@ public class WechatApi {
         return rtWeiXinStr;
     }
 
-    private JsApiOrderReqData dealWechatOrderResponse(HttpServletResponse response, Map<String, Object> resultMap) {
+    private JsApiOrderReqData dealWechatOrderResponse(Map<String, Object> resultMap) {
         if (StringUtils.equals(String.valueOf(resultMap.get(WebConstant.RESULT)), String.valueOf(WebConstant.FAULT))) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), String.valueOf(resultMap.get(WebConstant.MESSAGE))));
         } else {
