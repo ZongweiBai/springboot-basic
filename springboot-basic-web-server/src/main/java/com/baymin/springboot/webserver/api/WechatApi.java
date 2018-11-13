@@ -18,6 +18,7 @@ import com.baymin.springboot.pay.wechat.param.pojo.UserInfoResponse;
 import com.baymin.springboot.pay.wechat.param.unifiedorder.UnifiedOrderResData;
 import com.baymin.springboot.service.*;
 import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
 import com.baymin.springboot.store.payload.PayRequestVo;
@@ -98,7 +99,7 @@ public class WechatApi {
                     WechatUserInfo wechatUserInfo = userProfileService.saveWechatUserInfo(userInfoResponse);
 
                     ServiceStaff staff = staffService.findByIdpId(wechatUserInfo.getOpenid());
-                    if (Objects.nonNull(staff)) {
+                    if (Objects.nonNull(staff) && staff.getStaffStatus() != CommonStatus.DELETE) {
                         staff.setIdpId(wechatUserInfo.getOpenid());
                         staff.setImgUrl(wechatUserInfo.getHeadimgurl());
                         staffService.updateStaff(staff);

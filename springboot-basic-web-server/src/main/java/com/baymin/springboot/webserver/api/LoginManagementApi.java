@@ -13,6 +13,7 @@ import com.baymin.springboot.service.IUserProfileService;
 import com.baymin.springboot.store.entity.ServiceStaff;
 import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.store.entity.WechatUserInfo;
+import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.payload.LoginRequestVo;
 import com.baymin.springboot.store.payload.TokenVo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -102,7 +103,7 @@ public class LoginManagementApi {
         try {
             WechatUserInfo userInfo = userProfileService.getWechatUserInfoById(wechatId);
             ServiceStaff staff = staffService.findByMobile(userAccount);
-            if (Objects.nonNull(staff)) {
+            if (Objects.nonNull(staff) && staff.getStaffStatus() != CommonStatus.DELETE) {
                 if (Objects.nonNull(userInfo) && StringUtils.isNotBlank(userInfo.getOpenid())) {
                     staffService.updateIdpId(staff.getId(), userInfo.getOpenid());
                 }
