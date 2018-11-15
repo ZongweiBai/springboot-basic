@@ -23,14 +23,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 
 @Api(value = "护士/护工接口", tags = "护士/护工接口")
 @RestController
 @RequestMapping(path = "/api/staff")
-public class  StaffApi {
+public class StaffApi {
 
     @Autowired
     private IOrderService orderService;
@@ -85,7 +87,7 @@ public class  StaffApi {
         List<StaffIncome> incomeList = staffIncomeService.queryStaffIncome(staffId);
         double income = staffIncomeService.sumIncomeByDate(staffId, DateUtil.monthFirst(), DateUtil.monthLast());
         double totalIncome = incomeList.stream()
-                .filter(staffIncome -> staffIncome.getIncomeType()== IncomeType.INCOME)
+                .filter(staffIncome -> staffIncome.getIncomeType() == IncomeType.INCOME)
                 .map(StaffIncome::getIncome).reduce(0.0, BigDecimalUtil::add);
 
         return new StaffIncomeInfoVo(totalIncome, income, incomeList);
@@ -170,10 +172,11 @@ public class  StaffApi {
     @ApiOperation(value = "查询订单的照护计划")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
-            @ApiImplicitParam(name = "orderId", value = "订单ID")
+            @ApiImplicitParam(name = "orderId", value = "订单ID"),
+            @ApiImplicitParam(name = "queryType", value = "查询类型 basic(基础信息，不传即默认) detail(包含执行记录)")
     })
     @GetMapping("/careplan/{orderId}")
-    public OrderCarePlanVo queryOrderCarePlan(@PathVariable String orderId) {
+    public OrderCarePlanVo queryOrderCarePlan(@PathVariable String orderId, @RequestParam(value = "queryType") String queryType) {
         if (StringUtils.isBlank(orderId)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
@@ -184,7 +187,15 @@ public class  StaffApi {
         SysDict typeDict = sysManageService.getSysDictById(carePlan.getTypeId());
         SysDict caseDict = sysManageService.getSysDictById(carePlan.getCaseId());
         ServiceStaff staff = staffService.findById(carePlan.getStaffId());
-        OrderCarePlanVo carePlanVo = new OrderCarePlanVo(carePlan);
+
+        OrderCarePlanVo carePlanVo;
+        if (StringUtils.equals("detail", queryType)) {
+            List<OrderCarePlanRecord> recordList = orderCarePlanService.findRecordByCarePlanId(carePlan.getId());
+            Map<String, List<OrderCarePlanRecord>> recordMap = recordList.stream().collect(Collectors.groupingBy(OrderCarePlanRecord::getOrderPlanSubId));
+            carePlanVo = new OrderCarePlanVo(carePlan, recordMap);
+        } else {
+            carePlanVo = new OrderCarePlanVo(carePlan, null);
+        }
         if (Objects.nonNull(typeDict)) {
             carePlanVo.setTypeName(typeDict.getCodeValue());
         }
@@ -203,12 +214,30 @@ public class  StaffApi {
             @ApiImplicitParam(name = "orderId", value = "订单ID")
     })
     @PostMapping("/careplan/{orderId}")
-    public void queryOrderCarePlan(@PathVariable String orderId, @RequestBody OrderCarePlan orderCarePlan) {
+    public void saveOrderCarePlan(@PathVariable String orderId, @RequestBody OrderCarePlan orderCarePlan) {
         if (StringUtils.isBlank(orderId) || Objects.isNull(orderCarePlan)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
         orderCarePlan.setOrderId(orderId);
         orderCarePlanService.saveOrderCarePlan(orderCarePlan);
+    }
+
+    @ApiOperation(value = "开始执行/结束执行订单的照护计划")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),
+            @ApiImplicitParam(name = "careplanId", value = "执行计划ID"),
+            @ApiImplicitParam(name = "careplanSubId", value = "执行计划子项ID"),
+            @ApiImplicitParam(name = "operate", value = "start(开始执行) finish(结束执行)")
+    })
+    @PostMapping("/careplanrecord/{careplanId}/{careplanSubId}")
+    public void saveOrderCarePlanRecord(@PathVariable String careplanId,
+                                        @PathVariable String careplanSubId,
+                                        @RequestParam(name = "operate") String operate) {
+        if (StringUtils.isBlank(careplanId) || StringUtils.isBlank(careplanSubId) || StringUtils.isBlank(operate)
+                || (!StringUtils.equals("start", operate)) && !StringUtils.equals("finish", operate)) {
+            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+        }
+        orderCarePlanService.saveOrderCarePlanRecord(careplanId, careplanSubId, operate);
     }
 
     @ApiOperation(value = "开启/关闭接单功能")

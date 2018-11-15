@@ -681,75 +681,87 @@ public class OrderServiceImpl implements IOrderService {
             userProfileRepository.save(userProfile);
         }
 
+        ServiceStaff staff = null;
         if (StringUtils.isNotBlank(order.getServiceStaffId())) {
-            ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
-            if (Objects.nonNull(staff)) {
-                // 释放护士/护工的服务状态
-                if (Objects.isNull(staff.getServiceCount())) {
-                    staff.setServiceCount(1);
-                } else {
-                    staff.setServiceCount(staff.getServiceCount() + 1);
-                }
-                staff.setServiceOrderCount(staff.getServiceOrderCount() - 1);
-                if (staff.getServiceOrderCount() <= 0) {
-                    staff.setServiceOrderCount(0);
-                    staff.setServiceStatus(ServiceStatus.FREE);
-                }
-                serviceStaffRepository.save(staff);
+            staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+            dealStaffBiz(orderId, order, staff);
+        }
+        if (StringUtils.isNotBlank(order.getNurseId())) {
+            ServiceStaff nurseStaff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+            dealStaffBiz(orderId, order, nurseStaff);
+        }
 
-                // 计算护士/护工收入并记录
-                List<CommonDealStatus> dealStatuses = new ArrayList<>();
-                dealStatuses.add(CommonDealStatus.AGREE);
-                dealStatuses.add(CommonDealStatus.COMPLETED);
+        if (Objects.nonNull(staff) && Objects.nonNull(userProfile) && StringUtils.isNotBlank(userProfile.getIdpId())) {
+            String redirectUrl = T_MSG_REDIRECT_URL + "#/orderDetail?id=" + orderId;
+            Map<String, String> extension = new HashMap<>();
+            extension.put("first", "服务已结束，请您评价！");
+            extension.put("keyword1", staff.getUserName());
+            extension.put("keyword2", order.getCareType().getName());
+            extension.put("keyword3", "一家依护");
+            extension.put("keyword4", DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
+            extension.put("remark", "点击查看详情");
+            wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_ORDER_COMPLETED, redirectUrl, extension);
+        }
+    }
 
-                StringBuilder sqlBuilder = new StringBuilder("select CAST(COALESCE(sum(t.REFUND_FEE), 0) AS DECIMAL(18,2)) ");
-                sqlBuilder.append("from T_ORDER_REFUND t where 1=1 ");
-                sqlBuilder.append("and t.ORDER_ID = ? ");
-                sqlBuilder.append("and t.DEAL_STATUS in (?,?)");
-
-                double refundFee = jdbcTemplate.queryForObject(sqlBuilder.toString(),
-                        new Object[]{orderId, CommonDealStatus.AGREE.getIndex(), CommonDealStatus.COMPLETED.getIndex()}, Double.class);
-
-                double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);
-                double realIncome = BigDecimalUtil.mul(realFee, 0.8);
-
-                UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
-                if (Objects.isNull(userWallet)) {
-                    userWallet = new UserWallet();
-                    userWallet.setUserId(staff.getId());
-                    userWallet.setUserType("S");
-                    userWallet.setBalance(0.0);
-                    userWallet.setTotalIncome(0.0);
-                    userWallet.setTotalWithdraw(0.0);
-                    userWallet.setTotalInWithdrawing(0.0);
-                }
-                userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
-                userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
-                userWalletRepository.save(userWallet);
-
-                StaffIncome staffIncome = new StaffIncome();
-                staffIncome.setCreateTime(new Date());
-                staffIncome.setIncome(realIncome);
-                staffIncome.setOrderId(orderId);
-                staffIncome.setOrderTotalFee(order.getTotalFee());
-                staffIncome.setStaffId(order.getServiceStaffId());
-                staffIncome.setCurrentBalance(userWallet.getBalance());
-                staffIncome.setIncomeType(IncomeType.INCOME);
-                staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
-                staffIncomeRepository.save(staffIncome);
-
-                if (Objects.nonNull(userProfile) && StringUtils.isNotBlank(userProfile.getIdpId())) {
-                    String redirectUrl = T_MSG_REDIRECT_URL + "#/orderDetail?id=" + orderId;
-                    Map<String, String> extension = new HashMap<>();
-                    extension.put("first", "服务已结束，请您评价！");
-                    extension.put("keyword1", staff.getUserName());
-                    extension.put("keyword2", order.getCareType().getName());
-                    extension.put("keyword3", "一家依护");
-                    extension.put("keyword4", DateUtil.formatDate(new Date(), "yyyy-MM-dd"));
-                    extension.put("remark", "点击查看详情");
-                    wechatService.sendTemplateMsg(userProfile.getIdpId(), Constant.WechatTemplate.T_ORDER_COMPLETED, redirectUrl, extension);
-                }
+    private void dealStaffBiz(String orderId, Order order, ServiceStaff staff) {
+        if (Objects.nonNull(staff)) {
+            // 释放护士/护工的服务状态
+            if (Objects.isNull(staff.getServiceCount())) {
+                staff.setServiceCount(1);
+            } else {
+                staff.setServiceCount(staff.getServiceCount() + 1);
             }
+            staff.setServiceOrderCount(staff.getServiceOrderCount() - 1);
+            if (staff.getServiceOrderCount() <= 0) {
+                staff.setServiceOrderCount(0);
+                staff.setServiceStatus(ServiceStatus.FREE);
+            }
+            serviceStaffRepository.save(staff);
+
+            // 计算护士/护工收入并记录
+            List<CommonDealStatus> dealStatuses = new ArrayList<>();
+            dealStatuses.add(CommonDealStatus.AGREE);
+            dealStatuses.add(CommonDealStatus.COMPLETED);
+
+            StringBuilder sqlBuilder = new StringBuilder("select CAST(COALESCE(sum(t.REFUND_FEE), 0) AS DECIMAL(18,2)) ");
+            sqlBuilder.append("from T_ORDER_REFUND t where 1=1 ");
+            sqlBuilder.append("and t.ORDER_ID = ? ");
+            sqlBuilder.append("and t.DEAL_STATUS in (?,?)");
+
+            double refundFee = jdbcTemplate.queryForObject(sqlBuilder.toString(),
+                    new Object[]{orderId, CommonDealStatus.AGREE.getIndex(), CommonDealStatus.COMPLETED.getIndex()}, Double.class);
+
+            double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);
+            double realIncome = BigDecimalUtil.mul(realFee, 0.6);
+            if (staff.getServiceStaffType() == ServiceStaffType.NURSE) {
+                realIncome = BigDecimalUtil.mul(realFee, 0.2);
+            }
+
+            UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
+            if (Objects.isNull(userWallet)) {
+                userWallet = new UserWallet();
+                userWallet.setUserId(staff.getId());
+                userWallet.setUserType("S");
+                userWallet.setBalance(0.0);
+                userWallet.setTotalIncome(0.0);
+                userWallet.setTotalWithdraw(0.0);
+                userWallet.setTotalInWithdrawing(0.0);
+            }
+            userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
+            userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
+            userWalletRepository.save(userWallet);
+
+            StaffIncome staffIncome = new StaffIncome();
+            staffIncome.setCreateTime(new Date());
+            staffIncome.setIncome(realIncome);
+            staffIncome.setOrderId(orderId);
+            staffIncome.setOrderTotalFee(order.getTotalFee());
+            staffIncome.setStaffId(order.getServiceStaffId());
+            staffIncome.setCurrentBalance(userWallet.getBalance());
+            staffIncome.setIncomeType(IncomeType.INCOME);
+            staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
+            staffIncomeRepository.save(staffIncome);
         }
     }
 

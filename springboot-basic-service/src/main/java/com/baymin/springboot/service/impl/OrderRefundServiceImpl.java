@@ -226,48 +226,57 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
 
         if (StringUtils.isNotBlank(order.getServiceStaffId())) {
             ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
-            if (Objects.nonNull(staff)) {
-                // 释放护士/护工的服务状态
-                if (Objects.isNull(staff.getServiceCount())) {
-                    staff.setServiceCount(1);
-                } else {
-                    staff.setServiceCount(staff.getServiceCount() + 1);
-                }
-                staff.setServiceOrderCount(staff.getServiceOrderCount() - 1);
-                if (staff.getServiceOrderCount() <= 0) {
-                    staff.setServiceOrderCount(0);
-                    staff.setServiceStatus(ServiceStatus.FREE);
-                }
-                serviceStaffRepository.save(staff);
+            releaseStaffStatus(order, staff);
+        }
 
-                // 计算护士/护工收入并记录
-                double realIncome = 0.00D;
+        if (StringUtils.isNotBlank(order.getNurseId())) {
+            ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
+            releaseStaffStatus(order, staff);
+        }
+    }
 
-                UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
-                if (Objects.isNull(userWallet)) {
-                    userWallet = new UserWallet();
-                    userWallet.setUserId(staff.getId());
-                    userWallet.setUserType("S");
-                    userWallet.setBalance(0.0);
-                    userWallet.setTotalIncome(0.0);
-                    userWallet.setTotalWithdraw(0.0);
-                    userWallet.setTotalInWithdrawing(0.0);
-                }
-                userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
-                userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
-                userWalletRepository.save(userWallet);
-
-                StaffIncome staffIncome = new StaffIncome();
-                staffIncome.setCreateTime(new Date());
-                staffIncome.setIncome(realIncome);
-                staffIncome.setOrderId(order.getId());
-                staffIncome.setOrderTotalFee(order.getTotalFee());
-                staffIncome.setStaffId(order.getServiceStaffId());
-                staffIncome.setCurrentBalance(userWallet.getBalance());
-                staffIncome.setIncomeType(IncomeType.INCOME);
-                staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
-                staffIncomeRepository.save(staffIncome);
+    private void releaseStaffStatus(Order order, ServiceStaff staff) {
+        if (Objects.nonNull(staff)) {
+            // 释放护士/护工的服务状态
+            if (Objects.isNull(staff.getServiceCount())) {
+                staff.setServiceCount(1);
+            } else {
+                staff.setServiceCount(staff.getServiceCount() + 1);
             }
+            staff.setServiceOrderCount(staff.getServiceOrderCount() - 1);
+            if (staff.getServiceOrderCount() <= 0) {
+                staff.setServiceOrderCount(0);
+                staff.setServiceStatus(ServiceStatus.FREE);
+            }
+            serviceStaffRepository.save(staff);
+
+            // 计算护士/护工收入并记录
+            double realIncome = 0.00D;
+
+            UserWallet userWallet = userWalletRepository.findByUserId(staff.getId(), "S");
+            if (Objects.isNull(userWallet)) {
+                userWallet = new UserWallet();
+                userWallet.setUserId(staff.getId());
+                userWallet.setUserType("S");
+                userWallet.setBalance(0.0);
+                userWallet.setTotalIncome(0.0);
+                userWallet.setTotalWithdraw(0.0);
+                userWallet.setTotalInWithdrawing(0.0);
+            }
+            userWallet.setTotalIncome(BigDecimalUtil.add(userWallet.getTotalIncome(), realIncome));
+            userWallet.setBalance(BigDecimalUtil.add(userWallet.getBalance(), realIncome));
+            userWalletRepository.save(userWallet);
+
+            StaffIncome staffIncome = new StaffIncome();
+            staffIncome.setCreateTime(new Date());
+            staffIncome.setIncome(realIncome);
+            staffIncome.setOrderId(order.getId());
+            staffIncome.setOrderTotalFee(order.getTotalFee());
+            staffIncome.setStaffId(order.getServiceStaffId());
+            staffIncome.setCurrentBalance(userWallet.getBalance());
+            staffIncome.setIncomeType(IncomeType.INCOME);
+            staffIncome.setIncomeRemark(order.getCareType().getName() + "结算");
+            staffIncomeRepository.save(staffIncome);
         }
     }
 
