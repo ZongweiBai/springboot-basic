@@ -149,7 +149,7 @@ public class OrderCarePlanServiceImpl implements IOrderCarePlanService {
     }
 
     private boolean executable(String careplanId, String careplanSubId, SubCarePlanVo subCarePlanVo) {
-        if (subCarePlanVo.getStatus()) {
+        if (Objects.nonNull(subCarePlanVo.getStatus()) && subCarePlanVo.getStatus()) {
             return false;
         }
         List<OrderCarePlanRecord> recordList = findTodayRecord(careplanId, careplanSubId);
