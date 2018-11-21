@@ -48,6 +48,7 @@ function initForm() {
 }
 
 var careType;
+
 /**
  * 加载信息
  */
@@ -79,6 +80,7 @@ function loadData(orderId) {
                     $("#staffSelectSpan").html("选择护工");
                     selectStaff('WORKER');
                 } else if (order.careType == 'HOME_CARE') {
+                    $("#serviceStaffType").val("WORKER");
                     $("#staffSelectDiv").hide();
                     selectStaff('WORKER');
 

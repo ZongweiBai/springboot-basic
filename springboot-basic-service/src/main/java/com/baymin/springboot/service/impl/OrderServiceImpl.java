@@ -537,7 +537,11 @@ public class OrderServiceImpl implements IOrderService {
         order.setServiceAdminId(adminId);
         orderRepository.save(order);
 
-        staff.setServiceOrderCount(staff.getServiceOrderCount() + 1);
+        if (staff.getServiceOrderCount() == null) {
+            staff.setServiceOrderCount(1);
+        } else {
+            staff.setServiceOrderCount(staff.getServiceOrderCount() + 1);
+        }
         staff.setServiceStatus(ServiceStatus.ASSIGNED);
         serviceStaffRepository.save(staff);
 
