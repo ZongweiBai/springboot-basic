@@ -262,7 +262,7 @@ function getTimeStamp(type) {
         var modHours = durationHour % 24;
         if (modHours > 12) {
             serviceDuration = Math.floor(durationDays) + 1;
-        } else if (modHours < 0.5) {
+        } else if (modHours < 1) {
             serviceDuration = Math.floor(durationDays);
         } else {
             serviceDuration = Math.floor(durationDays) + 0.5;

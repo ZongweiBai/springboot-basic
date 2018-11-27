@@ -85,7 +85,7 @@ function loadTable() {
                 align: 'center',
                 formatter: function (value, row, index) {
                     if (!isEmpty(value)) {
-                        return value.account;
+                        return value.nickName + "(" + value.account + ")";
                     } else {
                         return "-";
                     }
