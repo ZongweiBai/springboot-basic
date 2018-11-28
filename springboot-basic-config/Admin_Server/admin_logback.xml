@@ -9,7 +9,7 @@
     <!-- application log -->
     <appender name="EVENT-LOG" class="ch.qos.logback.core.rolling.RollingFileAppender">
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <FileNamePattern>D:/workspace/test-log/Admin-Server/serverlog/event_log_%d{yyyy-MM-dd}.log</FileNamePattern>
+            <FileNamePattern>/var/lib/modules/Admin-Server/log/serverlog/event_log_%d{yyyy-MM-dd}.log</FileNamePattern>
             <MaxHistory>10</MaxHistory>
         </rollingPolicy>
         <encoder>

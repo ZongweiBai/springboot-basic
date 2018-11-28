@@ -211,11 +211,9 @@ public class OrderServiceImpl implements IOrderService {
         List<Order> orderList = orderDao.queryUserOrder(userId, status, ownerType);
 
         for (Order order : orderList) {
-            if (!StringUtils.equals("user", ownerType)) {
-                OrderExt orderExt = orderExtRepository.findByOrderId(order.getId());
-                if (Objects.nonNull(orderExt)) {
-                    order.setOrderExt(orderExt);
-                }
+            OrderExt orderExt = orderExtRepository.findByOrderId(order.getId());
+            if (Objects.nonNull(orderExt)) {
+                order.setOrderExt(orderExt);
             }
             if (StringUtils.isNotBlank(order.getServiceStaffId())) {
                 ServiceStaff staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
