@@ -153,7 +153,9 @@ public class OrderServiceImpl implements IOrderService {
 
         if (HOSPITAL_CARE == request.getOrderType() || HOME_CARE == request.getOrderType()) {
             orderExt.setServiceStartTime(new Date(request.getServiceStartDate()));
-            orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
+            if (Objects.nonNull(request.getServiceEndDate())) {
+                orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
+            }
             Map<String, Object> patientInfo = new HashMap<>();
             if (CollectionUtils.isNotEmpty(request.getQuestions())) {
                 Map<String, List<Question>> questionMap = request.getQuestions().stream().collect(Collectors.groupingBy(Question::getQuestionType));
@@ -233,13 +235,32 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Map<String, Object> getOrderBasic(String orderId) {
+    public Map<String, Object> getOrderBasic(String orderId, String type) {
         Map<String, Object> detailMap = new HashMap<>();
         Order order = orderRepository.findById(orderId).orElse(null);
         detailMap.put("order", order);
 
         OrderExt orderExt = orderExtRepository.findByOrderId(orderId);
         detailMap.put("orderExt", orderExt);
+
+        if (StringUtils.equals(type, "advance")) {
+            double productFee = 0.0;
+            double itemFee = 0.0;
+            String basicItems = "";
+            ServiceProduct product = serviceProductRepository.findById(order.getServiceProductId()).orElse(null);
+            if (Objects.nonNull(product)) {
+                productFee = product.getProductPrice();
+                basicItems = product.getBasicItems();
+            }
+            List<BasicItemRequestVo> basicItemInfo = order.getBasicItemInfo();
+            String finalBasicItems = basicItems;
+            List<String> basicItemIds = basicItemInfo.stream().filter(basicItemRequestVo -> !finalBasicItems.contains(basicItemRequestVo.getId())).map(BasicItemRequestVo::getId).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(basicItemIds)) {
+                List<BasicItem> basicItemList = basicItemRepository.findByIds(basicItemIds);
+                itemFee = basicItemList.stream().map(BasicItem::getItemFee).reduce((x, y) -> BigDecimalUtil.add(x, y)).get();
+            }
+            order.setUnitPrice(BigDecimalUtil.add(productFee, itemFee));
+        }
 
         return detailMap;
     }
@@ -374,6 +395,9 @@ public class OrderServiceImpl implements IOrderService {
                 if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                     adminIds.add(order.getServiceAdminId());
                 }
+                if (StringUtils.isNotBlank(order.getOfflinePayAdminId())) {
+                    adminIds.add(order.getOfflinePayAdminId());
+                }
                 if (StringUtils.isNotBlank(order.getOrderUserId())) {
                     userIds.add(order.getOrderUserId());
                 }
@@ -413,6 +437,9 @@ public class OrderServiceImpl implements IOrderService {
                 }
                 if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                     order.setAdmin(finalAdminMap.get(order.getServiceAdminId()));
+                }
+                if (StringUtils.isNotBlank(order.getOfflinePayAdminId())) {
+                    order.setOfflinePayAdmin(finalAdminMap.get(order.getOfflinePayAdminId()));
                 }
                 if (StringUtils.isNotBlank(order.getOrderUserId())) {
                     order.setUserProfile(finalUserMap.get(order.getOrderUserId()));
@@ -570,7 +597,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public void offlinePay(PayRecord payRecord) {
+    public void offlinePay(PayRecord payRecord, Admin sysUser) {
         Order order = orderRepository.findById(payRecord.getOrderId()).orElse(null);
         if (Objects.isNull(order)) {
             return;
@@ -580,6 +607,9 @@ public class OrderServiceImpl implements IOrderService {
         }
         order.setPayWay(payRecord.getPayWay());
         order.setPayTime(new Date());
+        if (Objects.nonNull(sysUser)) {
+            order.setOfflinePayAdminId(sysUser.getId());
+        }
         orderRepository.save(order);
 
         payRecord.setCreateTime(new Date());

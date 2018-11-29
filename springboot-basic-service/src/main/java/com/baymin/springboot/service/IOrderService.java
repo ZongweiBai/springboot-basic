@@ -20,7 +20,7 @@ public interface IOrderService {
 
     OrderDetailVo queryOrderDetail(String orderId);
 
-    Map<String, Object> getOrderBasic(String orderId);
+    Map<String, Object> getOrderBasic(String orderId, String type);
 
     void orderEvaluate(Evaluate evaluate);
 
@@ -32,7 +32,7 @@ public interface IOrderService {
 
     void assignOrderStaff(String orderId, String staffId, String adminId, String nurseId);
 
-    void offlinePay(PayRecord payRecord);
+    void offlinePay(PayRecord payRecord, Admin sysUser);
 
     void staffChangeRequest(OrderStaffChange staffChange);
 

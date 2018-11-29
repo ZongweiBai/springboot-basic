@@ -127,6 +127,17 @@ function loadTable() {
                 }
             },
             {
+                field: 'offlinePayAdmin',
+                title: '收款人',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (isEmpty(value)) {
+                        return "-";
+                    }
+                    return value.adminName;
+                }
+            },
+            {
                 field: 'serviceStaff',
                 title: '指派护工',
                 align: 'center',
@@ -204,11 +215,12 @@ function loadTable() {
                     if (isEmpty(row.staffChangeStatus)) {
                         staffChanged = false;
                     }
+                    var orderExt = row.orderExt;
 
                     var content = '';
                     content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewOrderInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
 
-                    if (payWay != 'PAY_ONLINE_WITH_WECHAT' && (status == "ORDER_UN_PAY" || isEmpty(payTime))) {
+                    if (payWay != 'PAY_ONLINE_WITH_WECHAT' && (status == "ORDER_UN_PAY" || isEmpty(payTime)) && !isEmpty(orderExt.serviceEndDate)) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="offlinePay(\'' + value + '\')" title="收款"><i style="font-size: 18px;" class="Hui-iconfont">&#xe63a;</i></a>&nbsp;';
                     }
 
@@ -224,6 +236,10 @@ function loadTable() {
 
                     if (status == "ORDER_PROCESSING" && !refundEd && !staffChanged) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="staffChange(\'' + value + '\')" title="换人"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
+                    }
+
+                    if (isEmpty(orderExt.serviceEndDate)) {
+                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editOrder(\'' + value + '\')" title="编辑订单"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
                     }
 
                     return content;
@@ -272,6 +288,14 @@ function staffChange(orderId) {
  */
 function offlinePay(orderId) {
     tip.openIframe("代收款", contextPath + 'index/order/offlinePay?orderId=' + orderId, 600, 350, refreshData);
+}
+
+/**
+ * 编辑订单
+ * @param orderId
+ */
+function offlinePay(orderId) {
+    tip.openIframe("编辑订单", contextPath + 'index/order/editOrder?orderId=' + orderId, 600, 350, refreshData);
 }
 
 

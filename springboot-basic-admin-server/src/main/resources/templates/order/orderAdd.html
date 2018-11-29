@@ -178,7 +178,7 @@
         <div class="row cl">
             <label class="form-label col-2"><span class="c-red">*</span>购买开始时间：</label>
             <div class="formControls col-3">
-                <input type="text" onchange="getTimeStamp('1');"
+                <input type="text" onchange="getTimeStamp('1');" datatype="*"
                        onfocus="WdatePicker({dateFmt:'yyyy-MM-d HH',minDate:'%y-%M-%d'})" id="datemin"
                        class="input-text Wdate">
             </div>
@@ -202,7 +202,7 @@
         <div class="row cl">
             <label class="form-label col-2"><span class="c-red">*</span>费用合计：</label>
             <div class="formControls col-3">
-                <input type="text" class="input-text" value="" placeholder="" id="totalFee"
+                <input type="text" class="input-text" value="0.00" placeholder="" id="totalFee"
                        name="totalFee"
                        datatype="/^(:?(:?\d+.\d+)|(:?\d+))$/" nullmsg="费用合不能为空" errormsg="费用合格式错误">
             </div>

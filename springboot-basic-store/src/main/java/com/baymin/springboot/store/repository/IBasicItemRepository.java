@@ -17,4 +17,6 @@ public interface IBasicItemRepository extends PagingAndSortingRepository<BasicIt
     @Query("select t from BasicItem t where t.status = :status order by t.createTime desc")
     List<BasicItem> findAllByStatus(@Param("status") CommonStatus status);
 
+    @Query("select t from BasicItem t where t.id in :ids")
+    List<BasicItem> findByIds(@Param("ids") List<String> basicItemIds);
 }

@@ -24,6 +24,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -77,10 +80,10 @@ public class OrderController {
 
     @ResponseBody
     @GetMapping(value = "getOrderBasic")
-    public Map<String, Object> getOrderBasic(String orderId, HttpServletRequest request) {
+    public Map<String, Object> getOrderBasic(String orderId, String type, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            Map<String, Object> detailMap = orderService.getOrderBasic(orderId);
+            Map<String, Object> detailMap = orderService.getOrderBasic(orderId, type);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, detailMap);
         } catch (Exception e) {
@@ -142,10 +145,21 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "offlinePay")
-    public Map<String, Object> offlinePay(PayRecord payRecord, HttpServletRequest request) {
+    public Map<String, Object> offlinePay(PayRecord payRecord, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
+        Admin sysUser = (Admin) session.getAttribute(WebConstant.ADMIN_USER_SESSION);
+        if (sysUser == null) {
+            sysUser = (Admin) session.getAttribute(WebConstant.SELLER_USER_SESSION);
+        }
+
+        if (sysUser == null) {
+            response.sendRedirect(request.getContextPath() + "/login");
+            return new HashMap<>();
+        }
+
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            orderService.offlinePay(payRecord);
+            orderService.offlinePay(payRecord, sysUser);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

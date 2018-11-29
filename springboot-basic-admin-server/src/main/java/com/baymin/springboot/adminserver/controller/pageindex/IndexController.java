@@ -256,6 +256,14 @@ public class IndexController {
         return "order/orderAdd";
     }
 
+    @GetMapping("/index/order/editOrder")
+    public String orderEdit(String orderId, Model model) {
+        if (Objects.nonNull(orderId)) {
+            model.addAttribute("orderId", orderId);
+        }
+        return "order/orderEdit";
+    }
+
     /**
      * ===========================售后管理入口================================
      */

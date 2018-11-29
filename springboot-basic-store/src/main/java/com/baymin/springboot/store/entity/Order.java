@@ -128,6 +128,10 @@ public class Order implements Serializable {
     @Column(name = "CARE_PLAN_EXISTS")
     private Boolean carePlanExists;
 
+    @ApiModelProperty(hidden = true)
+    @Column(name = "OFFLINE_PAY_ADMIN_ID")
+    private String offlinePayAdminId;
+
     /**
      * 乐观锁
      */
@@ -158,5 +162,13 @@ public class Order implements Serializable {
     @ApiModelProperty(hidden = true)
     @Transient
     private Admin admin;
+
+    @ApiModelProperty(hidden = true)
+    @Transient
+    private Admin offlinePayAdmin;
+
+    @ApiModelProperty(hidden = true)
+    @Transient
+    private double unitPrice;
 
 }
