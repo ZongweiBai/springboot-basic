@@ -37,6 +37,7 @@ function initForm() {
     });
 }
 
+var unitPrice = 0.0;
 var careType;
 
 /**
@@ -58,27 +59,28 @@ function loadData(orderId) {
             if (data.result == 200) {
                 var info = data.info;
                 var order = info.order;
+                var userProfile = order.userProfile;
+                var orderExt = info.orderExt;
+
                 $("#id").val(order.id);
                 $("#orderId").html(order.id);
 
                 careType = order.careType;
                 if (order.careType == 'HOSPITAL_CARE') {
-                    var content = '<option value="">选择护工</option>';
-                    content += '<option value="WORKER">护工</option>';
-                    $("#serviceStaffType").html(content);
-                    $("#serviceStaffType").val("WORKER");
-                    $("#staffSelectDiv").hide();
-                    $("#staffSelectSpan").html("选择护工");
-                    selectStaff('WORKER');
+                    $("#productName").html("医院陪护");
                 } else if (order.careType == 'HOME_CARE') {
-                    $("#serviceStaffType").val("WORKER");
-                    $("#staffSelectDiv").hide();
-                    selectStaff('WORKER');
-
-                    $("#staffSelectSpan").html("选择护工");
-                    $("#nurseSelectDiv").show();
-                    selectNurse();
+                    $("#productName").html("居家陪护");
                 }
+
+                if (!isEmpty(userProfile)) {
+                    $("#userName").html(userProfile.nickName);
+                }
+                $("#orderTime").html(order.orderTime);
+
+                $("#datemin").val(orderExt.serviceStartTime);
+                $("#datemin").attr("readOnly",false);
+                $("#serviceStartDate").val(datetime_to_unix(orderExt.serviceStartTime));
+                unitPrice = order.unitPrice;
             } else {
                 tip.alertError("加载订单信息失败");
             }
@@ -89,9 +91,6 @@ function loadData(orderId) {
         }
     });
 }
-
-var productFee = 0.0;
-var serviceDuration = 0;
 
 function getTimeStamp(type) {
     if (type == '1') {
@@ -126,13 +125,12 @@ function getTimeStamp(type) {
         serviceDuration = 0;
     }
     $("#serviceDuration").val(serviceDuration);
-    $("#serviceDurationSpan").html(serviceDuration + " 天");
 
     calculateTotalFee();
 }
 
 function calculateTotalFee() {
-    var fee = productFee + basicItemPrice;
-    var totalFee = serviceDuration * fee;
+    var duration = $("#serviceDuration").val();
+    var totalFee = duration * unitPrice;
     $("#totalFee").val(totalFee.toFixed(2));
 }

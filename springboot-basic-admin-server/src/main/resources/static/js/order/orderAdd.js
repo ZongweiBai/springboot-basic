@@ -228,6 +228,7 @@ function parseBasicItem(basicItems, divId) {
             }
             content += '</dt>';
             questionIndex++;
+            itemIndex++;
         }
         content += '</dl></dd>';
         content += '</dl>';

@@ -134,7 +134,7 @@ function loadTable() {
                     if (isEmpty(value)) {
                         return "-";
                     }
-                    return value.adminName;
+                    return value.adminName + "(" + value.account + ")";
                 }
             },
             {
@@ -294,7 +294,7 @@ function offlinePay(orderId) {
  * 编辑订单
  * @param orderId
  */
-function offlinePay(orderId) {
+function editOrder(orderId) {
     tip.openIframe("编辑订单", contextPath + 'index/order/editOrder?orderId=' + orderId, 600, 350, refreshData);
 }
 

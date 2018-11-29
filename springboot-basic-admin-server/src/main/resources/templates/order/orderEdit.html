@@ -41,16 +41,18 @@
             </div>
         </div>
 
+        <input type="hidden" id="serviceStartDate" name="serviceStartDate" />
+        <input type="hidden" id="serviceEndDate" name="serviceEndDate" />
         <div class="row cl">
             <label class="form-label col-2"><span class="c-red">*</span>购买时长：</label>
             <div class="formControls col-3">
                 <input type="text" onchange="getTimeStamp('1');" datatype="*" readonly="readonly"
-                       onfocus="WdatePicker({dateFmt:'yyyy-MM-d HH',minDate:'%y-%M-%d'})" id="datemin"
+                       onfocus="WdatePicker({isShowClear:false,dateFmt:'yyyy-MM-d HH',minDate:'%y-%M-%d'})" id="datemin"
                        class="input-text Wdate">
             </div>
             <label class="form-label col-2"><span class="c-red">*</span>至</label>
             <div class="formControls col-3">
-                <input type="text" onchange="getTimeStamp('2');"
+                <input type="text" onchange="getTimeStamp('2');" datatype="*"
                        onfocus="WdatePicker({dateFmt:'yyyy-MM-d HH',minDate:'#F{$dp.$D(\'datemin\')}'})" id="datemax"
                        class="input-text Wdate">
             </div>
@@ -61,10 +63,10 @@
             <label class="form-label col-2"><span class="c-red">*</span>总时长：</label>
             <div class="formControls col-3">
                 <input type="text" class="input-text" value="0" placeholder="" id="serviceDuration"
-                       name="totalFee"
-                       datatype="/^(:?(:?\d+.\d+)|(:?\d+))$/" nullmsg="总时长不能为空" errormsg="总时长格式错误">天
+                       name="serviceDuration" onchange="calculateTotalFee();"
+                       datatype="/^(:?(:?\d+.\d+)|(:?\d+))$/" nullmsg="总时长不能为空" errormsg="总时长格式错误">
             </div>
-            <div class="col-2"></div>
+            <div class="col-2">天</div>
         </div>
 
         <div class="row cl">
@@ -74,7 +76,7 @@
                        name="totalFee"
                        datatype="/^(:?(:?\d+.\d+)|(:?\d+))$/" nullmsg="费用合不能为空" errormsg="费用合格式错误">
             </div>
-            <div class="col-2"></div>
+            <div class="col-2">元</div>
         </div>
 
         <input type="hidden" id="id" name="orderId" value=""/>
@@ -93,7 +95,7 @@
 </script>
 <script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js"
         th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
-<script type="text/javascript" src="js/order/orderEdit.js" th:src="@{/js/order/orderAssign.js}"></script>
+<script type="text/javascript" src="js/order/orderEdit.js" th:src="@{/js/order/orderEdit.js}"></script>
 <script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
 </body>
 </html>

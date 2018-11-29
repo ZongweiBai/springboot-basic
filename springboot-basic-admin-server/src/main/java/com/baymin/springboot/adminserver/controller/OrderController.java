@@ -9,6 +9,8 @@ import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
+import com.baymin.springboot.store.payload.BasicItemRequestVo;
+import com.baymin.springboot.store.payload.EditOrderRequestVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,10 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Controller
@@ -152,12 +151,13 @@ public class OrderController {
             sysUser = (Admin) session.getAttribute(WebConstant.SELLER_USER_SESSION);
         }
 
+        Map<String, Object> resultMap = new HashMap<>();
         if (sysUser == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return new HashMap<>();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "登录已失效，请重新登录");
+            return resultMap;
         }
 
-        Map<String, Object> resultMap = new HashMap<>();
         try {
             orderService.offlinePay(payRecord, sysUser);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
@@ -203,10 +203,28 @@ public class OrderController {
                     .map(Question::getId).collect(Collectors.toList());
             List<Question> questionList = questionService.getQuestionByIds(questionIds);
 
+            List<BasicItemRequestVo> basicItemList = userOrderVo.getBasicItems().stream().filter(itemRequestVo -> Objects.nonNull(itemRequestVo.getId())).collect(Collectors.toList());
+            userOrderVo.setBasicItems(basicItemList);
+
             userOrderVo.setQuestions(questionList);
             userOrderVo.setOrderSource("PC");
             userOrderVo.setOrderType(CareType.HOSPITAL_CARE);
             orderService.saveUserOrder(userOrderVo);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "editOrder")
+    public Map<String, Object> editOrder(EditOrderRequestVo requestVo, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            orderService.editUserOrder(requestVo);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

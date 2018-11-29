@@ -15,6 +15,7 @@ import com.baymin.springboot.store.dao.IOrderDao;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.*;
 import com.baymin.springboot.store.payload.BasicItemRequestVo;
+import com.baymin.springboot.store.payload.EditOrderRequestVo;
 import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
 import com.baymin.springboot.store.repository.*;
@@ -244,6 +245,9 @@ public class OrderServiceImpl implements IOrderService {
         detailMap.put("orderExt", orderExt);
 
         if (StringUtils.equals(type, "advance")) {
+            UserProfile profile = userProfileRepository.findById(order.getOrderUserId()).orElse(null);
+            order.setUserProfile(profile);
+
             double productFee = 0.0;
             double itemFee = 0.0;
             String basicItems = "";
@@ -257,7 +261,7 @@ public class OrderServiceImpl implements IOrderService {
             List<String> basicItemIds = basicItemInfo.stream().filter(basicItemRequestVo -> !finalBasicItems.contains(basicItemRequestVo.getId())).map(BasicItemRequestVo::getId).collect(Collectors.toList());
             if (CollectionUtils.isNotEmpty(basicItemIds)) {
                 List<BasicItem> basicItemList = basicItemRepository.findByIds(basicItemIds);
-                itemFee = basicItemList.stream().map(BasicItem::getItemFee).reduce((x, y) -> BigDecimalUtil.add(x, y)).get();
+                itemFee = basicItemList.stream().map(BasicItem::getItemFee).reduce((x, y) -> BigDecimalUtil.add(x, y)).orElse(0.00);
             }
             order.setUnitPrice(BigDecimalUtil.add(productFee, itemFee));
         }
@@ -801,4 +805,20 @@ public class OrderServiceImpl implements IOrderService {
         }
     }
 
+    @Override
+    public void editUserOrder(EditOrderRequestVo requestVo) {
+        Order order = orderRepository.findById(requestVo.getOrderId()).orElse(null);
+        if (Objects.nonNull(order)) {
+            order.setTotalFee(requestVo.getTotalFee());
+            orderRepository.save(order);
+        }
+
+        OrderExt orderExt = orderExtRepository.findByOrderId(requestVo.getOrderId());
+        if (Objects.nonNull(orderExt)) {
+            orderExt.setServiceDuration(requestVo.getServiceDuration());
+            orderExt.setServiceStartTime(new Date(requestVo.getServiceStartDate()));
+            orderExt.setServiceEndDate(new Date(requestVo.getServiceEndDate()));
+            orderExtRepository.save(orderExt);
+        }
+    }
 }

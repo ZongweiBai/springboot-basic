@@ -3,6 +3,7 @@ package com.baymin.springboot.service;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
+import com.baymin.springboot.store.payload.EditOrderRequestVo;
 import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
 import org.springframework.data.domain.Page;
@@ -47,4 +48,6 @@ public interface IOrderService {
     void orderCompleted(String orderId);
 
     List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate, OrderStatus status);
+
+    void editUserOrder(EditOrderRequestVo requestVo);
 }
