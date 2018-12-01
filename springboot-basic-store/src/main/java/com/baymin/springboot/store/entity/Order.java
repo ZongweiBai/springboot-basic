@@ -132,6 +132,10 @@ public class Order implements Serializable {
     @Column(name = "OFFLINE_PAY_ADMIN_ID")
     private String offlinePayAdminId;
 
+    @ApiModelProperty(notes = "订单备注")
+    @Column(name = "REMARK", length = 2048)
+    private String remark;
+
     /**
      * 乐观锁
      */

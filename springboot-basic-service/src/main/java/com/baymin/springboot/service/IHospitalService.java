@@ -20,4 +20,5 @@ public interface IHospitalService {
 
     List<HospitalDepartment> queryHospitalDepartmentByHospital(String hospitalId);
 
+    List<Hospital> getAllHospital();
 }

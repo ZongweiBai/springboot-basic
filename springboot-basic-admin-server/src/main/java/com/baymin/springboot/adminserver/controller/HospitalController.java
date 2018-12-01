@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.text.Collator;
+import java.util.*;
 
 @Controller
 @RequestMapping("hospital")
@@ -77,6 +77,23 @@ public class HospitalController {
             Hospital hospital = hospitalService.getHospitalById(hospitalId);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
             resultMap.put(WebConstant.INFO, hospital);
+        } catch (Exception e) {
+            e.printStackTrace();
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getAllHospital", method = RequestMethod.GET)
+    public Map<String, Object> getAllHospital(HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            List<Hospital> hospitalList = hospitalService.getAllHospital();
+            Collections.sort(hospitalList, (Hospital o1, Hospital o2) -> Collator.getInstance(Locale.CHINESE).compare(o1.getHospitalName(), o2.getHospitalName()));
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+            resultMap.put(WebConstant.ROWS, hospitalList);
         } catch (Exception e) {
             e.printStackTrace();
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);

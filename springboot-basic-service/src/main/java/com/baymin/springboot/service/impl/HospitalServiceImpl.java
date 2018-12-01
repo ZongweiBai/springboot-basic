@@ -3,7 +3,6 @@ package com.baymin.springboot.service.impl;
 import com.baymin.springboot.service.IHospitalService;
 import com.baymin.springboot.store.entity.Hospital;
 import com.baymin.springboot.store.entity.HospitalDepartment;
-import com.baymin.springboot.store.entity.Organization;
 import com.baymin.springboot.store.entity.QHospital;
 import com.baymin.springboot.store.repository.IHospitalDepartmentRepository;
 import com.baymin.springboot.store.repository.IHospitalRepository;
@@ -71,6 +70,14 @@ public class HospitalServiceImpl implements IHospitalService {
     @Override
     public List<HospitalDepartment> queryHospitalDepartmentByHospital(String hospitalId) {
         return hospitalDepartmentRepository.findByHospitalId(hospitalId);
+    }
+
+    @Override
+    public List<Hospital> getAllHospital() {
+        Iterable<Hospital> hospitalIterable = hospitalRepository.findAll();
+        List<Hospital> hospitalList = new ArrayList<>();
+        hospitalIterable.forEach(hospitalList::add);
+        return hospitalList;
     }
 
     @Override

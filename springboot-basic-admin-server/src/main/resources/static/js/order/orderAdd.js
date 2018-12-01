@@ -6,6 +6,8 @@ $(function () {
 
     initProductInfo();
 
+    initHospital();
+
     initForm();
 
 });
@@ -170,6 +172,24 @@ function initProductInfo() {
                 if (!isEmpty(rows)) {
                     for (var index = 0; index < rows.length; index++) {
                         $("#productId").append("<option value='" + rows[index].id + "'>" + rows[index].productName + "</option>");
+                    }
+                }
+            }
+        }
+    });
+}
+
+function initHospital() {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "hospital/getAllHospital",
+        data: {},
+        success: function (data) {
+            if (data.result == 200) {
+                var rows = data.rows;
+                if (!isEmpty(rows)) {
+                    for (var index = 0; index < rows.length; index++) {
+                        $("#hospitalAddress").append("<option value='" + rows[index].hospitalName + "'>" + rows[index].hospitalName + "</option>");
                     }
                 }
             }

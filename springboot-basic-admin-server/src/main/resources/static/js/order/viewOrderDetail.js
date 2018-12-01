@@ -69,6 +69,7 @@ function loadDataInfo(orderId) {
                 $("#status").html(status);
                 $("#payWay").html(payWay);
                 $("#payTime").html(order.payTime);
+                $("#remark").html(order.remark);
                 $("#serviceAddress").html(orderExt.serviceAddress);
 
                 $("#serviceStartTime").html(orderExt.serviceStartTime);
@@ -81,6 +82,7 @@ function loadDataInfo(orderId) {
                 }
                 $("#contact").html(orderExt.contact);
                 $("#contactMobile").html(orderExt.contactMobile);
+                $("#hospitalAddress").html(orderExt.hospitalAddress);
                 var patientInfo = orderExt.patientInfo;
                 if (!isEmpty(patientInfo)) {
                     var DISEASES = patientInfo.DISEASES;

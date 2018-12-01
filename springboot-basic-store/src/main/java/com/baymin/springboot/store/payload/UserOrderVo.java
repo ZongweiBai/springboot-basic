@@ -49,6 +49,9 @@ public class UserOrderVo {
     @ApiModelProperty(notes = "服务地址")
     private String serviceAddress;
 
+    @ApiModelProperty(notes = "医院地址")
+    private String hospitalAddress;
+
     @ApiModelProperty(notes = "产品ID（方案ID）")
     private String productId;
 
@@ -60,5 +63,8 @@ public class UserOrderVo {
 
     @ApiModelProperty(notes = "订单来源 WECHAT：前端 PC：代下单", hidden = true)
     private String orderSource;
+
+    @ApiModelProperty(notes = "订单备注")
+    private String remark;
 
 }

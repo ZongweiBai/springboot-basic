@@ -37,6 +37,17 @@
         </div>
 
         <div class="row cl">
+            <label class="form-label col-2"><span class="c-red">*</span>所在医院：</label>
+            <div class="formControls col-3">
+                <select class="select input-text" datatype="*" id="hospitalAddress" name="hospitalAddress" size="1"
+                        nullmsg="所在医院不能为空" >
+                    <option value="">选择所在医院</option>
+                </select>
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
             <label class="form-label col-2"><span class="c-red">*</span>用户姓名：</label>
             <div class="formControls col-3">
                 <span id="userName"></span>
@@ -221,7 +232,15 @@
         </div>
 
         <div class="row cl">
-            <div class="col-9 col-offset-3">
+            <label class="form-label col-2"><span class="c-red"></span>备注：</label>
+            <div class="formControls col-8">
+                <input type="text" class="input-text" id="remark" name="remark" >
+            </div>
+            <div class="col-2"></div>
+        </div>
+
+        <div class="row cl">
+            <div class="col-12 col-offset-5">
                 <input class="btn btn-primary radius" type="submit" value="&nbsp;&nbsp;提交订单&nbsp;&nbsp;">
             </div>
         </div>

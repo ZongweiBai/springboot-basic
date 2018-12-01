@@ -58,6 +58,10 @@ public class OrderExt implements Serializable {
     @Column(name = "SERVICE_ADDRESS", length = 128)
     private String serviceAddress;
 
+    @ApiModelProperty(notes = "医院地址")
+    @Column(name = "HOSPITAL_ADDRESS", length = 128)
+    private String hospitalAddress;
+
     @ApiModelProperty(notes = "联系人")
     @Column(name = "CONTACT", length = 20)
     private String contact;

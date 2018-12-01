@@ -144,6 +144,7 @@ public class OrderServiceImpl implements IOrderService {
         }
         order.setEvaluated(false);
         order.setCarePlanExists(false);
+        order.setRemark(request.getRemark());
 
         OrderExt orderExt = new OrderExt();
         orderExt.setContact(request.getContact());
@@ -151,6 +152,7 @@ public class OrderServiceImpl implements IOrderService {
         orderExt.setServiceAddress(request.getServiceAddress());
         orderExt.setServiceDuration(request.getServiceDuration());
         orderExt.setServiceNumber(request.getServiceNumber());
+        orderExt.setHospitalAddress(request.getHospitalAddress());
 
         if (HOSPITAL_CARE == request.getOrderType() || HOME_CARE == request.getOrderType()) {
             orderExt.setServiceStartTime(new Date(request.getServiceStartDate()));
