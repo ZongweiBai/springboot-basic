@@ -703,9 +703,9 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.nonNull(order.getRefundStatus()) && order.getRefundStatus() == CommonDealStatus.APPLY) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "尚有退款未处理，不能完成订单"));
         }
-        if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT && Objects.isNull(order.getPayTime())) {
-            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单尚未支付，不能完成订单"));
-        }
+//        if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT && Objects.isNull(order.getPayTime())) {
+//            throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "订单尚未支付，不能完成订单"));
+//        }
 
         // 修改订单
         order.setCloseTime(new Date());
@@ -775,6 +775,9 @@ public class OrderServiceImpl implements IOrderService {
                     new Object[]{orderId, CommonDealStatus.AGREE.getIndex(), CommonDealStatus.COMPLETED.getIndex()}, Double.class);
 
             double realFee = BigDecimalUtil.sub(order.getTotalFee(), refundFee);
+            if (realFee <= 0) {
+                realFee = 0.00D;
+            }
             double realIncome = BigDecimalUtil.mul(realFee, 0.6);
             if (staff.getServiceStaffType() == ServiceStaffType.NURSE) {
                 realIncome = BigDecimalUtil.mul(realFee, 0.2);

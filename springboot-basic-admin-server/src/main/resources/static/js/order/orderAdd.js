@@ -170,9 +170,16 @@ function initProductInfo() {
             if (data.result == 200) {
                 var rows = data.rows;
                 if (!isEmpty(rows)) {
+                    $("#productId").empty();
+                    var selectProductId = null;
                     for (var index = 0; index < rows.length; index++) {
+                        if (index == 0) {
+                            selectProductId = rows[index].id;
+                        }
                         $("#productId").append("<option value='" + rows[index].id + "'>" + rows[index].productName + "</option>");
                     }
+                    $("#productId").val(selectProductId);
+                    selectProduct(selectProductId);
                 }
             }
         }

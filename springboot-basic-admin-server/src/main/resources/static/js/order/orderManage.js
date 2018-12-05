@@ -216,6 +216,7 @@ function loadTable() {
                         staffChanged = false;
                     }
                     var orderExt = row.orderExt;
+                    var orderSource = row.orderSource;
 
                     var content = '';
                     content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewOrderInfo(\'' + value + '\')" title="查看详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
@@ -238,7 +239,11 @@ function loadTable() {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="staffChange(\'' + value + '\')" title="换人"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
                     }
 
-                    if (isEmpty(orderExt.serviceEndDate)) {
+                    if (orderSource == "WECHAT") {
+                        if (isEmpty(orderExt.serviceEndDate)) {
+                            content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editOrder(\'' + value + '\')" title="编辑订单"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
+                        }
+                    } else if (isEmpty(orderExt.serviceEndDate) || isEmpty(payTime)) {
                         content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editOrder(\'' + value + '\')" title="编辑订单"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
                     }
 

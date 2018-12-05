@@ -195,18 +195,21 @@ public class OrderController {
         try {
             List<Question> questions = userOrderVo.getQuestions();
             if (CollectionUtils.isEmpty(questions)) {
-                resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+                /*resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
                 resultMap.put(WebConstant.MESSAGE, "请选择用户基本情况");
-                return resultMap;
+                return resultMap;*/
+                questions = new ArrayList<>();
             }
             List<String> questionIds = questions.stream().filter(question -> StringUtils.isNotBlank(question.getId()))
                     .map(Question::getId).collect(Collectors.toList());
-            List<Question> questionList = questionService.getQuestionByIds(questionIds);
+            if (CollectionUtils.isNotEmpty(questionIds)) {
+                List<Question> questionList = questionService.getQuestionByIds(questionIds);
+                userOrderVo.setQuestions(questionList);
+            }
 
             List<BasicItemRequestVo> basicItemList = userOrderVo.getBasicItems().stream().filter(itemRequestVo -> Objects.nonNull(itemRequestVo.getId())).collect(Collectors.toList());
             userOrderVo.setBasicItems(basicItemList);
 
-            userOrderVo.setQuestions(questionList);
             userOrderVo.setOrderSource("PC");
             userOrderVo.setOrderType(CareType.HOSPITAL_CARE);
             orderService.saveUserOrder(userOrderVo);
