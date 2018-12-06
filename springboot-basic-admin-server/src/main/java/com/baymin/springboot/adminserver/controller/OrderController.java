@@ -207,8 +207,12 @@ public class OrderController {
                 userOrderVo.setQuestions(questionList);
             }
 
-            List<BasicItemRequestVo> basicItemList = userOrderVo.getBasicItems().stream().filter(itemRequestVo -> Objects.nonNull(itemRequestVo.getId())).collect(Collectors.toList());
-            userOrderVo.setBasicItems(basicItemList);
+            if (CollectionUtils.isNotEmpty(userOrderVo.getBasicItems())) {
+                List<BasicItemRequestVo> basicItemList = userOrderVo.getBasicItems().stream().filter(itemRequestVo -> Objects.nonNull(itemRequestVo.getId())).collect(Collectors.toList());
+                userOrderVo.setBasicItems(basicItemList);
+            } else {
+                userOrderVo.setBasicItems(null);
+            }
 
             userOrderVo.setOrderSource("PC");
             userOrderVo.setOrderType(CareType.HOSPITAL_CARE);
