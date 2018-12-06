@@ -111,6 +111,15 @@ function loadTable() {
                     if (value == "PAY_ONLINE_WITH_WECHAT") {
                         return "微信支付";
                     } else {
+                        if (value == "PAY_OFFLINE_CASH") {
+                            return "线下支付-现金";
+                        } else if (value == "PAY_OFFLINE_POS") {
+                            return "线下支付-POS";
+                        } else if (value == "PAY_OFFLINE_ALI") {
+                            return "线下支付-支付宝";
+                        } else if (value == "PAY_OFFLINE_WECHAT") {
+                            return "线下支付-微信";
+                        }
                         return "线下支付";
                     }
                 }

@@ -104,7 +104,17 @@ function loadDataInfo(changeId) {
                 if (order.payWay == "PAY_ONLINE_WITH_WECHAT") {
                     payWay = "微信支付";
                 } else {
-                    payWay = "线下支付";
+                    if (order.payWay == "PAY_OFFLINE_CASH") {
+                        payWay = "线下支付-现金";
+                    } else if (order.payWay == "PAY_OFFLINE_POS") {
+                        payWay = "线下支付-POS";
+                    } else if (order.payWay == "PAY_OFFLINE_ALI") {
+                        payWay = "线下支付-支付宝";
+                    } else if (order.payWay == "PAY_OFFLINE_WECHAT") {
+                        payWay = "线下支付-微信";
+                    } else {
+                        payWay = "线下支付";
+                    }
                 }
                 var status = "";
                 if (order.status == "ORDER_UN_PAY") {
