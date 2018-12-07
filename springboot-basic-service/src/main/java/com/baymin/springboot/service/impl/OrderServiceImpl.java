@@ -260,10 +260,13 @@ public class OrderServiceImpl implements IOrderService {
             }
             List<BasicItemRequestVo> basicItemInfo = order.getBasicItemInfo();
             String finalBasicItems = basicItems;
-            List<String> basicItemIds = basicItemInfo.stream().filter(basicItemRequestVo -> !finalBasicItems.contains(basicItemRequestVo.getId())).map(BasicItemRequestVo::getId).collect(Collectors.toList());
-            if (CollectionUtils.isNotEmpty(basicItemIds)) {
-                List<BasicItem> basicItemList = basicItemRepository.findByIds(basicItemIds);
-                itemFee = basicItemList.stream().map(BasicItem::getItemFee).reduce((x, y) -> BigDecimalUtil.add(x, y)).orElse(0.00);
+
+            if (CollectionUtils.isNotEmpty(basicItemInfo)) {
+                List<String> basicItemIds = basicItemInfo.stream().filter(basicItemRequestVo -> !finalBasicItems.contains(basicItemRequestVo.getId())).map(BasicItemRequestVo::getId).collect(Collectors.toList());
+                if (CollectionUtils.isNotEmpty(basicItemIds)) {
+                    List<BasicItem> basicItemList = basicItemRepository.findByIds(basicItemIds);
+                    itemFee = basicItemList.stream().map(BasicItem::getItemFee).reduce((x, y) -> BigDecimalUtil.add(x, y)).orElse(0.00);
+                }
             }
             order.setUnitPrice(BigDecimalUtil.add(productFee, itemFee));
         }

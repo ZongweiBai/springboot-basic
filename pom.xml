@@ -27,7 +27,7 @@
         <hibernate-validator.version>6.0.11.Final</hibernate-validator.version>
         <el-api.version>3.0.1-b06</el-api.version>
         <hikaricp.version>3.2.0</hikaricp.version>
-        <lombok.version>1.18.2</lombok.version>
+        <lombok.version>1.18.4</lombok.version>
         <joda-time.version>2.9.9</joda-time.version>
         <usertype.jodatime.version>2.0.1</usertype.jodatime.version>
         <cxf.version>3.2.6</cxf.version>
@@ -38,6 +38,7 @@
         <commons-lang3.version>3.8</commons-lang3.version>
         <commons-pool2.version>2.6.0</commons-pool2.version>
         <springfox.version>2.9.2</springfox.version>
+        <maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
     </properties>
 
     <dependencyManagement>
