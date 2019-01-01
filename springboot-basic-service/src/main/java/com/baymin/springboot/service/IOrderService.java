@@ -6,7 +6,10 @@ import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.payload.EditOrderRequestVo;
 import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
+import com.baymin.springboot.store.payload.report.HospitalBizVo;
+import com.baymin.springboot.store.payload.report.JSVo;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import java.util.Date;
@@ -50,4 +53,12 @@ public interface IOrderService {
     List<Order> queryOrderForList(CareType careType, Date maxDate, Date minDate, OrderStatus status);
 
     void editUserOrder(EditOrderRequestVo requestVo);
+
+    Page<Order> queryOrderStatisticForPage(PageRequest pageRequest, String careTypes, String hospitalAddress, Date maxDate, Date minDate);
+
+    List<JSVo> queryOrderJSReport(PageRequest pageRequest, String careTypes, String hospitalAddress, Date maxDate, Date minDate);
+
+    List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate);
+
+    List<Order> queryHospitalOrder(String orderTime, String staffId);
 }

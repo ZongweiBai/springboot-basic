@@ -1,0 +1,106 @@
+﻿<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link href="lib/bootstrap-table/bootstrap.min.css" th:href="@{/lib/bootstrap-table/bootstrap.min.css}" rel="stylesheet" type="text/css" >
+    <link href="lib/bootstrap-table/bootstrap-table.min.css" th:href="@{/lib/bootstrap-table/bootstrap-table.min.css}" rel="stylesheet" type="text/css" >
+    <link rel="stylesheet" href="lib/layui/css/layui.css" th:href="@{/lib/layui/css/layui.css}"  media="all">
+    <script type="text/javascript" src="lib/My97DatePicker/WdatePicker.js" th:src="@{/lib/My97DatePicker/WdatePicker.js}"></script>
+    <head th:include="common/base">
+    <title>数据统计</title>
+</head>
+<body>
+<nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 报表中心 <span class="c-gray en">&gt;</span> 订单分析
+</nav>
+<div class="pd-20">
+
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span>
+            下单统计表
+		</span>
+    </div>
+    <form id="allOrderForm" name="menuForm" onsubmit="$('#allOrderTable').bootstrapTable('refresh');return false;" method="post">
+        <div style="margin-top: 10px;margin-bottom: 10px;">
+            服务名称:
+            <div class="check-box">
+                <input type="checkbox" name="allCareType" id="ALL_HOSPITAL_CARE" value="HOSPITAL_CARE">
+                <label for="ALL_HOSPITAL_CARE">医院陪护</label>
+            </div>
+            <div class="check-box">
+                <input type="checkbox" name="allCareType" id="ALL_HOME_CARE" value="HOME_CARE">
+                <label for="ALL_HOME_CARE">居家照护</label>
+            </div>
+            <div class="check-box">
+                <input type="checkbox" name="allCareType" id="ALL_REHABILITATION" value="REHABILITATION">
+                <label for="ALL_REHABILITATION">康复护理</label>
+            </div>
+
+            医院:
+            <select class="input-text" style="width: 120px;" id="allHospitalAddress">
+                <option value="">选择所在医院</option>
+            </select>
+
+            日期筛选：
+            <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'allDatemax\')||\'%y-%M-%d\'}'})" id="allDatemin"
+                   class="input-text Wdate" style="width:120px;">
+            -
+            <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'allDatemin\')}',maxDate:'%y-%M-%d'})"
+                   id="allDatemax" class="input-text Wdate" style="width:120px;">
+            <button type="submit" class="btn btn-success"><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>查询</button>
+        </div>
+    </form>
+    <table id="allOrderTable" class="table table-border table-bordered table-bg">
+
+    </table>
+
+
+    <div class="cl pd-5 bg-1 bk-gray mt-20">
+        <span>
+            结算统计表
+		</span>
+    </div>
+    <form id="menuForm" name="menuForm" onsubmit="$('#menuTable').bootstrapTable('refresh');return false;" method="post">
+        <div style="margin-top: 10px;margin-bottom: 10px;">
+            服务名称:
+            <div class="check-box">
+                <input type="checkbox" name="careType" id="HOSPITAL_CARE" value="HOSPITAL_CARE">
+                <label for="HOSPITAL_CARE">医院陪护</label>
+            </div>
+            <div class="check-box">
+                <input type="checkbox" name="careType" id="HOME_CARE" value="HOME_CARE">
+                <label for="HOME_CARE">居家照护</label>
+            </div>
+            <div class="check-box">
+                <input type="checkbox" name="careType" id="REHABILITATION" value="REHABILITATION">
+                <label for="REHABILITATION">康复护理</label>
+            </div>
+
+            医院:
+            <select class="input-text" style="width: 120px;" id="hospitalAddress">
+                <option value="">选择所在医院</option>
+            </select>
+            日期筛选：
+            <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'datemax\')||\'%y-%M-%d\'}'})" id="datemin"
+                   class="input-text Wdate" style="width:120px;">
+            -
+            <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'datemin\')}',maxDate:'%y-%M-%d'})"
+                   id="datemax" class="input-text Wdate" style="width:120px;">
+            <button type="submit" class="btn btn-success"><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>查询</button>
+        </div>
+    </form>
+    <table id="menuTable" class="table table-border table-bordered table-bg">
+
+    </table>
+
+</div>
+<script type="text/javascript" src="lib/bootstrap-table/bootstrap-table.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table.min.js}"></script>
+<script type="text/javascript" src="lib/bootstrap-table/bootstrap-table-zh-CN.min.js" th:src="@{/lib/bootstrap-table/bootstrap-table-zh-CN.min.js}"></script>
+<script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
+<script type="text/javascript" src="js/report/orderStatisticManage.js" th:src="@{/js/report/orderStatisticManage.js}"></script>
+</body>
+</html>

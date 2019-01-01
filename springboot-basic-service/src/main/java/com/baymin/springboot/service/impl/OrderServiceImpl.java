@@ -18,6 +18,8 @@ import com.baymin.springboot.store.payload.BasicItemRequestVo;
 import com.baymin.springboot.store.payload.EditOrderRequestVo;
 import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
+import com.baymin.springboot.store.payload.report.HospitalBizVo;
+import com.baymin.springboot.store.payload.report.JSVo;
 import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
@@ -26,10 +28,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -828,5 +827,253 @@ public class OrderServiceImpl implements IOrderService {
             orderExt.setServiceEndDate(new Date(requestVo.getServiceEndDate()));
             orderExtRepository.save(orderExt);
         }
+    }
+
+    @Override
+    public Page<Order> queryOrderStatisticForPage(PageRequest pageRequest, String careTypes, String hospitalAddress, Date maxDate, Date minDate) {
+        List<String> orderIds = null;
+        if (StringUtils.isNotBlank(hospitalAddress)) {
+            orderIds = jdbcTemplate.queryForList("select t.ORDER_ID from T_ORDER_EXT t where INSTR(t.HOSPITAL_ADDRESS, ?) > 0", new Object[]{hospitalAddress.trim()}, String.class);
+            if (CollectionUtils.isEmpty(orderIds)) {
+                return (PageImpl) new PageImpl<>(new ArrayList<>(), pageRequest, 0);
+            }
+        }
+
+        BooleanBuilder builder = new BooleanBuilder();
+        QOrder qOrder = QOrder.order;
+
+        if (StringUtils.isNotBlank(careTypes)) {
+            String[] careTypeArr = careTypes.split(",");
+            ArrayList<CareType> careTypeList = new ArrayList<>();
+            for (String careType : careTypeArr) {
+                if (StringUtils.isNotBlank(careType)) {
+                    careTypeList.add(CareType.valueOf(careType));
+                }
+            }
+            builder.and(qOrder.careType.in(careTypeList));
+        }
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qOrder.orderTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qOrder.orderTime.gt(minDate));
+        }
+        if (CollectionUtils.isNotEmpty(orderIds)) {
+            builder.and(qOrder.id.in(orderIds));
+        }
+
+        Page<Order> page = orderRepository.findAll(builder, pageRequest);
+        if (CollectionUtils.isNotEmpty(page.getContent())) {
+            List<String> staffIds = new ArrayList<>();
+            List<String> userIds = new ArrayList<>();
+            List<String> resultOrderIds = new ArrayList<>();
+
+            page.getContent().forEach(order -> {
+                resultOrderIds.add(order.getId());
+                if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                    staffIds.add(order.getServiceStaffId());
+                }
+                if (StringUtils.isNotBlank(order.getOrderUserId())) {
+                    userIds.add(order.getOrderUserId());
+                }
+            });
+
+            Map<String, ServiceStaff> staffMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(staffIds)) {
+                List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
+                staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, Function.identity()));
+            }
+
+            Map<String, UserProfile> userMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(userIds)) {
+                List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+                userMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, Function.identity()));
+            }
+
+            Map<String, OrderExt> orderExtMap = new HashMap<>();
+            if (CollectionUtils.isNotEmpty(resultOrderIds)) {
+                List<OrderExt> orderExtList = orderExtRepository.findByOrderIds(resultOrderIds);
+                orderExtMap = orderExtList.stream().collect(Collectors.toMap(OrderExt::getOrderId, Function.identity()));
+            }
+
+            Map<String, ServiceStaff> finalStaffMap = staffMap;
+            Map<String, OrderExt> finalOrderExtMap = orderExtMap;
+            Map<String, UserProfile> finalUserMap = userMap;
+            page.getContent().forEach(order -> {
+                if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                    order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
+                }
+                if (StringUtils.isNotBlank(order.getOrderUserId())) {
+                    order.setUserProfile(finalUserMap.get(order.getOrderUserId()));
+                }
+                order.setOrderExt(finalOrderExtMap.get(order.getId()));
+            });
+        }
+
+        return page;
+    }
+
+    @Override
+    public List<JSVo> queryOrderJSReport(PageRequest pageRequest, String careTypes, String hospitalAddress, Date maxDate, Date minDate) {
+        if (Objects.isNull(minDate)) {
+            minDate = DateUtil.dayBegin("1970-01-01");
+        }
+        if (Objects.isNull(maxDate)) {
+            maxDate = new Date();
+        }
+
+        StringBuilder sb = new StringBuilder("select DATE_FORMAT(t.ORDER_TIME,'%Y-%m-%d') as orderTime, count(t.ID) as orderCount, CAST(COALESCE(sum(t.TOTAL_FEE), 0) AS DECIMAL(18,2)) as totalFee,\n" +
+                " sum(if(t.PAY_WAY=10, 1, 0)) as wechatPayCount, sum(if(t.PAY_WAY=20, 1, 0)) as cashPayCount,  sum(if(t.PAY_WAY=21, 1, 0)) as posPayCount,sum(if(t.PAY_WAY=22, 1, 0)) as alipayPayCount,sum(if(t.PAY_WAY=24, 1, 0)) as offlineWechatPayCount\n" +
+                " from T_ORDER t \n" +
+                " where t.STATUS=4 and t.pay_Time is not null and t.ORDER_TIME>=? and t.ORDER_TIME<=? ");
+
+        List<String> orderIds = null;
+        if (StringUtils.isNotBlank(hospitalAddress)) {
+            orderIds = jdbcTemplate.queryForList("select t.ORDER_ID from T_ORDER_EXT t where INSTR(t.HOSPITAL_ADDRESS, ?) > 0", new Object[]{hospitalAddress.trim()}, String.class);
+            if (CollectionUtils.isEmpty(orderIds)) {
+                return new ArrayList<>();
+            }
+        }
+        if (CollectionUtils.isNotEmpty(orderIds)) {
+            sb.append(" and t.ID in (");
+            for (int i = 0; i < orderIds.size(); i++) {
+                sb.append("'" + orderIds.get(i) + "'");
+                if (i != orderIds.size() - 1) {
+                    sb.append(",");
+                }
+            }
+            sb.append(")");
+        }
+
+        StringBuilder careTypeName = new StringBuilder();
+        if (StringUtils.isNotBlank(careTypes)) {
+            String[] careTypeArr = careTypes.split(",");
+            ArrayList<CareType> careTypeList = new ArrayList<>();
+            for (String careType : careTypeArr) {
+                if (StringUtils.isNotBlank(careType)) {
+                    careTypeList.add(CareType.valueOf(careType));
+                    careTypeName.append(CareType.valueOf(careType).getName() + " ");
+                }
+            }
+            if (CollectionUtils.isNotEmpty(careTypeList)) {
+                sb.append(" and t.CARE_TYPE in (");
+                for (int i = 0; i < careTypeList.size(); i++) {
+                    sb.append(careTypeList.get(i).getIndex());
+                    if (i != careTypeList.size() - 1) {
+                        sb.append(",");
+                    }
+                }
+                sb.append(")");
+            }
+        } else {
+            careTypeName.append(CareType.HOME_CARE.getName()).append(" ")
+                    .append(CareType.HOSPITAL_CARE.getName()).append(" ")
+                    .append(CareType.REHABILITATION.getName());
+        }
+        sb.append("  group by DATE_FORMAT(t.ORDER_TIME,'%Y-%m-%d') order by orderTime desc");
+
+        List<JSVo> jsVoList = jdbcTemplate.query(sb.toString(), new Object[]{minDate, maxDate}, new JSVo());
+
+        jsVoList.forEach(jsVo -> jsVo.setCareType(careTypeName.toString()));
+        return jsVoList;
+    }
+
+    @Override
+    public List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate) {
+        if (Objects.isNull(minDate)) {
+            minDate = DateUtil.dayBegin("1970-01-01");
+        }
+        if (Objects.isNull(maxDate)) {
+            maxDate = new Date();
+        }
+
+        StringBuilder sb = new StringBuilder("select DATE_FORMAT(t.ORDER_TIME,'%Y-%m-%d') as orderTime, t.SERVICE_STAFF_ID as staffId, count(t.ID) as orderCount, CAST(COALESCE(sum(t.TOTAL_FEE), 0) AS DECIMAL(18,2)) as totalFee\n" +
+                " from T_ORDER t \n" +
+                " where t.STATUS=4 and t.pay_Time is not null and t.ORDER_TIME>=? and t.ORDER_TIME<=? and t.CARE_TYPE in ('1') ");
+
+        if (StringUtils.isNotBlank(serviceStaffId)) {
+            sb.append(" and t.SERVICE_STAFF_ID='").append(serviceStaffId).append("'");
+        }
+        sb.append("   group by DATE_FORMAT(t.ORDER_TIME,'%Y-%m-%d'), t.SERVICE_STAFF_ID order by orderTime desc");
+
+        List<HospitalBizVo> jsVoList = jdbcTemplate.query(sb.toString(), new Object[]{minDate, maxDate}, new HospitalBizVo());
+
+        Map<String, String> staffMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(jsVoList)) {
+            List<String> staffIds = jsVoList.stream().map(hospitalBizVo -> hospitalBizVo.getStaffId()).collect(Collectors.toList());
+            List<ServiceStaff> staffList = serviceStaffRepository.findByIds(staffIds);
+            staffMap = staffList.stream().collect(Collectors.toMap(ServiceStaff::getId, ServiceStaff::getUserName));
+        }
+
+        Map<String, String> finalStaffMap = staffMap;
+        jsVoList.forEach(jsVo -> jsVo.setStaffName(finalStaffMap.get(jsVo.getStaffId())));
+        return jsVoList;
+    }
+
+    @Override
+    public List<Order> queryHospitalOrder(String orderTime, String staffId) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QOrder qOrder = QOrder.order;
+
+        Date minDate = DateUtil.dayBegin(orderTime);
+        Date maxDate = DateUtil.dayEnd(orderTime);
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qOrder.orderTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qOrder.orderTime.gt(minDate));
+        }
+        if (Objects.nonNull(staffId)) {
+            builder.and(qOrder.serviceStaffId.eq(staffId));
+        }
+        builder.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
+        builder.and(qOrder.payTime.isNotNull());
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");
+
+        Iterable<Order> iterable = orderRepository.findAll(builder, sort);
+
+        List<Order> orderList = new ArrayList<>();
+
+        List<String> staffIds = new ArrayList<>();
+        List<String> orderIds = new ArrayList<>();
+        List<String> userIds = new ArrayList<>();
+        iterable.forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                staffIds.add(order.getServiceStaffId());
+            }
+            orderIds.add(order.getId());
+            userIds.add(order.getOrderUserId());
+        });
+
+        Map<String, ServiceStaff> staffMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(staffIds)) {
+            List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
+            staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, Function.identity()));
+        }
+
+        Map<String, UserProfile> userProfileMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+            userProfileMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, Function.identity()));
+        }
+
+        Map<String, OrderExt> orderExtMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(orderIds)) {
+            List<OrderExt> adminList = orderExtRepository.findByOrderIds(orderIds);
+            orderExtMap = adminList.stream().collect(Collectors.toMap(OrderExt::getOrderId, Function.identity()));
+        }
+        Map<String, ServiceStaff> finalStaffMap = staffMap;
+        Map<String, OrderExt> finalOrderExtMap = orderExtMap;
+        Map<String, UserProfile> finalUserProfileMap = userProfileMap;
+        iterable.forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
+            }
+            order.setOrderExt(finalOrderExtMap.get(order.getId()));
+            order.setUserProfile(finalUserProfileMap.get(order.getOrderUserId()));
+            orderList.add(order);
+        });
+        return orderList;
     }
 }

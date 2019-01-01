@@ -420,6 +420,23 @@ public class IndexController {
         return "report/orderManage";
     }
 
+    @GetMapping("/index/report/orderstatistic/manage")
+    public String manageOrderStatisticReport() {
+        return "report/orderStatisticManage";
+    }
+
+    @GetMapping("/index/report/hospitalbiz/manage")
+    public String manageHospitalBizReport() {
+        return "report/hospitalBizManage";
+    }
+
+    @GetMapping("/index/report/orderlist/manage")
+    public String manageOrderListForReport(String orderTime, String staffId, Model model) {
+        model.addAttribute("staffId", staffId);
+        model.addAttribute("orderTime", orderTime);
+        return "report/orderListManage";
+    }
+
     @GetMapping("/index/report/evaluate/manage")
     public String manageEvaluateReport() {
         return "report/evaluateManage";

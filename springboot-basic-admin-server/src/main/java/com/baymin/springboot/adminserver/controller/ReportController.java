@@ -10,9 +10,7 @@ import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.enumconstant.CareType;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.payload.report.PlatformOrderReport;
-import com.baymin.springboot.store.payload.report.ServiceStaffReport;
-import com.baymin.springboot.store.payload.report.UserInfoReport;
+import com.baymin.springboot.store.payload.report.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -103,6 +101,52 @@ public class ReportController {
         Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, status, null, careType, maxDate, minDate, null, null, null, null);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "queryOrderStatisticReport")
+    public Map<String, Object> queryOrderStatisticReport(Pageable pageable, String careTypes, String hospitalAddress,
+                                                String datemin, String datemax, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Date maxDate = DateUtil.dayEnd(datemax);
+        Date minDate = DateUtil.dayBegin(datemin);
+
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
+        Page<Order> queryResult = orderService.queryOrderStatisticForPage(pageRequest, careTypes, hospitalAddress, maxDate, minDate);
+        resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
+        resultMap.put(WebConstant.ROWS, queryResult.getContent());
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "queryOrderJSReport")
+    public Map<String, Object> queryOrderJSReport(Pageable pageable, String careTypes, String hospitalAddress,
+                                                String datemin, String datemax, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Date maxDate = DateUtil.dayEnd(datemax);
+        Date minDate = DateUtil.dayBegin(datemin);
+
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
+        List<JSVo> queryResult = orderService.queryOrderJSReport(pageRequest, careTypes, hospitalAddress, maxDate, minDate);
+        resultMap.put(WebConstant.TOTAL, queryResult.size());
+        resultMap.put(WebConstant.ROWS, queryResult);
+        return resultMap;
+    }
+
+
+    @ResponseBody
+    @PostMapping(value = "queryHospitalBizReport")
+    public Map<String, Object> queryHospitalBizReport(Pageable pageable, String serviceStaffId,
+                                                String datemin, String datemax, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Date maxDate = DateUtil.dayEnd(datemax);
+        Date minDate = DateUtil.dayBegin(datemin);
+
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
+        List<HospitalBizVo> queryResult = orderService.queryHospitalBizReport(pageRequest, serviceStaffId, maxDate, minDate);
+        resultMap.put(WebConstant.TOTAL, queryResult.size());
+        resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;
     }
 
