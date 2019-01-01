@@ -114,6 +114,9 @@ public class PayRecordServiceImpl implements IPayRecordService {
             if (order.getStatus() == OrderStatus.ORDER_UN_PAY) {
                 order.setStatus(OrderStatus.ORDER_PAYED);
             }
+            if (order.getPayWay() != PayWay.PAY_ONLINE_WITH_WECHAT) {
+                order.setPayWay(PayWay.PAY_OFFLINE_WECHAT);
+            }
             orderRepository.save(order);
         }
 
