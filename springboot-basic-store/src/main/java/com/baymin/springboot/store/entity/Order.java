@@ -69,7 +69,7 @@ public class Order implements Serializable {
     /**
      * 订单来源  WECHAT/PC
      */
-    @ApiModelProperty(notes = "订单来源 WECHAT/PC")
+    @ApiModelProperty(notes = "订单来源 WECHAT/PC/WECHAT_QUICK")
     @Column(name = "ORDER_SOURCE", length = 10)
     private String orderSource;
 
@@ -135,6 +135,28 @@ public class Order implements Serializable {
     @ApiModelProperty(notes = "订单备注")
     @Column(name = "REMARK", length = 2048)
     private String remark;
+
+    @ApiModelProperty(notes = "医院")
+    @Column(name = "HOSPITAL_NAME", length = 128)
+    private String hospitalName;
+
+    @ApiModelProperty(notes = "医院科室")
+    @Column(name = "HOSPITAL_DEPARTMENT", length = 128)
+    private String hospitalDepartment;
+
+    @ApiModelProperty(notes = "床号")
+    @Column(name = "BED_NO", length = 128)
+    private String bedNo;
+
+    @ApiModelProperty(notes = "服务范围")
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "SERVICE_SCOPE", length = 2)
+    private ServiceScope serviceScope;
+
+    @ApiModelProperty(notes = "服务模式")
+    @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
+    @Column(name = "SERVICE_MODE", length = 2)
+    private ServiceMode serviceMode;
 
     /**
      * 乐观锁

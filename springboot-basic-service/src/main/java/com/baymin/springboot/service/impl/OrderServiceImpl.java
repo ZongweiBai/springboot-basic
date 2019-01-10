@@ -39,6 +39,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.baymin.springboot.common.constant.Constant.WechatTemplate.T_MSG_REDIRECT_URL;
+import static com.baymin.springboot.common.exception.ErrorDescription.INVALID_REQUEST;
 import static com.baymin.springboot.common.exception.ErrorDescription.ORDER_INFO_NOT_CORRECT;
 import static com.baymin.springboot.store.enumconstant.CareType.HOME_CARE;
 import static com.baymin.springboot.store.enumconstant.CareType.HOSPITAL_CARE;
@@ -112,19 +113,36 @@ public class OrderServiceImpl implements IOrderService {
         order.setId(String.valueOf(System.currentTimeMillis()));
         order.setOrderUserId(request.getOrderUserId());
         order.setOrderTime(new Date());
-        order.setCareType(request.getOrderType());
-        if (!"PC".equalsIgnoreCase(request.getOrderSource())) {
+        if ("WECHAT".equalsIgnoreCase(request.getOrderSource())) {
+            order.setCareType(request.getOrderType());
             if (StringUtils.equals(RequestConstant.ONLINE_WECHAT, request.getPayway())) {
                 order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
             }
             order.setOrderSource("WECHAT");
             order.setStatus(OrderStatus.ORDER_UN_PAY);
-        } else {
+        } else if ("PC".equalsIgnoreCase(request.getOrderSource())) {
+            order.setCareType(request.getOrderType());
             PayWay payWay = PayWay.valueOf(request.getPayway());
             order.setPayWay(payWay);
 //            order.setPayTime(new Date());
             order.setOrderSource("PC");
             order.setStatus(OrderStatus.ORDER_UN_PAY);
+        } else {
+            if (!validRequest(request)) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
+            }
+            order.setOrderUserId(queryUserIdByMobile(request.getContactMobile(), request.getContact()));
+            order.setCareType(HOSPITAL_CARE);
+            order.setPayWay(PayWay.PAY_OFFLINE_WECHAT);
+            order.setOrderSource("WECHAT_QUICK");
+            order.setStatus(OrderStatus.ORDER_UN_PAY);
+            order.setHospitalName(request.getHospitalName());
+            order.setHospitalDepartment(request.getHospitalDepartment());
+            order.setBedNo(request.getBedNo());
+            order.setServiceMode(request.getServiceMode());
+            order.setServiceScope(request.getServiceScope());
+            order.setServiceAdminId(request.getServiceAdminId());
+            request.setHospitalAddress(request.getHospitalName() + " " + request.getHospitalDepartment() + " " + request.getBedNo());
         }
         order.setServiceProductId(request.getProductId());
         order.setBasicItemInfo(request.getBasicItems());
@@ -179,6 +197,37 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         return order;
+    }
+
+    private String queryUserIdByMobile(String contactMobile, String contact) {
+        UserProfile userProfile = userProfileRepository.findByAccount(contactMobile);
+        if (Objects.isNull(userProfile)) {
+            userProfile = new UserProfile();
+            userProfile.setAccount(contactMobile);
+            userProfile.setActualName(contact);
+            userProfile.setNickName(contact);
+            userProfile.setRegisterTime(new Date());
+            userProfile.setOrderCount(0);
+            userProfile = userProfileRepository.save(userProfile);
+        }
+        return userProfile.getId();
+    }
+
+    private boolean validRequest(UserOrderVo request) {
+        if (StringUtils.isBlank(request.getContact()) ||
+                StringUtils.isBlank(request.getContactMobile()) ||
+                StringUtils.isBlank(request.getHospitalName()) ||
+                StringUtils.isBlank(request.getHospitalDepartment()) ||
+                StringUtils.isBlank(request.getBedNo()) ||
+                Objects.isNull(request.getServiceMode()) ||
+                Objects.isNull(request.getServiceScope()) ||
+                Objects.isNull(request.getServiceStartDate()) ||
+                Objects.isNull(request.getServiceEndDate()) ||
+                Objects.isNull(request.getTotalFee()) ||
+                StringUtils.isBlank(request.getServiceAdminId())) {
+            return false;
+        }
+        return true;
     }
 
     private Double calculateTotalFee(UserOrderVo request) {
@@ -314,6 +363,11 @@ public class OrderServiceImpl implements IOrderService {
 
         order.setEvaluated(true);
         orderRepository.save(order);
+    }
+
+    @Override
+    public List<Evaluate> queryOrderEvaluate(String orderId, CommonDealStatus dealStatus) {
+        return evaluateRepository.findByOrderId(orderId);
     }
 
     @Override

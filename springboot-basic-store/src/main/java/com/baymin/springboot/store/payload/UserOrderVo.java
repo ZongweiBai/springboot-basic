@@ -3,10 +3,14 @@ package com.baymin.springboot.store.payload;
 import com.baymin.springboot.store.entity.Invoice;
 import com.baymin.springboot.store.entity.Question;
 import com.baymin.springboot.store.enumconstant.CareType;
+import com.baymin.springboot.store.enumconstant.ServiceMode;
+import com.baymin.springboot.store.enumconstant.ServiceScope;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.annotations.Type;
 
+import javax.persistence.Column;
 import java.util.List;
 
 @ApiModel(description = "用户下单数据")
@@ -61,10 +65,28 @@ public class UserOrderVo {
     @ApiModelProperty(notes = "问题列表")
     private List<Question> questions;
 
-    @ApiModelProperty(notes = "订单来源 WECHAT：前端 PC：代下单", hidden = true)
+    @ApiModelProperty(notes = "订单来源 WECHAT：前端 PC：代下单 WECHAT_QUICK：微信快捷开单")
     private String orderSource;
 
     @ApiModelProperty(notes = "订单备注")
     private String remark;
+
+    @ApiModelProperty(notes = "医院名称")
+    private String hospitalName;
+
+    @ApiModelProperty(notes = "医院科室")
+    private String hospitalDepartment;
+
+    @ApiModelProperty(notes = "床号")
+    private String bedNo;
+
+    @ApiModelProperty(notes = "服务范围")
+    private ServiceScope serviceScope;
+
+    @ApiModelProperty(notes = "服务模式")
+    private ServiceMode serviceMode;
+
+    @ApiModelProperty(notes = "服务监督人员ID")
+    private String serviceAdminId;
 
 }

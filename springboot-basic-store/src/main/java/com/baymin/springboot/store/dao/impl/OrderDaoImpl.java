@@ -75,7 +75,7 @@ public class OrderDaoImpl implements IOrderDao {
                     predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
                 }
             }
-        } else {
+        } else if (StringUtils.equals("staff", ownerType)) {
             predicate.and(qOrder.serviceStaffId.eq(userId).or(qOrder.nurseId.eq(userId)));
             if (StringUtils.equals(RequestConstant.ORDER_INIT, status)) {
                 predicate.and(qOrder.status.eq(OrderStatus.ORDER_ASSIGN));
@@ -84,6 +84,9 @@ public class OrderDaoImpl implements IOrderDao {
             } else {
                 predicate.and(qOrder.status.eq(OrderStatus.ORDER_FINISH));
             }
+        } else {
+            predicate.and(qOrder.serviceAdminId.eq(userId));
+            predicate.and(qOrder.orderSource.eq("WECHAT_QUICK"));
         }
 
         Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");

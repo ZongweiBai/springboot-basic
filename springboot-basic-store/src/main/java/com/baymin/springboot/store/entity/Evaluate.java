@@ -48,6 +48,10 @@ public class Evaluate implements Serializable {
     @Column(name = "DESCRIPTION", length = 2048)
     private String description;
 
+    @ApiModelProperty(notes = "评价回复")
+    @Column(name = "REPLY", length = 2048)
+    private String reply;
+
     @ApiModelProperty(hidden = true)
     @Column(name = "CREATE_TIME")
     @Temporal(TemporalType.TIMESTAMP)

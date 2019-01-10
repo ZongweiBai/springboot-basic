@@ -2,6 +2,7 @@ package com.baymin.springboot.service;
 
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CareType;
+import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.payload.EditOrderRequestVo;
 import com.baymin.springboot.store.payload.OrderDetailVo;
@@ -61,4 +62,6 @@ public interface IOrderService {
     List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate);
 
     List<Order> queryHospitalOrder(String orderTime, String staffId);
+
+    List<Evaluate> queryOrderEvaluate(String orderId, CommonDealStatus dealStatus);
 }

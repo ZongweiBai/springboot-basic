@@ -6,6 +6,7 @@ import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
 import io.swagger.annotations.Api;
@@ -95,6 +96,15 @@ public class UserOrderApi {
         }
 
         orderService.orderEvaluate(evaluate);
+    }
+
+    @ApiOperation(value = "查询订单评价")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
+    @GetMapping("/evaluate/{orderId}")
+    public List<Evaluate> queryOrderEvaluate(@PathVariable(value = "orderId") String orderId) {
+        return orderService.queryOrderEvaluate(orderId, CommonDealStatus.AGREE);
     }
 
     @ApiOperation(value = "订单开票申请")
