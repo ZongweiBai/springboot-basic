@@ -433,6 +433,11 @@ public class IndexController {
         return "report/orderStatisticManage";
     }
 
+    @GetMapping("/index/report/quickorder/manage")
+    public String manageQuickOrderReport() {
+        return "report/quickOrderManage";
+    }
+
     @GetMapping("/index/report/hospitalbiz/manage")
     public String manageHospitalBizReport() {
         return "report/hospitalBizManage";
@@ -443,6 +448,14 @@ public class IndexController {
         model.addAttribute("staffId", staffId);
         model.addAttribute("orderTime", orderTime);
         return "report/orderListManage";
+    }
+
+    @GetMapping("/index/report/quickOrderlist/manage")
+    public String manageQuickOrderListForReport(String hospitalName, String datemin,  String datemax, Model model) {
+        model.addAttribute("datemin", datemin);
+        model.addAttribute("datemax", datemax);
+        model.addAttribute("hospitalName", hospitalName);
+        return "report/quickOrderListManage";
     }
 
     @GetMapping("/index/report/evaluate/manage")

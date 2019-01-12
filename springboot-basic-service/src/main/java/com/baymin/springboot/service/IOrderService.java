@@ -9,6 +9,7 @@ import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
 import com.baymin.springboot.store.payload.report.HospitalBizVo;
 import com.baymin.springboot.store.payload.report.JSVo;
+import com.baymin.springboot.store.payload.report.QuickOrderReport;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,4 +65,8 @@ public interface IOrderService {
     List<Order> queryHospitalOrder(String orderTime, String staffId);
 
     List<Evaluate> queryOrderEvaluate(String orderId, CommonDealStatus dealStatus);
+
+    List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate);
+
+    List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName);
 }

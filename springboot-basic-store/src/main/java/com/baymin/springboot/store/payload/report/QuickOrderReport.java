@@ -25,7 +25,7 @@ public class QuickOrderReport implements RowMapper<QuickOrderReport> {
 
     private Double inOneToMany;
 
-    private Double inManyToMany;
+    private Double inManyToOne;
 
     private Double totalOutFee;
 
@@ -33,7 +33,7 @@ public class QuickOrderReport implements RowMapper<QuickOrderReport> {
 
     private Double outOneToMany;
 
-    private Double outManyToMany;
+    private Double outManyToOne;
 
     @Override
     public QuickOrderReport mapRow(ResultSet resultSet, int i) throws SQLException {
@@ -49,11 +49,11 @@ public class QuickOrderReport implements RowMapper<QuickOrderReport> {
         report.setTotalInFee(resultSet.getDouble("totalInFee"));
         report.setInOneToOne(resultSet.getDouble("inOneToOne"));
         report.setInOneToMany(resultSet.getDouble("inOneToMany"));
-        report.setInManyToMany(resultSet.getDouble("inManyToMany"));
+        report.setInManyToOne(resultSet.getDouble("inManyToOne"));
         report.setTotalOutFee(resultSet.getDouble("totalOutFee"));
         report.setOutOneToOne(resultSet.getDouble("outOneToOne"));
         report.setOutOneToMany(resultSet.getDouble("outOneToMany"));
-        report.setOutManyToMany(resultSet.getDouble("outManyToMany"));
+        report.setOutManyToOne(resultSet.getDouble("outManyToOne"));
 
         return report;
     }

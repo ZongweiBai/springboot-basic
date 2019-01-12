@@ -20,6 +20,7 @@ import com.baymin.springboot.store.payload.OrderDetailVo;
 import com.baymin.springboot.store.payload.UserOrderVo;
 import com.baymin.springboot.store.payload.report.HospitalBizVo;
 import com.baymin.springboot.store.payload.report.JSVo;
+import com.baymin.springboot.store.payload.report.QuickOrderReport;
 import com.baymin.springboot.store.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.querydsl.core.BooleanBuilder;
@@ -1039,6 +1040,44 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
+    public List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate) {
+        if (Objects.isNull(minDate)) {
+            minDate = DateUtil.dayBegin("1970-01-01");
+        }
+        if (Objects.isNull(maxDate)) {
+            maxDate = new Date();
+        }
+
+        Object[] queryParams = new Object[]{minDate, maxDate};
+        StringBuilder sb = new StringBuilder("select t.HOSPITAL_NAME as hospitalName,  " +
+                " sum(t.TOTAL_FEE) as totalFee,   " +
+                " sum(t.REFUND_FEE) as refundFee,  " +
+                " sum(if(t.SERVICE_SCOPE=0,t.TOTAL_FEE,0)) as totalInFee, " +
+                " sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=0,t.TOTAL_FEE,0)) as inOneToOne, " +
+                " sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=1,t.TOTAL_FEE,0)) as inOneToMany, " +
+                " sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=2,t.TOTAL_FEE,0)) as inManyToOne,  " +
+                " sum(if(t.SERVICE_SCOPE=1,t.TOTAL_FEE,0)) as totalOutFee, " +
+                " sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=0,t.TOTAL_FEE,0)) as outOneToOne, " +
+                " sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=1,t.TOTAL_FEE,0)) as outOneToMany, " +
+                " sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=2,t.TOTAL_FEE,0)) as outManyToOne " +
+                " from (\n" +
+                " SELECT o.id, o.TOTAL_FEE, r.REFUND_FEE, o.HOSPITAL_NAME, o.SERVICE_SCOPE, o.SERVICE_MODE  " +
+                " FROM T_ORDER o \n" +
+                " LEFT JOIN T_ORDER_REFUND r on o.id=r.ORDER_ID and r.DEAL_STATUS=2  " +
+                " WHERE o.ORDER_SOURCE='WECHAT_QUICK' and o.ORDER_TIME>=? and o.ORDER_TIME<=? ");
+
+        if (StringUtils.isNotBlank(hospitalAddress)) {
+            sb.append(" and o.HOSPITAL_NAME = ? ");
+            queryParams = new Object[]{minDate, maxDate, hospitalAddress};
+        }
+        sb.append(" ) t GROUP BY t.HOSPITAL_NAME ");
+
+        List<QuickOrderReport> jsVoList = jdbcTemplate.query(sb.toString(), queryParams, new QuickOrderReport());
+
+        return jsVoList;
+    }
+
+    @Override
     public List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate) {
         if (Objects.isNull(minDate)) {
             minDate = DateUtil.dayBegin("1970-01-01");
@@ -1129,6 +1168,76 @@ public class OrderServiceImpl implements IOrderService {
         iterable.forEach(order -> {
             if (StringUtils.isNotBlank(order.getServiceStaffId())) {
                 order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
+            }
+            order.setOrderExt(finalOrderExtMap.get(order.getId()));
+            order.setUserProfile(finalUserProfileMap.get(order.getOrderUserId()));
+            orderList.add(order);
+        });
+        return orderList;
+    }
+
+    @Override
+    public List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QOrder qOrder = QOrder.order;
+
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qOrder.orderTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qOrder.orderTime.gt(minDate));
+        }
+        if (Objects.nonNull(hospitalName)) {
+            builder.and(qOrder.hospitalName.eq(hospitalName));
+        }
+        builder.and(qOrder.orderSource.eq("WECHAT_QUICK"));
+
+        Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");
+
+        Iterable<Order> iterable = orderRepository.findAll(builder, sort);
+
+        List<Order> orderList = new ArrayList<>();
+
+        List<String> staffIds = new ArrayList<>();
+        List<String> orderIds = new ArrayList<>();
+        List<String> userIds = new ArrayList<>();
+        iterable.forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                staffIds.add(order.getServiceStaffId());
+            }
+            if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                staffIds.add(order.getServiceAdminId());
+            }
+            orderIds.add(order.getId());
+            userIds.add(order.getOrderUserId());
+        });
+
+        Map<String, ServiceStaff> staffMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(staffIds)) {
+            List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
+            staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, Function.identity()));
+        }
+
+        Map<String, UserProfile> userProfileMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+            userProfileMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, Function.identity()));
+        }
+
+        Map<String, OrderExt> orderExtMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(orderIds)) {
+            List<OrderExt> adminList = orderExtRepository.findByOrderIds(orderIds);
+            orderExtMap = adminList.stream().collect(Collectors.toMap(OrderExt::getOrderId, Function.identity()));
+        }
+        Map<String, ServiceStaff> finalStaffMap = staffMap;
+        Map<String, OrderExt> finalOrderExtMap = orderExtMap;
+        Map<String, UserProfile> finalUserProfileMap = userProfileMap;
+        iterable.forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
+            }
+            if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                order.setAdminStaff(finalStaffMap.get(order.getServiceAdminId()));
             }
             order.setOrderExt(finalOrderExtMap.get(order.getId()));
             order.setUserProfile(finalUserProfileMap.get(order.getOrderUserId()));

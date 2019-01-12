@@ -73,6 +73,19 @@ public class OrderController {
     }
 
     @ResponseBody
+    @PostMapping(value = "queryQuickOrder")
+    public Map<String, Object> queryQuickOrder(String datemin, String datemax, String hospitalName) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Date maxDate = DateUtil.dayEnd(datemax);
+        Date minDate = DateUtil.dayBegin(datemin);
+
+        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName);
+        resultMap.put(WebConstant.TOTAL, queryResult.size());
+        resultMap.put(WebConstant.ROWS, queryResult);
+        return resultMap;
+    }
+
+    @ResponseBody
     @GetMapping(value = "viewOrderDetail")
     public Map<String, Object> viewOrderDetail(String orderId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();

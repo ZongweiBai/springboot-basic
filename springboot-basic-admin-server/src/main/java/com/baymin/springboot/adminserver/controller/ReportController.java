@@ -134,6 +134,20 @@ public class ReportController {
         return resultMap;
     }
 
+    @ResponseBody
+    @PostMapping(value = "queryQuickOrderReport")
+    public Map<String, Object> queryQuickOrderReport(Pageable pageable, String hospitalAddress,
+                                                String datemin, String datemax, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        Date maxDate = DateUtil.dayEnd(datemax);
+        Date minDate = DateUtil.dayBegin(datemin);
+
+        List<QuickOrderReport> queryResult = orderService.queryQuickOrderReport(hospitalAddress, maxDate, minDate);
+        resultMap.put(WebConstant.TOTAL, queryResult.size());
+        resultMap.put(WebConstant.ROWS, queryResult);
+        return resultMap;
+    }
+
 
     @ResponseBody
     @PostMapping(value = "queryHospitalBizReport")
