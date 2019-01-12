@@ -71,6 +71,10 @@ public class Evaluate implements Serializable {
     @Column(name = "AUDIT_DESC", length = 1024)
     private String auditDesc;
 
+    @ApiModelProperty(hidden = true, notes = "审核人")
+    @Column(name = "AUDIT_USER", length = 32)
+    private String auditUser;
+
     @ApiModelProperty(notes = "用户ID")
     @Column(name = "USER_ID", length = 32)
     private String userId;

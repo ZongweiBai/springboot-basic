@@ -74,6 +74,8 @@ function loadTable() {
                 formatter: function (value, row, index) {
                     if (value == "WECHAT") {
                         return "自主下单";
+                    } else if (value === "WECHAT_QUICK") {
+                        return "微信快捷开单";
                     } else {
                         return "代下单";
                     }
@@ -162,8 +164,13 @@ function loadTable() {
                 title: '监督人员',
                 align: 'center',
                 formatter: function (value, row, index) {
+                    var adminStaff = row.adminStaff
                     if (isEmpty(value)) {
-                        return "-";
+                        if (isEmpty(adminStaff)) {
+                            return "-"
+                        } else {
+                            return adminStaff.userName;
+                        }
                     }
                     return value.adminName;
                 }

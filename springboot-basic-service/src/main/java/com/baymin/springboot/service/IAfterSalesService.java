@@ -38,4 +38,6 @@ public interface IAfterSalesService {
     void dealEvaluate(Evaluate evaluate);
 
     List<Evaluate> queryEvaluateList(Integer grade, String orderId, Date maxDate, Date minDate);
+
+    void replyEvaluate(Evaluate evaluate);
 }

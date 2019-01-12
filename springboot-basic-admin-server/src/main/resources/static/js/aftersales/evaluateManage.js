@@ -112,12 +112,16 @@ function loadTable() {
                 title: '操作',
                 align: 'center',
                 formatter: function (value, row, index) {
+                    var reply = row.reply;
                     var orderId = row.orderId;
                     var status = row.auditStatus;
                     var content = ''
                     content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="viewOrderInfo(\'' + orderId + '\')" title="查看订单详情"><i style="font-size: 18px;" class="Hui-iconfont">&#xe695;</i></a>&nbsp;';
                     if (status == 'APPLY' || isEmpty(status)) {
-                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="dealInfo(\'' + value + '\')" title="审核"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
+                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="audit(\'' + value + '\')" title="审核"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
+                    }
+                    if (isEmpty(reply)) {
+                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="reply(\'' + value + '\')" title="回复"><i style="font-size: 18px;" class="Hui-iconfont">&#xe692;</i></a>&nbsp;';
                     }
                     content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="deleteInfo(\'' + value + '\')" title="删除"><i style="font-size: 18px;" class="Hui-iconfont">&#xe609;</i></a>&nbsp;';
                     return content;
@@ -136,8 +140,20 @@ function viewOrderInfo(orderId) {
     tip.openIframe("订单详情", contextPath + 'index/order/detail?orderId=' + orderId);
 }
 
-function dealInfo(evaluateId) {
-    tip.openIframe("评价审核", contextPath + 'index/aftersales/evaluate/deal?evaluateId=' + evaluateId, 550, 350, refreshData, "no");
+/**
+ * 评论审核
+ * @param evaluateId
+ */
+function audit(evaluateId) {
+    tip.openIframe("评论审核", contextPath + 'index/aftersales/evaluate/deal?evaluateId=' + evaluateId, 550, 450, refreshData, "no");
+}
+
+/**
+ * 评论回复
+ * @param evaluateId
+ */
+function reply(evaluateId) {
+    tip.openIframe("评论回复", contextPath + 'index/aftersales/evaluate/reply?evaluateId=' + evaluateId, 550, 350, refreshData, "no");
 }
 
 function deleteInfo(evaluateId) {

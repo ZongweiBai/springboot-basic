@@ -35,7 +35,7 @@ public class StaffAdminApi {
     @ResponseBody
     public List<Order> queryUserOrder(@PathVariable String serviceAdminId,
                                       @RequestParam(name = "status", required = false) String status) {
-        if (Objects.isNull(serviceAdminId) || Objects.isNull(status)) {
+        if (Objects.isNull(serviceAdminId)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
         List<Order> orderList = orderService.queryUserOrder(serviceAdminId, status, "staffAdmin");

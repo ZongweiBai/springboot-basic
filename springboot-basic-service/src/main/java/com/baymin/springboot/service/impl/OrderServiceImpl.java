@@ -143,6 +143,8 @@ public class OrderServiceImpl implements IOrderService {
             order.setServiceScope(request.getServiceScope());
             order.setServiceAdminId(request.getServiceAdminId());
             request.setHospitalAddress(request.getHospitalName() + " " + request.getHospitalDepartment() + " " + request.getBedNo());
+            request.setServiceAddress(request.getHospitalAddress());
+            request.setOrderType(HOSPITAL_CARE);
         }
         order.setServiceProductId(request.getProductId());
         order.setBasicItemInfo(request.getBasicItems());
@@ -456,6 +458,7 @@ public class OrderServiceImpl implements IOrderService {
                 }
                 if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                     adminIds.add(order.getServiceAdminId());
+                    staffIds.add(order.getServiceAdminId());
                 }
                 if (StringUtils.isNotBlank(order.getOfflinePayAdminId())) {
                     adminIds.add(order.getOfflinePayAdminId());
@@ -499,6 +502,7 @@ public class OrderServiceImpl implements IOrderService {
                 }
                 if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                     order.setAdmin(finalAdminMap.get(order.getServiceAdminId()));
+                    order.setAdminStaff(finalStaffMap.get(order.getServiceAdminId()));
                 }
                 if (StringUtils.isNotBlank(order.getOfflinePayAdminId())) {
                     order.setOfflinePayAdmin(finalAdminMap.get(order.getOfflinePayAdminId()));
@@ -545,6 +549,7 @@ public class OrderServiceImpl implements IOrderService {
             }
             if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                 adminIds.add(order.getServiceAdminId());
+                staffIds.add(order.getServiceAdminId());
             }
         });
 
@@ -567,6 +572,7 @@ public class OrderServiceImpl implements IOrderService {
             }
             if (StringUtils.isNotBlank(order.getServiceAdminId())) {
                 order.setAdmin(finalAdminMap.get(order.getServiceAdminId()));
+                order.setAdminStaff(finalStaffMap.get(order.getServiceAdminId()));
             }
             orderList.add(order);
         });

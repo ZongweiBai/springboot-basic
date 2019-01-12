@@ -44,21 +44,9 @@
         </div>
 
         <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>审核状态：</label>
+            <label class="form-label col-3"><span class="c-red">*</span>回复：</label>
             <div class="formControls col-7">
-                <select class="input-text" style="width: 120px;" id="auditStatus" name="auditStatus"
-                        datatype="*" onchange="selectStaff(this.value)">
-                    <option value="">选择审核状态</option>
-                    <option value="AGREE">通过</option>
-                    <option value="REJECT">不通过</option>
-                </select>
-            </div>
-        </div>
-
-        <div class="row cl">
-            <label class="form-label col-3"><span class="c-red">*</span>审核备注：</label>
-            <div class="formControls col-7">
-                <textarea type="text" style="height: 100px;" class="input-text" value="" placeholder="" id="auditDesc" name="auditDesc" ></textarea>
+                <textarea type="text" style="height: 100px;" class="input-text" value="" placeholder="" id="reply" name="reply" ></textarea>
             </div>
         </div>
 
@@ -78,7 +66,7 @@
 </script>
 <script type="text/javascript" src="lib/Validform/5.3.2/Validform.min.js"
         th:src="@{/lib/Validform/5.3.2/Validform.min.js}"></script>
-<script type="text/javascript" src="js/aftersales/dealEvaluate.js" th:src="@{/js/aftersales/dealEvaluate.js}"></script>
+<script type="text/javascript" src="js/aftersales/replyEvaluate.js" th:src="@{/js/aftersales/replyEvaluate.js}"></script>
 <script type="text/javascript" src="js/DateFormat.js" th:src="@{/js/DateFormat.js}"></script>
 <link href="css/style.css" th:href="@{/css/style.css}" rel="stylesheet" type="text/css"/>
 </body>

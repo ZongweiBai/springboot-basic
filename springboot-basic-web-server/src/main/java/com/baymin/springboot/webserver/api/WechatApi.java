@@ -21,6 +21,7 @@ import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CommonStatus;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
+import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import com.baymin.springboot.store.payload.PayRequestVo;
 import com.baymin.springboot.store.payload.TicketRequestVo;
 import com.baymin.springboot.store.payload.TokenVo;
@@ -103,7 +104,11 @@ public class WechatApi {
                         staff.setIdpId(wechatUserInfo.getOpenid());
                         staff.setImgUrl(wechatUserInfo.getHeadimgurl());
                         staffService.updateStaff(staff);
-                        return userProfileService.getTokenVo(staff.getId(), "S");
+                        if (staff.getServiceStaffType() == ServiceStaffType.SUPERVISOR) {
+                            return userProfileService.getTokenVo(staff.getId(), "A");
+                        } else {
+                            return userProfileService.getTokenVo(staff.getId(), "S");
+                        }
                     }
 
                     UserProfile userProfile = userProfileService.findByIdpId(wechatUserInfo.getOpenid());

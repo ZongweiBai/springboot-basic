@@ -79,6 +79,54 @@ function loadTable() {
                 formatter: function (value, row, index) {
                     return value + "星";
                 }
+            },
+            {
+                field: 'auditStatus',
+                title: '审核结果',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    if (value == "APPLY") {
+                        return "审核中";
+                    } else if (value == "AGREE") {
+                        return "审核通过";
+                    } else if (value == "REJECT") {
+                        return "审核不通过";
+                    }
+                    return "";
+                }
+            },
+            {
+                field: 'auditUser',
+                title: '审核人',
+                align: 'center'
+            },
+            {
+                field: 'auditTime',
+                title: '审核时间',
+                align: 'center'
+            },
+            {
+                field: 'reply',
+                title: '回复内容',
+                align: 'center'
+            },
+            {
+                field: 'id',
+                title: '操作',
+                align: 'center',
+                formatter: function (value, row, index) {
+                    var reply = row.reply;
+                    var auditStatus = row.auditStatus;
+                    var content = '';
+                    if (auditStatus === 'APPLY') {
+                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="audit(\'' + value + '\')" title="审核"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
+                    }
+
+                    if (isEmpty(reply)) {
+                        content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="reply(\'' + value + '\')" title="回复"><i style="font-size: 18px;" class="Hui-iconfont">&#xe692;</i></a>&nbsp;';
+                    }
+                    return content;
+                }
             }
         ]
     });
@@ -99,4 +147,20 @@ function downloadExcel() {
     var url = contextPath + "report/downloadEvaluate?orderId=" + orderId +
         "&grade=" + grade + "&datemin=" + datemin + "&datemax=" + datemax;
     window.open(url);
+}
+
+/**
+ * 评论审核
+ * @param evaluateId
+ */
+function audit(evaluateId) {
+    tip.openIframe("评论审核", contextPath + 'index/aftersales/evaluate/deal?evaluateId=' + evaluateId, 550, 450, refreshData, "no");
+}
+
+/**
+ * 评论回复
+ * @param evaluateId
+ */
+function reply(evaluateId) {
+    tip.openIframe("评论回复", contextPath + 'index/aftersales/evaluate/reply?evaluateId=' + evaluateId, 550, 350, refreshData, "no");
 }

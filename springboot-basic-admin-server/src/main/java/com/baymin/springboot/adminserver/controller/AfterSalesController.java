@@ -5,6 +5,7 @@ import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IAfterSalesService;
 import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
+import com.baymin.springboot.store.entity.Admin;
 import com.baymin.springboot.store.entity.Evaluate;
 import com.baymin.springboot.store.entity.OrderRefund;
 import com.baymin.springboot.store.entity.OrderStaffChange;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -176,12 +178,36 @@ public class AfterSalesController {
     @ResponseBody
     @PostMapping(value = "dealEvaluate")
     public Map<String, Object> dealEvaluate(Evaluate evaluate, HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Admin sysUser = (Admin) session.getAttribute(WebConstant.ADMIN_USER_SESSION);
+
         Map<String, Object> resultMap = new HashMap<>();
+        if (sysUser == null) {
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "登录已失效，请重新登录");
+            return resultMap;
+        }
         try {
+            evaluate.setAuditUser(sysUser.getAdminName());
             afterSalesService.dealEvaluate(evaluate);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             log.error("审核订单评价出错", e);
+            resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
+        }
+        return resultMap;
+    }
+
+    @ResponseBody
+    @PostMapping(value = "replyEvaluate")
+    public Map<String, Object> replyEvaluate(Evaluate evaluate, HttpServletRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            afterSalesService.replyEvaluate(evaluate);
+            resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            log.error("回复订单评价出错", e);
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "加载出错：" + e.getMessage());
         }

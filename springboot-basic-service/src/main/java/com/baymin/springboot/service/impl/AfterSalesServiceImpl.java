@@ -399,6 +399,16 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
             oldDate.setAuditStatus(evaluate.getAuditStatus());
             oldDate.setAuditDesc(evaluate.getAuditDesc());
             oldDate.setAuditTime(new Date());
+            oldDate.setAuditUser(evaluate.getAuditUser());
+            evaluateRepository.save(oldDate);
+        }
+    }
+
+    @Override
+    public void replyEvaluate(Evaluate evaluate) {
+        Evaluate oldDate = getEvaluateInfo(evaluate.getId());
+        if (Objects.nonNull(oldDate)) {
+            oldDate.setReply(evaluate.getReply());
             evaluateRepository.save(oldDate);
         }
     }

@@ -314,6 +314,14 @@ public class IndexController {
         return "aftersales/evaluate/dealEvaluate";
     }
 
+    @GetMapping("/index/aftersales/evaluate/reply")
+    public String evaluateReply(String evaluateId, Model model) {
+        if (Objects.nonNull(evaluateId)) {
+            model.addAttribute("evaluateId", evaluateId);
+        }
+        return "aftersales/evaluate/replyEvaluate";
+    }
+
     /**
      * ===========================财务管理入口================================
      */

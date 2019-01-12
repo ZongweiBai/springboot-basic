@@ -68,7 +68,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     throw new WebServerException(HttpStatus.UNAUTHORIZED, new ErrorInfo(ErrorCode.unauthorized.name(), ErrorDescription.TOKEN_INVALID));
                 }
-            } else if (StringUtils.equals("S", userType)) {
+            } else if (StringUtils.equals("S", userType) || StringUtils.equals("A", userType)) {
                 ServiceStaff staff = staffService.findById(String.valueOf(accountMap.get("userId")));
                 if (staff == null || staff.getStaffStatus() == CommonStatus.DELETE) {
                     log.error("护士/护工ID：{}无法找到或者已被删除", accountFromHeader);

@@ -10,7 +10,7 @@ function initForm() {
         callback: function (form) {
             $.ajax({
                 type: "POST",
-                url: contextPath + "afterSales/dealEvaluate",
+                url: contextPath + "afterSales/replyEvaluate",
                 data: $('#form-menu-add').serialize(),
                 beforeSend: function () {
                     tip.showLoading();

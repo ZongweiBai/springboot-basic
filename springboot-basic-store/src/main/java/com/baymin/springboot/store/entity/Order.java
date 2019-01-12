@@ -187,6 +187,10 @@ public class Order implements Serializable {
 
     @ApiModelProperty(hidden = true)
     @Transient
+    private ServiceStaff adminStaff;
+
+    @ApiModelProperty(hidden = true)
+    @Transient
     private Admin admin;
 
     @ApiModelProperty(hidden = true)

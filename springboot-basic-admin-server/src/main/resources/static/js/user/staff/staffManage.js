@@ -37,8 +37,10 @@ function loadTable() {
                 title: '服务人员类型',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    if (value == 'NURSE') {
+                    if (value === 'NURSE') {
                         return "护士";
+                    } else if (value === 'SUPERVISOR') {
+                        return "督导";
                     }
                     return "护工";
                 }

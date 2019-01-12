@@ -1,3 +1,17 @@
 @charset "utf-8";
 /* 你自己的样式 */
+.star-bar-show{background:url(../img/iconpic-star-S-default.png) repeat-x 0 0}
+.star-bar-show .star{background:url(../img/iconpic-star-S.png) repeat-x 0 0}
+.star-bar .star {display: inline-block;text-align: center;}
+.star-1{width:20%}
+.star-2{ width:40%}
+.star-3{width:60%}
+.star-4{ width:80%}
+.star-5{ width:100%}
+.star-bar-show.size-M{width:120px;height:24px}
+.star-bar-show.size-M,.star-bar-show.size-M .star{background-size:24px}
+.star-bar-show.size-M .star{ height:24px}
+.star-bar-show.size-S{width:80px; height:16px}
+.star-bar-show.size-S,.star-bar-show.size-S .star{background-size:16px}
+.star-bar-show.size-S .star{ height:16px}
 

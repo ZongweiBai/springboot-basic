@@ -5,9 +5,9 @@ server:
 spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:mysql://127.0.0.1:13306/family_care?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://192.168.72.128:13306/family_care?useUnicode=true&characterEncoding=utf8&useSSL=false&allowPublicKeyRetrieval=true
     username: root
-    password: root
+    password: root#jjac
     driverClassName: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 50
@@ -32,8 +32,8 @@ spring:
     time-zone: GMT+8
   redis:
     database: 0
-    host: 127.0.0.1
-    #password:
+    host: 192.168.72.128
+    password: family-care
     port: 16379
     lettuce:
       pool:

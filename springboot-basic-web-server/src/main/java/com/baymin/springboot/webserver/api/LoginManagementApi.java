@@ -14,6 +14,7 @@ import com.baymin.springboot.store.entity.ServiceStaff;
 import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.store.entity.WechatUserInfo;
 import com.baymin.springboot.store.enumconstant.CommonStatus;
+import com.baymin.springboot.store.enumconstant.ServiceStaffType;
 import com.baymin.springboot.store.payload.LoginRequestVo;
 import com.baymin.springboot.store.payload.TokenVo;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -108,7 +109,11 @@ public class LoginManagementApi {
                     staffService.updateIdpId(staff.getId(), userInfo.getOpenid());
                 }
 
-                tokenVo = userProfileService.getTokenVo(staff.getId(), "S");
+                if (staff.getServiceStaffType() == ServiceStaffType.SUPERVISOR) {
+                    tokenVo = userProfileService.getTokenVo(staff.getId(), "A");
+                } else {
+                    tokenVo = userProfileService.getTokenVo(staff.getId(), "S");
+                }
 
             } else {
                 UserProfile userProfile = userProfileService.findByAccount(userAccount);
@@ -169,7 +174,7 @@ public class LoginManagementApi {
                 if (userProfile == null) {
                     throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));
                 }
-            } else if (StringUtils.equals("S", userType)) {
+            } else if (StringUtils.equals("S", userType) || StringUtils.equals("A", userType)) {
                 ServiceStaff staff = staffService.findById(accountId);
                 if (staff == null) {
                     throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), TOKEN_INVALID));

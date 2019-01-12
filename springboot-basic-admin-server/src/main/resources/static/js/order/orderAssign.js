@@ -165,11 +165,37 @@ function selectNurse() {
 }
 
 function loadAdminData() {
+    // $.ajax({
+    //     type: "GET",
+    //     url: contextPath + "system/queryAdminByRoleType",
+    //     data: {
+    //         "roleType": "C"
+    //     },
+    //     beforeSend: function () {
+    //         tip.showLoading();
+    //     },
+    //     success: function (data) {
+    //         tip.hideLoading();
+    //         if (data.result == 200) {
+    //             var rows = data.rows;
+    //             for (var i = 0; i < rows.length; i++) {
+    //                 var admin = rows[i];
+    //                 $("#serviceAdminId").append('<option value="' + admin.id + '">' + admin.adminName + '</option>');
+    //             }
+    //         } else {
+    //             tip.alertError("加载督导信息失败");
+    //         }
+    //     },
+    //     error: function () {
+    //         tip.hideLoading();
+    //         tip.alertError("加载督导信息失败");
+    //     }
+    // });
     $.ajax({
         type: "GET",
-        url: contextPath + "system/queryAdminByRoleType",
+        url: contextPath + "/staff/queryStaffByType",
         data: {
-            "roleType": "C"
+            "serviceStaffType": "SUPERVISOR"
         },
         beforeSend: function () {
             tip.showLoading();
@@ -177,10 +203,11 @@ function loadAdminData() {
         success: function (data) {
             tip.hideLoading();
             if (data.result == 200) {
+                $("#nurseId").empty();
                 var rows = data.rows;
                 for (var i = 0; i < rows.length; i++) {
-                    var admin = rows[i];
-                    $("#serviceAdminId").append('<option value="' + admin.id + '">' + admin.adminName + '</option>');
+                    var staff = rows[i];
+                    $("#serviceAdminId").append('<option value="' + staff.id + '">' + staff.userName + '-' + staff.mobile + '</option>');
                 }
             } else {
                 tip.alertError("加载督导信息失败");
