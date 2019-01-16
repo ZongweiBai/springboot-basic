@@ -107,6 +107,16 @@ public class UserOrderApi {
         return orderService.queryOrderEvaluate(orderId, CommonDealStatus.AGREE);
     }
 
+    @ApiOperation(value = "查询用户的订单评价")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header")
+    })
+    @GetMapping("/evaluate")
+    public List<Evaluate> queryEvaluate(@RequestParam(value = "orderId", required = false) String orderId,
+                                        @RequestParam(value = "userId", required = false) String userId) {
+        return orderService.queryEvaluate(orderId, userId);
+    }
+
     @ApiOperation(value = "订单开票申请")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Authorization", value = "Bearer access_token", required = true, dataType = "string", paramType = "header"),

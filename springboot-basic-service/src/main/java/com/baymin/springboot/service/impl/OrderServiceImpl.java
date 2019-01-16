@@ -362,6 +362,7 @@ public class OrderServiceImpl implements IOrderService {
         evaluate.setCareType(order.getCareType());
         evaluate.setCreateTime(new Date());
         evaluate.setAuditStatus(CommonDealStatus.APPLY);
+        evaluate.setUserId(order.getOrderUserId());
         evaluateRepository.save(evaluate);
 
         order.setEvaluated(true);
@@ -371,6 +372,23 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     public List<Evaluate> queryOrderEvaluate(String orderId, CommonDealStatus dealStatus) {
         return evaluateRepository.findByOrderId(orderId);
+    }
+
+    @Override
+    public List<Evaluate> queryEvaluate(String orderId, String userId) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QEvaluate qEvaluate = QEvaluate.evaluate;
+        if (StringUtils.isNotBlank(orderId)) {
+            builder.and(qEvaluate.orderId.eq(orderId));
+        }
+        if (StringUtils.isNotBlank(userId)) {
+            builder.and(qEvaluate.userId.eq(userId));
+        }
+        Sort sort = Sort.by(Sort.Direction.DESC, "createTime");
+        Iterable<Evaluate> evaluateIterable = evaluateRepository.findAll(builder, sort);
+        List<Evaluate> list = new ArrayList<>();
+        evaluateIterable.forEach(list::add);
+        return list;
     }
 
     @Override

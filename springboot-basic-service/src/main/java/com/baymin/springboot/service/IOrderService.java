@@ -69,4 +69,6 @@ public interface IOrderService {
     List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate);
 
     List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName);
+
+    List<Evaluate> queryEvaluate(String orderId, String userId);
 }
