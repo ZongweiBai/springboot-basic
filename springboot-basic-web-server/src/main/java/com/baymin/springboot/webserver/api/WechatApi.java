@@ -186,15 +186,23 @@ public class WechatApi {
 
         Map<String, Object> resultMap;
         UserProfile user = null;
+        ServiceStaff serviceStaff = null;
 
         if (!StringUtils.equals("NATIVE", payType)) {
-            user = userProfileService.findById(userId);
-            if (Objects.isNull(user) || StringUtils.isBlank(user.getIdpId())) {
-                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "您尚未绑定微信，请重新登录"));
+            if (StringUtils.equals(order.getOrderSource(), "WECHAT_QUICK")) {
+                serviceStaff = staffService.findById(order.getServiceAdminId());
+                if (Objects.isNull(serviceStaff)) {
+                    throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "您尚未绑定微信，请重新登录"));
+                }
+            } else {
+                user = userProfileService.findById(userId);
+                if (Objects.isNull(user) || StringUtils.isBlank(user.getIdpId())) {
+                    throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "您尚未绑定微信，请重新登录"));
+                }
             }
         }
 
-        resultMap = payRecordService.payOrderWithWeChat(payType, user, order, WechatConfig.AppID, WechatConfig.mchID, WechatConfig.key);
+        resultMap = payRecordService.payOrderWithWeChat(payType, user, serviceStaff, order, WechatConfig.AppID, WechatConfig.mchID, WechatConfig.key);
         return dealWechatOrderResponse(resultMap);
     }
 

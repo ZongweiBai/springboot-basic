@@ -7,6 +7,7 @@ import com.baymin.springboot.pay.wechat.service.UnifiedOrderService;
 import com.baymin.springboot.service.IPayRecordService;
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.PayRecord;
+import com.baymin.springboot.store.entity.ServiceStaff;
 import com.baymin.springboot.store.entity.UserProfile;
 import com.baymin.springboot.store.enumconstant.OrderStatus;
 import com.baymin.springboot.store.enumconstant.PayWay;
@@ -37,7 +38,7 @@ public class PayRecordServiceImpl implements IPayRecordService {
     private IPayRecordRepository payRecordRepository;
 
     @Override
-    public Map<String, Object> payOrderWithWeChat(String payType, final UserProfile user, Order order, String appID, String mchID, String key) {
+    public Map<String, Object> payOrderWithWeChat(String payType, final UserProfile user, ServiceStaff serviceStaff, Order order, String appID, String mchID, String key) {
         final Map<String, Object> reMap = new HashMap<>();
 
         final double totalFee = order.getTotalFee();
@@ -48,7 +49,11 @@ public class PayRecordServiceImpl implements IPayRecordService {
             payType = "JSAPI";
         }
         if (StringUtils.equals("JSAPI", payType)) {
-            idpId = user.getIdpId();
+            if (!StringUtils.equals(order.getOrderSource(), "WECHAT_QUICK")) {
+                idpId = user.getIdpId();
+            } else {
+                idpId = serviceStaff.getIdpId();
+            }
         }
 
         try {

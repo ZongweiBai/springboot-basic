@@ -134,7 +134,7 @@ public class OrderServiceImpl implements IOrderService {
             }
             order.setOrderUserId(queryUserIdByMobile(request.getContactMobile(), request.getContact()));
             order.setCareType(HOSPITAL_CARE);
-            order.setPayWay(PayWay.PAY_OFFLINE_WECHAT);
+            order.setPayWay(PayWay.PAY_ONLINE_WITH_WECHAT);
             order.setOrderSource("WECHAT_QUICK");
             order.setStatus(OrderStatus.ORDER_UN_PAY);
             order.setHospitalName(request.getHospitalName());

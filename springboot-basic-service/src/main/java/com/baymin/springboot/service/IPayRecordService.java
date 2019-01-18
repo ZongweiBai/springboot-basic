@@ -2,6 +2,7 @@ package com.baymin.springboot.service;
 
 import com.baymin.springboot.store.entity.Order;
 import com.baymin.springboot.store.entity.PayRecord;
+import com.baymin.springboot.store.entity.ServiceStaff;
 import com.baymin.springboot.store.entity.UserProfile;
 
 import java.util.Map;
@@ -11,7 +12,7 @@ public interface IPayRecordService {
     /**
      * 微信商品支付
      */
-    Map<String, Object> payOrderWithWeChat(String payType, UserProfile user, Order order, String appID, String mchID, String key);
+    Map<String, Object> payOrderWithWeChat(String payType, UserProfile user, ServiceStaff serviceStaff, Order order, String appID, String mchID, String key);
 
     /**
      * 支付成功回调
