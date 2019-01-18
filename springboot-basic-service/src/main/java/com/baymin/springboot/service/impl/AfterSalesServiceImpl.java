@@ -409,6 +409,7 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
         Evaluate oldDate = getEvaluateInfo(evaluate.getId());
         if (Objects.nonNull(oldDate)) {
             oldDate.setReply(evaluate.getReply());
+            oldDate.setReplyTime(new Date());
             evaluateRepository.save(oldDate);
         }
     }

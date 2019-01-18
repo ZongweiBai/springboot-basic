@@ -57,6 +57,11 @@ public class Evaluate implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createTime;
 
+    @ApiModelProperty(hidden = true)
+    @Column(name = "REPLY_TIME")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date replyTime;
+
     @ApiModelProperty(hidden = true, notes = "审核状态")
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "DEAL_STATUS", length = 2)
