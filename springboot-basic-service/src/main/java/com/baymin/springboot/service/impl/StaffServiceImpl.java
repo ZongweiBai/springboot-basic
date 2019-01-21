@@ -133,8 +133,8 @@ public class StaffServiceImpl implements IStaffService {
     }
 
     @Override
-    public void updateStaffStatus(String staffId, CommonStatus statusType) {
-        serviceStaffRepository.updateStaffStatus(staffId, statusType);
+    public void updateStaffStatus(String staffId, CommonStatus statusType, String idCard) {
+        serviceStaffRepository.updateStaffStatus(staffId, statusType, idCard);
     }
 
     @Override

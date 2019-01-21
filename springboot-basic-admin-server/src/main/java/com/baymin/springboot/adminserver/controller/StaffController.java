@@ -104,7 +104,7 @@ public class StaffController {
     public Map<String, Object> deleteStaff(String staffId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
-            staffService.updateStaffStatus(staffId, CommonStatus.DELETE);
+            staffService.updateStaffStatus(staffId, CommonStatus.DELETE, String.valueOf(System.currentTimeMillis()));
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {
             e.printStackTrace();

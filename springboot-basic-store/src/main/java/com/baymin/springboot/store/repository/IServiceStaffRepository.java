@@ -18,8 +18,8 @@ public interface IServiceStaffRepository extends PagingAndSortingRepository<Serv
         QuerydslPredicateExecutor<ServiceStaff> {
 
     @Modifying
-    @Query("update ServiceStaff set staffStatus = :statusType where id = :staffId")
-    void updateStaffStatus(@Param("staffId") String staffId, @Param("statusType") CommonStatus statusType);
+    @Query("update ServiceStaff set staffStatus = :statusType, idCard = :idCard where id = :staffId")
+    void updateStaffStatus(@Param("staffId") String staffId, @Param("statusType") CommonStatus statusType, @Param("idCard") String idCard);
 
     @Query("select s from ServiceStaff s where s.serviceStaffType = :staffType " +
             "and s.serviceStatus = :serviceStatus and s.staffStatus = :staffStatus")
