@@ -145,7 +145,7 @@ public class StaffServiceImpl implements IStaffService {
 
     @Override
     public ServiceStaff findByMobile(String userAccount) {
-        return serviceStaffRepository.findByMobile(userAccount);
+        return serviceStaffRepository.findByMobile(userAccount, CommonStatus.NORMAL);
     }
 
     @Override
