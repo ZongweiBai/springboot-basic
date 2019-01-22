@@ -10,10 +10,7 @@ import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.ISmsSendRecordService;
 import com.baymin.springboot.service.IWechatService;
 import com.baymin.springboot.store.entity.*;
-import com.baymin.springboot.store.enumconstant.CommonDealStatus;
-import com.baymin.springboot.store.enumconstant.IncomeType;
-import com.baymin.springboot.store.enumconstant.OrderStatus;
-import com.baymin.springboot.store.enumconstant.ServiceStatus;
+import com.baymin.springboot.store.enumconstant.*;
 import com.baymin.springboot.store.repository.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -78,8 +75,10 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
 
         OrderExt orderExt = orderExtRepository.findByOrderId(order.getId());
         if (Objects.nonNull(orderExt)) {
-            if (orderExt.getServiceDuration() < orderRefund.getRefundDuration()) {
-                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "退款数量不能大于订单数量"));
+            if ((order.getCareType() == CareType.HOME_CARE || order.getCareType() == CareType.HOSPITAL_CARE) && orderExt.getServiceDuration() < orderRefund.getRefundDuration()) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "退款天数不能大于订单天数"));
+            } else if (order.getCareType() == CareType.REHABILITATION && orderExt.getServiceNumber() < orderRefund.getRefundDuration()) {
+                throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "退款次数不能大于订单次数"));
             }
         }
 
@@ -95,13 +94,27 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
                 order.setFullRefund(false);
             }
         } else {
-            if (orderExt.getServiceDuration().equals(orderRefund.getRefundDuration())) {
-                orderRefund.setRefundFee(order.getTotalFee());
+            /*if (order.getCareType() == CareType.HOME_CARE || order.getCareType() == CareType.HOSPITAL_CARE) {
+                if (orderExt.getServiceDuration().equals(orderRefund.getRefundDuration())) {
+                    orderRefund.setRefundFee(order.getTotalFee());
+                    order.setFullRefund(true);
+                } else {
+                    double refundFee = calcRefundFee(orderRefund, order);
+                    orderRefund.setRefundFee(refundFee);
+                    orderRefund.setDealStatus(CommonDealStatus.APPLY);
+                    order.setFullRefund(false);
+                }
+            } else {
+                if (orderRefund.getRefundFee().equals(order.getTotalFee())) {
+                    order.setFullRefund(true);
+                } else {
+                    order.setFullRefund(false);
+                }
+            }*/
+            orderRefund.setDealStatus(CommonDealStatus.APPLY);
+            if (orderRefund.getRefundFee().equals(order.getTotalFee())) {
                 order.setFullRefund(true);
             } else {
-                double refundFee = calcRefundFee(orderRefund, order);
-                orderRefund.setRefundFee(refundFee);
-                orderRefund.setDealStatus(CommonDealStatus.APPLY);
                 order.setFullRefund(false);
             }
         }
