@@ -221,7 +221,7 @@ public class OrderServiceImpl implements IOrderService {
                 StringUtils.isBlank(request.getContactMobile()) ||
                 StringUtils.isBlank(request.getHospitalName()) ||
                 StringUtils.isBlank(request.getHospitalDepartment()) ||
-                StringUtils.isBlank(request.getBedNo()) ||
+//                StringUtils.isBlank(request.getBedNo()) ||
                 Objects.isNull(request.getServiceMode()) ||
                 Objects.isNull(request.getServiceScope()) ||
                 Objects.isNull(request.getServiceStartDate()) ||
