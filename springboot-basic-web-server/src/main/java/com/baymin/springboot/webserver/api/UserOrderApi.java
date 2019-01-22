@@ -48,6 +48,9 @@ public class UserOrderApi {
         if (Objects.isNull(request)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
+        if (StringUtils.isBlank(request.getOrderSource())) {
+            request.setOrderSource("WECHAT");
+        }
         Order order = orderService.saveUserOrder(request);
 
         Map<String, Object> reMap = new HashMap<>();
