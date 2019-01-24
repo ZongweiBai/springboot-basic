@@ -37,4 +37,5 @@ public interface IUserProfileService {
 
     List<UserProfile> queryUserProfile();
 
+    void resetIdpId(String userId);
 }

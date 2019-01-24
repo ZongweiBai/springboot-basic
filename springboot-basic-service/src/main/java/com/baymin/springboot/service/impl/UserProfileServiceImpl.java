@@ -172,4 +172,9 @@ public class UserProfileServiceImpl implements IUserProfileService {
         iterable.forEach(list::add);
         return list;
     }
+
+    @Override
+    public void resetIdpId(String userId) {
+        userProfileRepository.resetIdpId(userId);
+    }
 }

@@ -167,4 +167,9 @@ public class StaffServiceImpl implements IStaffService {
     public void updateStaff(ServiceStaff staff) {
         serviceStaffRepository.save(staff);
     }
+
+    @Override
+    public void resetIdpId(String staffId) {
+        serviceStaffRepository.resetIdpId(staffId);
+    }
 }

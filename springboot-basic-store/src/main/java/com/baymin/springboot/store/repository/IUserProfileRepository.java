@@ -2,6 +2,7 @@ package com.baymin.springboot.store.repository;
 
 import com.baymin.springboot.store.entity.UserProfile;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
 import org.springframework.data.repository.PagingAndSortingRepository;
@@ -22,4 +23,8 @@ public interface IUserProfileRepository extends PagingAndSortingRepository<UserP
 
     @Query("select vo from UserProfile vo where vo.id in :ids")
     List<UserProfile> findByIds(@Param("ids") List<String> userIds);
+
+    @Modifying
+    @Query("update UserProfile set idpId = null where id = :userId")
+    void resetIdpId(@Param("userId") String userId);
 }

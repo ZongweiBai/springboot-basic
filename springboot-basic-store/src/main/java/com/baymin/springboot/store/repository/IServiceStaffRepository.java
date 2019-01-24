@@ -51,4 +51,9 @@ public interface IServiceStaffRepository extends PagingAndSortingRepository<Serv
 
     @Query("select s from ServiceStaff s where s.id in :ids")
     List<ServiceStaff> findByIds(@Param("ids") List<String> staffIds);
+
+    @Modifying
+    @Query("update ServiceStaff set idpId = null where id = :staffId")
+    void resetIdpId(@Param("staffId") String staffId);
+
 }

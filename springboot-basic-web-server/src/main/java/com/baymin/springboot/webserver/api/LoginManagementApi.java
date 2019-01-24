@@ -2,6 +2,7 @@ package com.baymin.springboot.webserver.api;
 
 import com.baymin.springboot.common.constant.Constant;
 import com.baymin.springboot.common.exception.ErrorCode;
+import com.baymin.springboot.common.exception.ErrorDescription;
 import com.baymin.springboot.common.exception.ErrorInfo;
 import com.baymin.springboot.common.exception.WebServerException;
 import com.baymin.springboot.common.util.JwtUtil;
@@ -143,6 +144,42 @@ public class LoginManagementApi {
                 tokenVo = userProfileService.getTokenVo(userProfile.getId(), "U");
             }
             return tokenVo;
+        } catch (Exception e) {
+            log.error("Error occurred", e);
+            throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SERVER_ERROR));
+        }
+    }
+
+    @ApiOperation(value = "退出并解绑微信")
+    @PostMapping("logout")
+    @ResponseBody
+    public Map<String, Object> logout(@RequestHeader(name = "Authorization") String authorization) {
+        if (StringUtils.isBlank(authorization)) {
+            log.error("Authorization 信息为空");
+            throw new WebServerException(HttpStatus.UNAUTHORIZED, new ErrorInfo(ErrorCode.unauthorized.name(), ErrorDescription.TOKEN_INVALID));
+        }
+        try {
+            Claims claims = JwtUtil.parseJWT(authorization.replace("Bearer ", ""));
+            Map<String, Object> accountMap = objectMapper.readValue(claims.getSubject(), new TypeReference<Map<String, Object>>() {
+            });
+            if (!StringUtils.equals(Constant.JWTAPI.JWT_TOKEN, String.valueOf(accountMap.get("tokenType")))) {
+                log.error("AccessToken 类型错误");
+                throw new WebServerException(HttpStatus.UNAUTHORIZED, new ErrorInfo(ErrorCode.unauthorized.name(), ErrorDescription.TOKEN_INVALID));
+            }
+            String accountFromHeader = String.valueOf(accountMap.get("userId"));
+            String userType = String.valueOf(accountMap.get("userType"));
+            if (StringUtils.equals("U", userType)) {
+                userProfileService.resetIdpId(accountFromHeader);
+            } else if (StringUtils.equals("S", userType) || StringUtils.equals("A", userType)) {
+                staffService.resetIdpId(accountFromHeader);
+            } else {
+                log.error("accessToken所属的userType：{}错误", userType);
+                throw new WebServerException(HttpStatus.UNAUTHORIZED, new ErrorInfo(ErrorCode.unauthorized.name(), ErrorDescription.TOKEN_INVALID));
+            }
+            Map<String, Object> resultMap = new HashMap<>();
+            resultMap.put("result", 200);
+            resultMap.put("message", "OK");
+            return resultMap;
         } catch (Exception e) {
             log.error("Error occurred", e);
             throw new WebServerException(HttpStatus.INTERNAL_SERVER_ERROR, new ErrorInfo(ErrorCode.server_error.name(), SERVER_ERROR));

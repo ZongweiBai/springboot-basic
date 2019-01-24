@@ -32,4 +32,5 @@ public interface IStaffService {
 
     void updateStaff(ServiceStaff staff);
 
+    void resetIdpId(String staffId);
 }
