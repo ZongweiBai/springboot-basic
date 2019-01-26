@@ -288,7 +288,7 @@ public class ReportController {
         }
 
         String fileName = "护工费报表";
-        String outPath = "D:\\" + fileName + ".xlsx";
+        String outPath = "/tmp/" + fileName + ".xlsx";
         // 写入文件
         ExcelUtil.writeComplicatedHeaderExcel(excelHeader0, headnum0, excelHeader1, lls, outPath);
         // 下载文件
