@@ -65,6 +65,9 @@ public class OrderServiceImpl implements IOrderService {
     private IOrderRepository orderRepository;
 
     @Autowired
+    private IOrderRefundRepository orderRefundRepository;
+
+    @Autowired
     private IInvoiceRepository invoiceRepository;
 
     @Autowired
@@ -1058,35 +1061,59 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate) {
+    public List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate, Date paymaxDate, Date payminDate) {
+        int queryParamLength = 0;
         if (Objects.isNull(minDate)) {
             minDate = DateUtil.dayBegin("1970-01-01");
+            queryParamLength++;
         }
         if (Objects.isNull(maxDate)) {
             maxDate = new Date();
+            queryParamLength++;
+        }
+        if (Objects.nonNull(payminDate)) {
+            queryParamLength++;
+        }
+        if (Objects.nonNull(paymaxDate)) {
+            queryParamLength++;
+        }
+        if (StringUtils.isNotBlank(hospitalAddress)) {
+            queryParamLength++;
         }
 
-        Object[] queryParams = new Object[]{minDate, maxDate};
+        int queryParamIndex = 0;
+        Object[] queryParams = new Object[queryParamLength];
         StringBuilder sb = new StringBuilder("select t.HOSPITAL_NAME as hospitalName,  " +
-                " sum(t.TOTAL_FEE) as totalFee,   " +
-                " sum(t.REFUND_FEE) as refundFee,  " +
-                " sum(if(t.SERVICE_SCOPE=0,t.TOTAL_FEE,0)) as totalInFee, " +
-                " sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=0,t.TOTAL_FEE,0)) as inOneToOne, " +
-                " sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=1,t.TOTAL_FEE,0)) as inOneToMany, " +
-                " sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=2,t.TOTAL_FEE,0)) as inManyToOne,  " +
-                " sum(if(t.SERVICE_SCOPE=1,t.TOTAL_FEE,0)) as totalOutFee, " +
-                " sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=0,t.TOTAL_FEE,0)) as outOneToOne, " +
-                " sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=1,t.TOTAL_FEE,0)) as outOneToMany, " +
-                " sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=2,t.TOTAL_FEE,0)) as outManyToOne " +
+                " CAST(COALESCE(sum(t.TOTAL_FEE), 0) AS DECIMAL(18,2)) as totalFee,   " +
+                " CAST(COALESCE(sum(t.REFUND_FEE), 0) AS DECIMAL(18,2)) as refundFee,  " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=0,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as totalInFee, " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=0,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as inOneToOne, " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=1,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as inOneToMany, " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=0 and t.SERVICE_MODE=2,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as inManyToOne,  " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=1,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as totalOutFee, " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=0,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as outOneToOne, " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=1,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as outOneToMany, " +
+                " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=2,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as outManyToOne " +
                 " from (\n" +
                 " SELECT o.id, o.TOTAL_FEE, r.REFUND_FEE, o.HOSPITAL_NAME, o.SERVICE_SCOPE, o.SERVICE_MODE  " +
                 " FROM T_ORDER o \n" +
                 " LEFT JOIN T_ORDER_REFUND r on o.id=r.ORDER_ID and r.DEAL_STATUS=2  " +
                 " WHERE o.ORDER_SOURCE='WECHAT_QUICK' and o.ORDER_TIME>=? and o.ORDER_TIME<=? ");
 
+        queryParams[queryParamIndex++] = minDate;
+        queryParams[queryParamIndex++] = maxDate;
+        if (Objects.nonNull(payminDate)) {
+            sb.append(" and o.PAY_TIME>=? ");
+            queryParams[queryParamIndex++] = payminDate;
+        }
+        if (Objects.nonNull(paymaxDate)) {
+            sb.append("  and o.PAY_TIME<=? ");
+            queryParams[queryParamIndex++] = paymaxDate;
+        }
+
         if (StringUtils.isNotBlank(hospitalAddress)) {
             sb.append(" and o.HOSPITAL_NAME = ? ");
-            queryParams = new Object[]{minDate, maxDate, hospitalAddress};
+            queryParams[queryParamIndex++] =  hospitalAddress;
         }
         sb.append(" ) t GROUP BY t.HOSPITAL_NAME ");
 
@@ -1195,7 +1222,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName) {
+    public List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType) {
         BooleanBuilder builder = new BooleanBuilder();
         QOrder qOrder = QOrder.order;
 
@@ -1205,8 +1232,18 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.nonNull(minDate)) {
             builder.and(qOrder.orderTime.gt(minDate));
         }
+
+        if (Objects.nonNull(paymaxDate)) {
+            builder.and(qOrder.payTime.lt(paymaxDate));
+        }
+        if (Objects.nonNull(payminDate)) {
+            builder.and(qOrder.payTime.gt(payminDate));
+        }
         if (Objects.nonNull(hospitalName)) {
             builder.and(qOrder.hospitalName.eq(hospitalName));
+        }
+        if (StringUtils.equals("REFUND", queryType)) {
+            builder.and(qOrder.refundStatus.eq(CommonDealStatus.COMPLETED));
         }
         builder.and(qOrder.orderSource.eq("WECHAT_QUICK"));
 
@@ -1247,9 +1284,16 @@ public class OrderServiceImpl implements IOrderService {
             List<OrderExt> adminList = orderExtRepository.findByOrderIds(orderIds);
             orderExtMap = adminList.stream().collect(Collectors.toMap(OrderExt::getOrderId, Function.identity()));
         }
+
+        Map<String, OrderRefund> orderRefundMap = new HashMap<>();
+        if (StringUtils.equals("REFUND", queryType) && CollectionUtils.isNotEmpty(orderIds)) {
+            List<OrderRefund> orderRefundList = orderRefundRepository.findByOrderIds(orderIds, CommonDealStatus.COMPLETED);
+            orderRefundMap = orderRefundList.stream().collect(Collectors.toMap(OrderRefund::getOrderId, Function.identity()));
+        }
         Map<String, ServiceStaff> finalStaffMap = staffMap;
         Map<String, OrderExt> finalOrderExtMap = orderExtMap;
         Map<String, UserProfile> finalUserProfileMap = userProfileMap;
+        Map<String, OrderRefund> finalOrderRefundMap = orderRefundMap;
         iterable.forEach(order -> {
             if (StringUtils.isNotBlank(order.getServiceStaffId())) {
                 order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
@@ -1259,8 +1303,10 @@ public class OrderServiceImpl implements IOrderService {
             }
             order.setOrderExt(finalOrderExtMap.get(order.getId()));
             order.setUserProfile(finalUserProfileMap.get(order.getOrderUserId()));
+            order.setOrderRefund(finalOrderRefundMap.get(order.getId()));
             orderList.add(order);
         });
         return orderList;
     }
+
 }

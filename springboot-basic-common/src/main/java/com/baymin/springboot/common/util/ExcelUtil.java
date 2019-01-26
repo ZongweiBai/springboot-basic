@@ -1,7 +1,9 @@
 package com.baymin.springboot.common.util;
 
+import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 
 import javax.servlet.http.HttpServletResponse;
@@ -44,6 +46,61 @@ public class ExcelUtil {
                     List<String> list = rslist.get(i);
                     if (list != null && list.size() > 0) {
                         Row row = sheet.createRow(1 + i);
+                        for (int j = 0; j < list.size(); j++) {
+                            row.createCell(j).setCellValue(list.get(j));
+                        }
+                    }
+                }
+            }
+            FileOutputStream out = new FileOutputStream(outpath);
+            book.write(out);
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void writeComplicatedHeaderExcel(String[] excelHeader0, String[] headnum0, String[] excelHeader1, List<List<String>> rslist, String outpath) {
+        SXSSFWorkbook book = null;
+        Sheet sheet = null;
+        // 限制内存中保留对象数量，防止大数据量内存溢出
+        int cacheRows = 1000;
+        try {
+            book = new SXSSFWorkbook(cacheRows);
+            sheet = book.createSheet();
+            // 标题
+            if (excelHeader0 != null && excelHeader0.length > 0) {
+                Row row = sheet.createRow(0);
+                for (int i = 0; i < excelHeader0.length; i++) {
+                    row.createCell(i).setCellValue(excelHeader0[i]);
+                }
+            }
+
+
+            // 动态合并单元格
+            for (int i = 0; i < headnum0.length; i++) {
+                String[] temp = headnum0[i].split(",");
+                Integer startrow = Integer.parseInt(temp[0]);
+                Integer overrow = Integer.parseInt(temp[1]);
+                Integer startcol = Integer.parseInt(temp[2]);
+                Integer overcol = Integer.parseInt(temp[3]);
+                sheet.addMergedRegion(new CellRangeAddress(startrow, overrow, startcol, overcol));
+            }
+
+            // 第二行表头
+            if (excelHeader1 != null && excelHeader1.length > 0) {
+                Row row = sheet.createRow(1);
+                for (int i = 0; i < excelHeader1.length; i++) {
+                    row.createCell(i+4).setCellValue(excelHeader1[i]);
+                }
+            }
+
+            if (rslist != null && rslist.size() > 0) {
+                for (int i = 0; i < rslist.size(); i++) {
+                    List<String> list = rslist.get(i);
+                    if (list != null && list.size() > 0) {
+                        Row row = sheet.createRow(2 + i);
                         for (int j = 0; j < list.size(); j++) {
                             row.createCell(j).setCellValue(list.get(j));
                         }

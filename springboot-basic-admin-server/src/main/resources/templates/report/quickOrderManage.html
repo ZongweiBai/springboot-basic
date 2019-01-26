@@ -37,7 +37,16 @@
             -
             <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'allDatemin\')}',maxDate:'%y-%M-%d'})"
                    id="allDatemax" class="input-text Wdate" style="width:120px;">
+
+            收款时间：
+            <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'payDatemax\')||\'%y-%M-%d\'}'})" id="payDatemin"
+                   class="input-text Wdate" style="width:120px;">
+            -
+            <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'payDatemin\')}',maxDate:'%y-%M-%d'})"
+                   id="payDatemax" class="input-text Wdate" style="width:120px;">
             <button type="submit" class="btn btn-success"><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>查询</button>
+
+            <button type="button" class="btn btn-success" onclick="downloadExcel();"><i class="Hui-iconfont">&#xe644;</i>导出Excel</button>
         </div>
     </form>
     <table id="allOrderTable" class="table table-border table-bordered table-bg">

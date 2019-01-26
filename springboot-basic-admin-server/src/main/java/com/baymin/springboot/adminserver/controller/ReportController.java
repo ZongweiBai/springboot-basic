@@ -107,7 +107,7 @@ public class ReportController {
     @ResponseBody
     @PostMapping(value = "queryOrderStatisticReport")
     public Map<String, Object> queryOrderStatisticReport(Pageable pageable, String careTypes, String hospitalAddress,
-                                                String datemin, String datemax, HttpServletRequest request) {
+                                                         String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
@@ -122,7 +122,7 @@ public class ReportController {
     @ResponseBody
     @PostMapping(value = "queryOrderJSReport")
     public Map<String, Object> queryOrderJSReport(Pageable pageable, String careTypes, String hospitalAddress,
-                                                String datemin, String datemax, HttpServletRequest request) {
+                                                  String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
@@ -137,12 +137,15 @@ public class ReportController {
     @ResponseBody
     @PostMapping(value = "queryQuickOrderReport")
     public Map<String, Object> queryQuickOrderReport(Pageable pageable, String hospitalAddress,
-                                                String datemin, String datemax, HttpServletRequest request) {
+                                                     String datemin, String datemax,
+                                                     String paydatemin, String paydatemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
+        Date paymaxDate = DateUtil.dayEnd(paydatemax);
+        Date payminDate = DateUtil.dayBegin(paydatemin);
 
-        List<QuickOrderReport> queryResult = orderService.queryQuickOrderReport(hospitalAddress, maxDate, minDate);
+        List<QuickOrderReport> queryResult = orderService.queryQuickOrderReport(hospitalAddress, maxDate, minDate, paymaxDate, payminDate);
         resultMap.put(WebConstant.TOTAL, queryResult.size());
         resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;
@@ -152,7 +155,7 @@ public class ReportController {
     @ResponseBody
     @PostMapping(value = "queryHospitalBizReport")
     public Map<String, Object> queryHospitalBizReport(Pageable pageable, String serviceStaffId,
-                                                String datemin, String datemax, HttpServletRequest request) {
+                                                      String datemin, String datemax, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
@@ -238,6 +241,56 @@ public class ReportController {
         String outPath = "/tmp/" + fileName + ".xlsx";
         // 写入文件
         ExcelUtil.writeExcel(titleList, lls, outPath);
+        // 下载文件
+        ExcelUtil.downLoadFile(outPath, response);
+    }
+
+    /**
+     * 导出微信快捷订单统计信息
+     */
+    @RequestMapping(value = "downloadQuickRefundOrder", method = RequestMethod.GET)
+    public void downloadQuickRefundOrder(String hospitalAddress,
+                                    String datemin, String datemax,
+                                    String paydatemin, String paydatemax, HttpServletResponse response) throws Exception {
+        Date maxDate = DateUtil.dayEnd(datemax);
+        Date minDate = DateUtil.dayBegin(datemin);
+        Date paymaxDate = DateUtil.dayEnd(paydatemax);
+        Date payminDate = DateUtil.dayBegin(paydatemin);
+
+        List<QuickOrderReport> queryResult = orderService.queryQuickOrderReport(hospitalAddress, maxDate, minDate, paymaxDate, payminDate);
+
+        // 声明String数组，并初始化元素（表头名称）
+        // 第一行表头字段，合并单元格时字段跨几列就将该字段重复几次
+        String[] excelHeader0 = { "医院", "总收入", "退款", "实收",
+                "院内", "院内", "院内", "院内",
+                "院外", "院外", "院外"};
+        // “0,2,0,0” ===> “起始行，截止行，起始列，截止列”
+        String[] headnum0 = { "0,1,0,0", "0,1,1,1", "0,1,2,2", "0,1,3,3", "0,0,4,7", "0,0,8,10" };
+        //第二行表头字段，其中的空的双引号是为了补全表格边框
+        String[] excelHeader1 = { "合计", "一对一", "一对多", "多对一",
+                "合计", "一对一", "多对一"};
+
+        List<List<String>> lls = new ArrayList<>();
+        for (QuickOrderReport data : queryResult) {
+            List<String> ls = new ArrayList<>();
+            ls.add(data.getHospitalName());
+            ls.add("￥ " + data.getTotalFee());
+            ls.add("￥ " + data.getRefundFee());
+            ls.add("￥ " + data.getActualIncome());
+            ls.add("￥ " + data.getActualIncome());
+            ls.add("￥ " + data.getInOneToOne());
+            ls.add("￥ " + data.getInOneToMany());
+            ls.add("￥ " + data.getInManyToOne());
+            ls.add("￥ " + data.getTotalOutFee());
+            ls.add("￥ " + data.getOutOneToOne());
+            ls.add("￥ " + data.getOutManyToOne());
+            lls.add(ls);
+        }
+
+        String fileName = "护工费报表";
+        String outPath = "D:\\" + fileName + ".xlsx";
+        // 写入文件
+        ExcelUtil.writeComplicatedHeaderExcel(excelHeader0, headnum0, excelHeader1, lls, outPath);
         // 下载文件
         ExcelUtil.downLoadFile(outPath, response);
     }

@@ -5,7 +5,7 @@ $().ready(function () {
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
-        url: contextPath + "/order/queryQuickOrder",
+        url: contextPath + "/order/queryQuickRefundOrder",
         dataType: "json",
         method: "POST",
         contentType: "application/x-www-form-urlencoded",
@@ -28,14 +28,14 @@ function loadTable() {
         sidePagination: "server", //服务端处理分页
         columns: [
             {
-                field: 'payTime',
-                title: '支付时间',
+                field: 'orderRefund',
+                title: '退款时间',
                 align: 'center',
                 formatter: function (value, row, index) {
                     if (isEmpty(value)) {
                         return "-";
                     }
-                    return value;
+                    return value.createTime;
                 }
             },
             {
@@ -61,32 +61,11 @@ function loadTable() {
                 }
             },
             {
-                field: 'totalFee',
-                title: '订单金额',
+                field: 'orderRefund',
+                title: '退款金额',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    return "￥" + value
-                }
-            },
-            {
-                field: 'payWay',
-                title: '付款方式',
-                align: 'center',
-                formatter: function (value, row, index) {
-                    if (value == "PAY_ONLINE_WITH_WECHAT") {
-                        return "微信支付";
-                    } else {
-                        if (value == "PAY_OFFLINE_CASH") {
-                            return "线下支付-现金";
-                        } else if (value == "PAY_OFFLINE_POS") {
-                            return "线下支付-POS";
-                        } else if (value == "PAY_OFFLINE_ALI") {
-                            return "线下支付-支付宝";
-                        } else if (value == "PAY_OFFLINE_WECHAT") {
-                            return "线下支付-微信";
-                        }
-                        return "线下支付";
-                    }
+                    return "￥" + value.refundFee
                 }
             },
             {
@@ -104,19 +83,11 @@ function loadTable() {
                 }
             },
             {
-                field: 'admin',
-                title: '操作人',
+                field: 'id',
+                title: '操作类型',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    var adminStaff = row.adminStaff
-                    if (isEmpty(value)) {
-                        if (isEmpty(adminStaff)) {
-                            return "-"
-                        } else {
-                            return adminStaff.userName;
-                        }
-                    }
-                    return value.adminName;
+                    return '退款';
                 }
             }
         ]

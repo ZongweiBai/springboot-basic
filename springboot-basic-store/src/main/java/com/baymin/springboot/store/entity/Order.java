@@ -195,6 +195,10 @@ public class Order implements Serializable {
 
     @ApiModelProperty(hidden = true)
     @Transient
+    private OrderRefund orderRefund;
+
+    @ApiModelProperty(hidden = true)
+    @Transient
     private Admin offlinePayAdmin;
 
     @ApiModelProperty(hidden = true)

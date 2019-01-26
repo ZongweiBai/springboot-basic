@@ -19,4 +19,7 @@ public interface IOrderRefundRepository extends PagingAndSortingRepository<Order
 
     @Query("select COALESCE(sum(vo.refundFee),0) from OrderRefund  vo where vo.orderId = :orderId and vo.dealStatus in :dealStatus")
     Double sumRefundFeeByOrderId(@Param("orderId") String orderId, @Param("dealStatus") List<CommonDealStatus> dealStatus);
+
+    @Query("select vo from OrderRefund vo where vo.orderId in :orderIds and vo.dealStatus = :dealStatus")
+    List<OrderRefund> findByOrderIds(@Param("orderIds") List<String> orderIds, @Param("dealStatus") CommonDealStatus dealStatus);
 }

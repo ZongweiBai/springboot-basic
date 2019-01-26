@@ -451,11 +451,25 @@ public class IndexController {
     }
 
     @GetMapping("/index/report/quickOrderlist/manage")
-    public String manageQuickOrderListForReport(String hospitalName, String datemin,  String datemax, Model model) {
+    public String manageQuickOrderListForReport(String hospitalName, String datemin, String datemax,
+                                                String paydatemin, String paydatemax, Model model) {
         model.addAttribute("datemin", datemin);
         model.addAttribute("datemax", datemax);
+        model.addAttribute("paydatemin", paydatemin);
+        model.addAttribute("paydatemax", paydatemax);
         model.addAttribute("hospitalName", hospitalName);
         return "report/quickOrderListManage";
+    }
+
+    @GetMapping("/index/report/quickRefundOrderlist/manage")
+    public String manageQuickRefundOrderListForReport(String hospitalName, String datemin, String datemax,
+                                                String paydatemin, String paydatemax, Model model) {
+        model.addAttribute("datemin", datemin);
+        model.addAttribute("datemax", datemax);
+        model.addAttribute("paydatemin", paydatemin);
+        model.addAttribute("paydatemax", paydatemax);
+        model.addAttribute("hospitalName", hospitalName);
+        return "report/quickRefundOrderListManage";
     }
 
     @GetMapping("/index/report/evaluate/manage")

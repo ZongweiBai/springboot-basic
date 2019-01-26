@@ -19,6 +19,8 @@ function loadJSTable() {
                 page: params.offset / params.limit,
                 datemin: $("#allDatemin").val(),
                 datemax: $("#allDatemax").val(),
+                paydatemin: $("#payDatemin").val(),
+                paydatemax: $("#payDatemax").val(),
                 hospitalAddress: $("#allHospitalAddress").val()
             };
             return paramsMap;
@@ -56,7 +58,9 @@ function loadJSTable() {
                     align: 'center',
                     valign: 'middle',
                     formatter: function (value, row, index) {
-                        return "￥ " + value;
+                        var hospitalName = row.hospitalName
+                        content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showRefundDetail(\'' + hospitalName + '\')" title="退款订单详情">￥'+ value +'</a>&nbsp;';
+                        return content;
                     }
                 },
                 {
@@ -146,11 +150,14 @@ function loadJSTable() {
  * 导出excel
  */
 function downloadExcel() {
-    var careType = $("#careType").val();
-    var datemin = $("#datemin").val();
-    var datemax = $("#datemax").val();
-    var url = contextPath + "report/downloadOrder?careType=" + careType +
-        "&datemin=" + datemin + "&datemax=" + datemax;
+    var datemin = $("#allDatemin").val()
+    var datemax = $("#allDatemax").val()
+    var paydatemin = $("#payDatemin").val()
+    var paydatemax = $("#payDatemax").val()
+    var hospitalAddress = $("#allHospitalAddress").val()
+    var url = contextPath + "report/downloadQuickRefundOrder?datemin=" + datemin +
+        "&datemax=" + datemax + "&paydatemin=" + paydatemin +
+        "&paydatemax=" + paydatemax + "&hospitalAddress=" + hospitalAddress;
     window.open(url);
 }
 
@@ -176,5 +183,15 @@ function initHospital() {
 function showDetail(hospitalName) {
     var datemin = $("#allDatemin").val()
     var datemax = $("#allDatemax").val()
-    tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax);
+    var paydatemin = $("#payDatemin").val()
+    var paydatemax = $("#payDatemax").val()
+    tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax);
+}
+
+function showRefundDetail(hospitalName) {
+    var datemin = $("#allDatemin").val()
+    var datemax = $("#allDatemax").val()
+    var paydatemin = $("#payDatemin").val()
+    var paydatemax = $("#payDatemax").val()
+    tip.openIframe("订单详情", contextPath + 'index/report/quickRefundOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax);
 }

@@ -66,9 +66,10 @@ public interface IOrderService {
 
     List<Evaluate> queryOrderEvaluate(String orderId, CommonDealStatus dealStatus);
 
-    List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate);
+    List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate, Date paymaxDate, Date payminDate);
 
-    List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName);
+    List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType);
 
     List<Evaluate> queryEvaluate(String orderId, String userId);
+
 }
