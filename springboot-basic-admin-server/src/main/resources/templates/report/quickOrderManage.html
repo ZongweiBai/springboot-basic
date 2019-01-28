@@ -31,12 +31,12 @@
                 <option value="">选择所在医院</option>
             </select>
 
-            下单时间：
+            <!--下单时间：-->
             <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'allDatemax\')||\'%y-%M-%d\'}'})" id="allDatemin"
-                   class="input-text Wdate" style="width:120px;">
+                   class="input-text Wdate" style="width:120px;display: none;">
             -
             <input type="text" onfocus="WdatePicker({minDate:'#F{$dp.$D(\'allDatemin\')}',maxDate:'%y-%M-%d'})"
-                   id="allDatemax" class="input-text Wdate" style="width:120px;">
+                   id="allDatemax" class="input-text Wdate" style="width:120px; display: none;">
 
             收款时间：
             <input type="text" onfocus="WdatePicker({maxDate:'#F{$dp.$D(\'payDatemax\')||\'%y-%M-%d\'}'})" id="payDatemin"

@@ -452,11 +452,12 @@ public class IndexController {
 
     @GetMapping("/index/report/quickOrderlist/manage")
     public String manageQuickOrderListForReport(String hospitalName, String datemin, String datemax,
-                                                String paydatemin, String paydatemax, Model model) {
+                                                String paydatemin, String paydatemax, String serviceScope, Model model) {
         model.addAttribute("datemin", datemin);
         model.addAttribute("datemax", datemax);
         model.addAttribute("paydatemin", paydatemin);
         model.addAttribute("paydatemax", paydatemax);
+        model.addAttribute("serviceScope", serviceScope);
         model.addAttribute("hospitalName", hospitalName);
         return "report/quickOrderListManage";
     }

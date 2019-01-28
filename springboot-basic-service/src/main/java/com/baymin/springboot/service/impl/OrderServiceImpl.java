@@ -1222,7 +1222,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType) {
+    public List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope) {
         BooleanBuilder builder = new BooleanBuilder();
         QOrder qOrder = QOrder.order;
 
@@ -1244,6 +1244,13 @@ public class OrderServiceImpl implements IOrderService {
         }
         if (StringUtils.equals("REFUND", queryType)) {
             builder.and(qOrder.refundStatus.eq(CommonDealStatus.COMPLETED));
+        }
+        if (StringUtils.isNotBlank(serviceScope)) {
+            if (StringUtils.equals(ServiceScope.INSIDE.toString(), serviceScope.trim())) {
+                builder.and(qOrder.serviceScope.eq(ServiceScope.INSIDE));
+            } else if (StringUtils.equals(ServiceScope.OUTSIDE.toString(), serviceScope.trim())) {
+                builder.and(qOrder.serviceScope.eq(ServiceScope.OUTSIDE));
+            }
         }
         builder.and(qOrder.orderSource.eq("WECHAT_QUICK"));
 

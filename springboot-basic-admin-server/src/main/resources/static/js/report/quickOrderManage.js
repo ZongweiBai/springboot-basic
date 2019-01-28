@@ -90,7 +90,9 @@ function loadJSTable() {
                     title: '合计',
                     align: 'center',
                     formatter: function (value, row, index) {
-                        return "￥ " + value;
+                        var hospitalName = row.hospitalName
+                        content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + hospitalName + '\', \'INSIDE\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        return content;
                     }
                 },
                 {
@@ -122,7 +124,9 @@ function loadJSTable() {
                     title: '合计',
                     align: 'center',
                     formatter: function (value, row, index) {
-                        return "￥ " + value;
+                        var hospitalName = row.hospitalName
+                        content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + hospitalName + '\', \'OUTSIDE\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        return content;
                     }
                 },
                 {
@@ -186,6 +190,14 @@ function showDetail(hospitalName) {
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
     tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax);
+}
+
+function showOtherDetail(hospitalName, serviceScope) {
+    var datemin = $("#allDatemin").val()
+    var datemax = $("#allDatemax").val()
+    var paydatemin = $("#payDatemin").val()
+    var paydatemax = $("#payDatemax").val()
+    tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax + "&serviceScope=" + serviceScope);
 }
 
 function showRefundDetail(hospitalName) {

@@ -74,7 +74,7 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "queryQuickOrder")
-    public Map<String, Object> queryQuickOrder(String datemin, String datemax,
+    public Map<String, Object> queryQuickOrder(String datemin, String datemax, String serviceScope,
                                                String paydatemin, String paydatemax, String hospitalName) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
@@ -82,7 +82,7 @@ public class OrderController {
         Date paymaxDate = DateUtil.dayEnd(paydatemax);
         Date payminDate = DateUtil.dayBegin(paydatemin);
 
-        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL");
+        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL", serviceScope);
         resultMap.put(WebConstant.TOTAL, queryResult.size());
         resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;
@@ -98,7 +98,7 @@ public class OrderController {
         Date paymaxDate = DateUtil.dayEnd(paydatemax);
         Date payminDate = DateUtil.dayBegin(paydatemin);
 
-        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "REFUND");
+        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "REFUND", null);
         resultMap.put(WebConstant.TOTAL, queryResult.size());
         resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;

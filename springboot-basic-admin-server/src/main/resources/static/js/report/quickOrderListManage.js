@@ -16,6 +16,7 @@ function loadTable() {
                 hospitalName: hospitalName,
                 datemin: datemin,
                 datemax: datemax,
+                serviceScope: serviceScope,
                 paydatemin: paydatemin,
                 paydatemax: paydatemax
             };
