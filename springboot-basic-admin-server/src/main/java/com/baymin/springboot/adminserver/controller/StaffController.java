@@ -57,6 +57,12 @@ public class StaffController {
         Map<String, Object> resultMap = new HashMap<>();
         Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
         try {
+            long count = staffService.checkUniqueMobile(serviceStaff.getMobile(), null);
+            if (count > 0) {
+                resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
+                resultMap.put(WebConstant.MESSAGE, "该手机号码已注册！");
+                return resultMap;
+            }
             staffService.saveStaff(serviceStaff);
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {

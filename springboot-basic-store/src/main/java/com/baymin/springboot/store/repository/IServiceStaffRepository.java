@@ -56,4 +56,9 @@ public interface IServiceStaffRepository extends PagingAndSortingRepository<Serv
     @Query("update ServiceStaff set idpId = null where id = :staffId")
     void resetIdpId(@Param("staffId") String staffId);
 
+    @Query("select count(vo.mobile) from ServiceStaff vo where vo.mobile = :mobile and vo.staffStatus = :status and vo.id <> :staffId")
+    long countByMobileAndStaffId(@Param("mobile") String mobile, @Param("staffId") String staffId, @Param("status") CommonStatus status);
+
+    @Query("select count(vo.mobile) from ServiceStaff vo where vo.mobile = :mobile and vo.staffStatus = :status")
+    long countByMobile(@Param("mobile") String mobile, @Param("status") CommonStatus status);
 }

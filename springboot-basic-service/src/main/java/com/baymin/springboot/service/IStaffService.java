@@ -33,4 +33,6 @@ public interface IStaffService {
     void updateStaff(ServiceStaff staff);
 
     void resetIdpId(String staffId);
+
+    long checkUniqueMobile(String mobile, String staffId);
 }

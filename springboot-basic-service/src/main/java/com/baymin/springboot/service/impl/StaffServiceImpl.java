@@ -135,6 +135,7 @@ public class StaffServiceImpl implements IStaffService {
     @Override
     public void updateStaffStatus(String staffId, CommonStatus statusType, String idCard) {
         serviceStaffRepository.updateStaffStatus(staffId, statusType, idCard);
+        serviceStaffRepository.resetIdpId(staffId);
     }
 
     @Override
@@ -171,5 +172,14 @@ public class StaffServiceImpl implements IStaffService {
     @Override
     public void resetIdpId(String staffId) {
         serviceStaffRepository.resetIdpId(staffId);
+    }
+
+    @Override
+    public long checkUniqueMobile(String mobile, String staffId) {
+        if (StringUtils.isNotBlank(staffId)) {
+            return serviceStaffRepository.countByMobileAndStaffId(mobile, staffId, CommonStatus.NORMAL);
+        } else {
+            return serviceStaffRepository.countByMobile(mobile, CommonStatus.NORMAL);
+        }
     }
 }
