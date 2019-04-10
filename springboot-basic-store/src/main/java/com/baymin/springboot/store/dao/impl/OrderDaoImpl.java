@@ -22,6 +22,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 public class OrderDaoImpl implements IOrderDao {
@@ -99,6 +100,8 @@ public class OrderDaoImpl implements IOrderDao {
 
     @Override
     public OrderDetailVo queryOrderDetail(String orderId) {
+        OrderDetailVo detail = new OrderDetailVo();
+
         QOrder qOrder = QOrder.order;
         QOrderExt qOrderExt = QOrderExt.orderExt;
         QServiceProduct qProduct = QServiceProduct.serviceProduct;
@@ -113,20 +116,21 @@ public class OrderDaoImpl implements IOrderDao {
                 .where(qOrderExt.orderId.eq(orderId))
                 .fetchOne();
 
-        ServiceProduct product = queryFactory.select(qProduct)
-                .from(qProduct)
-                .where(qProduct.id.eq(order.getServiceProductId()))
-                .fetchOne();
+        if (Objects.nonNull(order) && StringUtils.isNotBlank(order.getServiceProductId())) {
+            ServiceProduct product = queryFactory.select(qProduct)
+                    .from(qProduct)
+                    .where(qProduct.id.eq(order.getServiceProductId()))
+                    .fetchOne();
+            detail.setServiceProduct(new ServiceProductVo(product, null));
+        }
 
         ServiceStaff staff = null;
         if (StringUtils.isNotBlank(order.getServiceStaffId())) {
             staff = serviceStaffRepository.findById(order.getServiceStaffId()).orElse(null);
         }
 
-        OrderDetailVo detail = new OrderDetailVo();
         detail.setOrder(order);
         detail.setOrderExt(orderExt);
-        detail.setServiceProduct(new ServiceProductVo(product, null));
         detail.setServiceStaff(staff);
         return detail;
     }
