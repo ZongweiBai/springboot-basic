@@ -82,7 +82,7 @@ public class OrderController {
         Date paymaxDate = DateUtil.dayEnd(paydatemax);
         Date payminDate = DateUtil.dayBegin(paydatemin);
 
-        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL", serviceScope);
+        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL_WITH_PAID", serviceScope);
         resultMap.put(WebConstant.TOTAL, queryResult.size());
         resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;

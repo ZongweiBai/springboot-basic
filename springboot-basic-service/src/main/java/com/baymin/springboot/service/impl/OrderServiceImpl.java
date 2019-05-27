@@ -1098,7 +1098,7 @@ public class OrderServiceImpl implements IOrderService {
                 " SELECT o.id, o.TOTAL_FEE, r.REFUND_FEE, o.HOSPITAL_NAME, o.SERVICE_SCOPE, o.SERVICE_MODE  " +
                 " FROM T_ORDER o \n" +
                 " LEFT JOIN T_ORDER_REFUND r on o.id=r.ORDER_ID and r.DEAL_STATUS=2  " +
-                " WHERE o.ORDER_SOURCE='WECHAT_QUICK' and o.ORDER_TIME>=? and o.ORDER_TIME<=? ");
+                " WHERE o.ORDER_SOURCE='WECHAT_QUICK' and o.PAY_TIME is not null and o.ORDER_TIME>=? and o.ORDER_TIME<=? ");
 
         queryParams[queryParamIndex++] = minDate;
         queryParams[queryParamIndex++] = maxDate;
@@ -1244,6 +1244,8 @@ public class OrderServiceImpl implements IOrderService {
         }
         if (StringUtils.equals("REFUND", queryType)) {
             builder.and(qOrder.refundStatus.eq(CommonDealStatus.COMPLETED));
+        } else if (StringUtils.equals("NORMAL_WITH_PAID", queryType)) {
+            builder.and(qOrder.payTime.isNotNull());
         }
         if (StringUtils.isNotBlank(serviceScope)) {
             if (StringUtils.equals(ServiceScope.INSIDE.toString(), serviceScope.trim())) {
