@@ -189,6 +189,8 @@ function showDetail(hospitalName) {
     var datemax = $("#allDatemax").val()
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
+    hospitalName = encodeURI(hospitalName)
+    console.log(hospitalName)
     tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax);
 }
 
@@ -197,6 +199,8 @@ function showOtherDetail(hospitalName, serviceScope) {
     var datemax = $("#allDatemax").val()
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
+    hospitalName = encodeURI(hospitalName)
+    console.log(hospitalName)
     tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax + "&serviceScope=" + serviceScope);
 }
 
@@ -205,5 +209,6 @@ function showRefundDetail(hospitalName) {
     var datemax = $("#allDatemax").val()
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
+    hospitalName = escape(hospitalName)
     tip.openIframe("订单详情", contextPath + 'index/report/quickRefundOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax);
 }

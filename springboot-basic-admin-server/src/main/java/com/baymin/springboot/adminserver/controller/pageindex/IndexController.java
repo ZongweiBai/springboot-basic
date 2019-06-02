@@ -2,6 +2,7 @@ package com.baymin.springboot.adminserver.controller.pageindex;
 
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.store.entity.Admin;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,10 +12,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Objects;
 
 @Controller
 @RequestMapping
+@Slf4j
 public class IndexController {
 
     @GetMapping("/")
@@ -453,12 +457,18 @@ public class IndexController {
     @GetMapping("/index/report/quickOrderlist/manage")
     public String manageQuickOrderListForReport(String hospitalName, String datemin, String datemax,
                                                 String paydatemin, String paydatemax, String serviceScope, Model model) {
+        log.error("获取到的hospitalName是{}", hospitalName);
         model.addAttribute("datemin", datemin);
         model.addAttribute("datemax", datemax);
         model.addAttribute("paydatemin", paydatemin);
         model.addAttribute("paydatemax", paydatemax);
         model.addAttribute("serviceScope", serviceScope);
-        model.addAttribute("hospitalName", hospitalName);
+        try {
+            model.addAttribute("hospitalName", URLDecoder.decode(hospitalName, "utf-8"));
+        } catch (Exception e) {
+            log.warn("hospitalName解码失败:{}", e.getMessage());
+            model.addAttribute("hospitalName", hospitalName);
+        }
         return "report/quickOrderListManage";
     }
 
@@ -469,7 +479,12 @@ public class IndexController {
         model.addAttribute("datemax", datemax);
         model.addAttribute("paydatemin", paydatemin);
         model.addAttribute("paydatemax", paydatemax);
-        model.addAttribute("hospitalName", hospitalName);
+        try {
+            model.addAttribute("hospitalName", URLDecoder.decode(hospitalName, "utf-8"));
+        } catch (Exception e) {
+            log.warn("hospitalName解码失败:{}", e.getMessage());
+            model.addAttribute("hospitalName", hospitalName);
+        }
         return "report/quickRefundOrderListManage";
     }
 
