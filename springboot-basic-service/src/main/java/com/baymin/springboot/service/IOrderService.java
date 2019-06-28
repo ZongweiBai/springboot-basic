@@ -72,4 +72,5 @@ public interface IOrderService {
 
     List<Evaluate> queryEvaluate(String orderId, String userId);
 
+    Page<Order> queryQuickOrderForPage(PageRequest pageRequest, Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String normal_with_paid, String serviceScope);
 }

@@ -1318,4 +1318,101 @@ public class OrderServiceImpl implements IOrderService {
         return orderList;
     }
 
+    @Override
+    public Page<Order> queryQuickOrderForPage(PageRequest pageRequest, Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope) {
+        BooleanBuilder builder = new BooleanBuilder();
+        QOrder qOrder = QOrder.order;
+
+        if (Objects.nonNull(maxDate)) {
+            builder.and(qOrder.orderTime.lt(maxDate));
+        }
+        if (Objects.nonNull(minDate)) {
+            builder.and(qOrder.orderTime.gt(minDate));
+        }
+
+        if (Objects.nonNull(paymaxDate)) {
+            builder.and(qOrder.payTime.lt(paymaxDate));
+        }
+        if (Objects.nonNull(payminDate)) {
+            builder.and(qOrder.payTime.gt(payminDate));
+        }
+        if (Objects.nonNull(hospitalName)) {
+            builder.and(qOrder.hospitalName.eq(hospitalName));
+        }
+        if (StringUtils.equals("REFUND", queryType)) {
+            builder.and(qOrder.refundStatus.eq(CommonDealStatus.COMPLETED));
+        } else if (StringUtils.equals("NORMAL_WITH_PAID", queryType)) {
+            builder.and(qOrder.payTime.isNotNull());
+        }
+        if (StringUtils.isNotBlank(serviceScope)) {
+            if (StringUtils.equals(ServiceScope.INSIDE.toString(), serviceScope.trim())) {
+                builder.and(qOrder.serviceScope.eq(ServiceScope.INSIDE));
+            } else if (StringUtils.equals(ServiceScope.OUTSIDE.toString(), serviceScope.trim())) {
+                builder.and(qOrder.serviceScope.eq(ServiceScope.OUTSIDE));
+            }
+        }
+        builder.and(qOrder.orderSource.eq("WECHAT_QUICK"));
+
+//        Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");
+
+        Page<Order> page = orderRepository.findAll(builder, pageRequest);
+//        Iterable<Order> iterable = orderRepository.findAll(builder, sort);
+
+        List<Order> orderList = new ArrayList<>();
+
+        List<String> staffIds = new ArrayList<>();
+        List<String> orderIds = new ArrayList<>();
+        List<String> userIds = new ArrayList<>();
+        page.getContent().forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                staffIds.add(order.getServiceStaffId());
+            }
+            if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                staffIds.add(order.getServiceAdminId());
+            }
+            orderIds.add(order.getId());
+            userIds.add(order.getOrderUserId());
+        });
+
+        Map<String, ServiceStaff> staffMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(staffIds)) {
+            List<ServiceStaff> serviceStaffList = serviceStaffRepository.findByIds(staffIds);
+            staffMap = serviceStaffList.stream().collect(Collectors.toMap(ServiceStaff::getId, Function.identity()));
+        }
+
+        Map<String, UserProfile> userProfileMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(userIds)) {
+            List<UserProfile> userProfileList = userProfileRepository.findByIds(userIds);
+            userProfileMap = userProfileList.stream().collect(Collectors.toMap(UserProfile::getId, Function.identity()));
+        }
+
+        Map<String, OrderExt> orderExtMap = new HashMap<>();
+        if (CollectionUtils.isNotEmpty(orderIds)) {
+            List<OrderExt> adminList = orderExtRepository.findByOrderIds(orderIds);
+            orderExtMap = adminList.stream().collect(Collectors.toMap(OrderExt::getOrderId, Function.identity()));
+        }
+
+        Map<String, OrderRefund> orderRefundMap = new HashMap<>();
+        if (StringUtils.equals("REFUND", queryType) && CollectionUtils.isNotEmpty(orderIds)) {
+            List<OrderRefund> orderRefundList = orderRefundRepository.findByOrderIds(orderIds, CommonDealStatus.COMPLETED);
+            orderRefundMap = orderRefundList.stream().collect(Collectors.toMap(OrderRefund::getOrderId, Function.identity()));
+        }
+        Map<String, ServiceStaff> finalStaffMap = staffMap;
+        Map<String, OrderExt> finalOrderExtMap = orderExtMap;
+        Map<String, UserProfile> finalUserProfileMap = userProfileMap;
+        Map<String, OrderRefund> finalOrderRefundMap = orderRefundMap;
+        page.getContent().forEach(order -> {
+            if (StringUtils.isNotBlank(order.getServiceStaffId())) {
+                order.setServiceStaff(finalStaffMap.get(order.getServiceStaffId()));
+            }
+            if (StringUtils.isNotBlank(order.getServiceAdminId())) {
+                order.setAdminStaff(finalStaffMap.get(order.getServiceAdminId()));
+            }
+            order.setOrderExt(finalOrderExtMap.get(order.getId()));
+            order.setUserProfile(finalUserProfileMap.get(order.getOrderUserId()));
+            order.setOrderRefund(finalOrderRefundMap.get(order.getId()));
+            orderList.add(order);
+        });
+        return page;
+    }
 }
