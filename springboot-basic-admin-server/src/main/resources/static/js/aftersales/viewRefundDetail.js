@@ -142,6 +142,10 @@ function loadDataInfo(refundId) {
                     $("#refundPeriod").html(getSmpFormatDateByLong(begin, true) + " 至 " + getSmpFormatDateByLong(end, true));
                 }
 
+                $("#bankAccountUserName").html(refund.bankAccountUserName);
+                $("#bankName").html(refund.bankName);
+                $("#bankAccountNumber").html(refund.bankAccountNumber);
+
                 careType = order.careType;
                 serviceDuration = orderExt.serviceDuration;
                 totalFee = order.totalFee;

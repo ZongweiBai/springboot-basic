@@ -21,6 +21,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,7 +59,7 @@ public class OrderDaoImpl implements IOrderDao {
     }
 
     @Override
-    public List<Order> queryUserOrder(String userId, String status, String ownerType) {
+    public List<Order> queryUserOrder(String userId, String status, String ownerType, Date minDate, Date maxDate) {
         QOrder qOrder = QOrder.order;
 
         BooleanBuilder predicate = new BooleanBuilder();
@@ -88,6 +89,12 @@ public class OrderDaoImpl implements IOrderDao {
         } else {
             predicate.and(qOrder.serviceAdminId.eq(userId));
             predicate.and(qOrder.orderSource.eq("WECHAT_QUICK"));
+            if (Objects.nonNull(minDate)) {
+                predicate.and(qOrder.orderTime.gt(minDate));
+            }
+            if (Objects.nonNull(maxDate)) {
+                predicate.and(qOrder.orderTime.lt(maxDate));
+            }
         }
 
         Sort sort = Sort.by(Sort.Direction.DESC, "orderTime");

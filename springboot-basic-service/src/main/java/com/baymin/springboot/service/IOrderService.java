@@ -23,7 +23,7 @@ public interface IOrderService {
 
     Order saveUserOrder(UserOrderVo request);
 
-    List<Order> queryUserOrder(String userId, String status, String ownerType);
+    List<Order> queryUserOrder(String userId, String status, String ownerType, Date minDate, Date maxDate);
 
     OrderDetailVo queryOrderDetail(String orderId);
 

@@ -182,6 +182,13 @@ public class OrderServiceImpl implements IOrderService {
             if (Objects.nonNull(request.getServiceEndDate())) {
                 orderExt.setServiceEndDate(new Date(request.getServiceEndDate()));
             }
+
+            // 如果前端没有传ServiceDuration，自己计算
+            if (Objects.isNull(orderExt.getServiceDuration()) && Objects.nonNull(orderExt.getServiceStartTime()) && Objects.nonNull(orderExt.getServiceEndDate())) {
+                double duration = DateUtil.daysBetween(orderExt.getServiceStartTime(), orderExt.getServiceEndDate());
+                orderExt.setServiceDuration(duration);
+            }
+
             Map<String, Object> patientInfo = new HashMap<>();
             if (CollectionUtils.isNotEmpty(request.getQuestions())) {
                 Map<String, List<Question>> questionMap = request.getQuestions().stream().collect(Collectors.groupingBy(Question::getQuestionType));
@@ -266,8 +273,8 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> queryUserOrder(String userId, String status, String ownerType) {
-        List<Order> orderList = orderDao.queryUserOrder(userId, status, ownerType);
+    public List<Order> queryUserOrder(String userId, String status, String ownerType, Date minDate, Date maxDate) {
+        List<Order> orderList = orderDao.queryUserOrder(userId, status, ownerType, minDate, maxDate);
 
         for (Order order : orderList) {
             OrderExt orderExt = orderExtRepository.findByOrderId(order.getId());
