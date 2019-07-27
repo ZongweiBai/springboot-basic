@@ -1,9 +1,8 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IHospitalService;
-import com.baymin.springboot.store.entity.Hospital;
-import com.baymin.springboot.store.entity.HospitalDepartment;
-import com.baymin.springboot.store.entity.QHospital;
+import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.repository.IAdminHospitalRelationRepository;
 import com.baymin.springboot.store.repository.IHospitalDepartmentRepository;
 import com.baymin.springboot.store.repository.IHospitalRepository;
 import com.google.common.collect.Lists;
@@ -30,6 +29,9 @@ public class HospitalServiceImpl implements IHospitalService {
 
     @Autowired
     private IHospitalDepartmentRepository hospitalDepartmentRepository;
+
+    @Autowired
+    private IAdminHospitalRelationRepository adminHospitalRelationRepository;
 
     @Override
     public Page<Hospital> queryQuestionForPage(String hospitalName, Pageable pageable) {
@@ -77,6 +79,26 @@ public class HospitalServiceImpl implements IHospitalService {
         Iterable<Hospital> hospitalIterable = hospitalRepository.findAll();
         List<Hospital> hospitalList = new ArrayList<>();
         hospitalIterable.forEach(hospitalList::add);
+        return hospitalList;
+    }
+
+    @Override
+    public List<Hospital> getUserHospital(String adminId) {
+        // 查询用户关联的医院列表
+        List<String> checkedHospitalIds = new ArrayList<>();
+        List<AdminHospitalRelation> relationList = adminHospitalRelationRepository.findByAdminId(adminId);
+        if (CollectionUtils.isNotEmpty(relationList)) {
+            checkedHospitalIds = relationList.stream().map(AdminHospitalRelation::getHospitalId).collect(Collectors.toList());
+        }
+
+        Iterable<Hospital> hospitalIterable = hospitalRepository.findAll();
+        List<Hospital> hospitalList = new ArrayList<>();
+        for (Hospital hospital : hospitalIterable) {
+            // admin用户可以查看所有的
+            if (checkedHospitalIds.contains(hospital.getId()) || StringUtils.equals("1", adminId)) {
+                hospitalList.add(hospital);
+            }
+        }
         return hospitalList;
     }
 

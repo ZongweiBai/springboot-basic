@@ -2,6 +2,7 @@ package com.baymin.springboot.adminserver.controller;
 
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
+import com.baymin.springboot.service.IHospitalService;
 import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
 import com.baymin.springboot.service.IQuestionService;
@@ -45,17 +46,35 @@ public class OrderController {
     @Autowired
     private IQuestionService questionService;
 
+    @Autowired
+    private IHospitalService hospitalService;
+
     @ResponseBody
     @PostMapping(value = "queryOrderForPage")
     public Map<String, Object> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType,
                                                  String datemin, String datemax, String payStatus, String orderSource,
-                                                 String account, String address, HttpServletRequest request) {
+                                                 String account, String address, String hospitalName, HttpServletRequest request) {
+
+        Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
+
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
+        Set<String> hospitalNameSet = new HashSet<>();
+        if (StringUtils.isBlank(hospitalName)) {
+            List<Hospital> hospitalList = hospitalService.getUserHospital(sysUser.getId());
+            if (CollectionUtils.isNotEmpty(hospitalList)) {
+                for (Hospital hospital : hospitalList) {
+                    hospitalNameSet.add(hospital.getHospitalName());
+                }
+            }
+        } else {
+            hospitalNameSet.add(hospitalName);
+        }
+
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
-        Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, status, orderId, careType, maxDate, minDate, payStatus, orderSource, account, address);
+        Page<Order> queryResult = orderService.queryOrderForPage(pageRequest, status, orderId, careType, maxDate, minDate, payStatus, orderSource, account, address, hospitalNameSet);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
@@ -75,14 +94,14 @@ public class OrderController {
     @ResponseBody
     @PostMapping(value = "queryQuickOrder")
     public Map<String, Object> queryQuickOrder(String datemin, String datemax, String serviceScope,
-                                               String paydatemin, String paydatemax, String hospitalName) {
+                                               String paydatemin, String paydatemax, String hospitalName, String department) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
         Date paymaxDate = DateUtil.dayEnd(paydatemax);
         Date payminDate = DateUtil.dayBegin(paydatemin);
 
-        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL_WITH_PAID", serviceScope);
+        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL_WITH_PAID", serviceScope, department);
         resultMap.put(WebConstant.TOTAL, queryResult.size());
         resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;
@@ -91,14 +110,14 @@ public class OrderController {
     @ResponseBody
     @PostMapping(value = "queryQuickRefundOrder")
     public Map<String, Object> queryQuickRefundOrder(String datemin, String datemax,
-                                               String paydatemin, String paydatemax, String hospitalName) {
+                                               String paydatemin, String paydatemax, String hospitalName, String department) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
         Date paymaxDate = DateUtil.dayEnd(paydatemax);
         Date payminDate = DateUtil.dayBegin(paydatemin);
 
-        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "REFUND", null);
+        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "REFUND", null, department);
         resultMap.put(WebConstant.TOTAL, queryResult.size());
         resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;

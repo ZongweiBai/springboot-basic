@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface IOrderService {
 
@@ -32,7 +33,7 @@ public interface IOrderService {
 
     void saveInvoiceRequest(Invoice invoice);
 
-    Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource, String account, String address);
+    Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource, String account, String address, Set<String> hospitalNameSet);
 
     Map<String, Object> getOrderDetail(String orderId);
 
@@ -66,9 +67,9 @@ public interface IOrderService {
 
     List<Evaluate> queryOrderEvaluate(String orderId, CommonDealStatus dealStatus);
 
-    List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate, Date paymaxDate, Date payminDate);
+    List<QuickOrderReport> queryQuickOrderReport(Set<String> hospitalNameSet, Date maxDate, Date minDate, Date paymaxDate, Date payminDate, String hospitalDepartment, String groupType);
 
-    List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope);
+    List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope, String department);
 
     List<Evaluate> queryEvaluate(String orderId, String userId);
 

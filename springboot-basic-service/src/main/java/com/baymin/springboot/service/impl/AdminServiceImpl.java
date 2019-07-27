@@ -2,22 +2,20 @@ package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IAdminService;
 import com.baymin.springboot.service.IOrganizationService;
-import com.baymin.springboot.store.entity.Admin;
-import com.baymin.springboot.store.entity.Organization;
-import com.baymin.springboot.store.entity.SysRole;
+import com.baymin.springboot.store.entity.*;
+import com.baymin.springboot.store.repository.IAdminHospitalRelationRepository;
 import com.baymin.springboot.store.repository.IAdminRepository;
+import com.baymin.springboot.store.repository.IHospitalRepository;
 import com.baymin.springboot.store.repository.ISysRoleRepository;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -34,6 +32,12 @@ public class AdminServiceImpl implements IAdminService {
     @Autowired
     private ISysRoleRepository sysRoleRepository;
 
+    @Autowired
+    private IHospitalRepository hospitalRepository;
+
+    @Autowired
+    private IAdminHospitalRelationRepository adminHospitalRelationRepository;
+
     @Override
     public Admin getAdminByAccount(String account) {
         return adminRepository.findByAccount(account);
@@ -42,6 +46,15 @@ public class AdminServiceImpl implements IAdminService {
     @Override
     public void updateAdmin(Admin admin) {
         adminRepository.save(admin);
+    }
+
+    @Override
+    public void updateAdminForManage(Admin admin) {
+        adminRepository.save(admin);
+
+        // 删除医院信息
+        adminHospitalRelationRepository.deleteByAdminId(admin.getId());
+        saveHospitalRelations(admin);
     }
 
     @Override
@@ -64,7 +77,29 @@ public class AdminServiceImpl implements IAdminService {
 
     @Override
     public Admin getAdminById(String userId) {
-        return adminRepository.findById(userId).orElse(null);
+        Admin admin = adminRepository.findById(userId).orElse(null);
+        if (Objects.isNull(admin)) {
+            return null;
+        }
+
+        // 查询所有的医院列表
+        Iterable<Hospital> hospitalIterable = hospitalRepository.findAll();
+        List<Hospital> hospitalList = new ArrayList<>();
+        hospitalIterable.forEach(hospitalList::add);
+
+        // 查询用户关联的医院列表
+        List<String> checkedHospitalIds = new ArrayList<>();
+        List<AdminHospitalRelation> relationList = adminHospitalRelationRepository.findByAdminId(admin.getId());
+        if (CollectionUtils.isNotEmpty(relationList)) {
+            checkedHospitalIds = relationList.stream().map(AdminHospitalRelation::getHospitalId).collect(Collectors.toList());
+        }
+
+        for (Hospital hospital : hospitalList) {
+            hospital.setChecked(checkedHospitalIds.contains(hospital.getId()));
+        }
+
+        admin.setHospitalList(hospitalList);
+        return admin;
     }
 
     @Override
@@ -72,6 +107,9 @@ public class AdminServiceImpl implements IAdminService {
         admin.setCreateTime(new Date());
         admin.setPassword("888888");
         adminRepository.save(admin);
+
+        // 保存医院关联信息
+        saveHospitalRelations(admin);
     }
 
     @Override
@@ -84,5 +122,19 @@ public class AdminServiceImpl implements IAdminService {
         List<String> roleIds = roleList.stream().map(SysRole::getId).collect(Collectors.toList());
 
         return adminRepository.findByRoleIds(roleIds);
+    }
+
+    private void saveHospitalRelations(Admin admin) {
+        // 保存医院关联信息
+        if (CollectionUtils.isNotEmpty(admin.getHospitalList())) {
+            admin.getHospitalList().stream()
+                    .filter(hospital -> StringUtils.isNoneBlank(hospital.getId()))
+                    .forEach(hospital -> {
+                        AdminHospitalRelation relation = new AdminHospitalRelation();
+                        relation.setAdminId(admin.getId());
+                        relation.setHospitalId(hospital.getId());
+                        adminHospitalRelationRepository.save(relation);
+                    });
+        }
     }
 }

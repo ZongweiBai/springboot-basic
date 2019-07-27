@@ -19,4 +19,5 @@ public interface IHospitalDepartmentRepository extends PagingAndSortingRepositor
     void deleteByHospitalId(@Param("hospitalId") String hospitalId);
 
     List<HospitalDepartment> findByHospitalId(String hospitalId);
+
 }

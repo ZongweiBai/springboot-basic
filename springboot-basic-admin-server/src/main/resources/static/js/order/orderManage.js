@@ -1,7 +1,30 @@
 $().ready(function () {
+    // 同步加载医院的过滤信息
+    loadAdminHospital()
     // 加载列表
     loadTable();
 });
+
+function loadAdminHospital() {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "/hospital/getUserHospital",
+        async: false,
+        data: {},
+        success: function (data) {
+            if (data.result == 200) {
+                var rows = data.rows;
+                let html = ''
+                if (!isEmpty(rows)) {
+                    rows.forEach(hospital => {
+                        html += '<option value="' + hospital.hospitalName + '">' + hospital.hospitalName + '</option>'
+                    })
+                }
+                $("#hospitalName").append(html)
+            }
+        }
+    });
+}
 
 function loadTable() {
     $('#menuTable').bootstrapTable({
@@ -21,7 +44,8 @@ function loadTable() {
                 datemin: $("#datemin").val(),
                 datemax: $("#datemax").val(),
                 account: $("#account").val(),
-                address: $("#address").val()
+                address: $("#address").val(),
+                hospitalName: $("#hospitalName").val(),
             };
             return paramsMap;
         },

@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -78,5 +79,8 @@ public class Admin implements Serializable {
 
     @Transient
     private Organization organization;
+
+    @Transient
+    private List<Hospital> hospitalList;
 
 }

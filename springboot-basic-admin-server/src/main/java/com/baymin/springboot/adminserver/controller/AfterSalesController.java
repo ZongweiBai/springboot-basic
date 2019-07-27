@@ -3,14 +3,14 @@ package com.baymin.springboot.adminserver.controller;
 import com.baymin.springboot.adminserver.constant.WebConstant;
 import com.baymin.springboot.common.util.DateUtil;
 import com.baymin.springboot.service.IAfterSalesService;
+import com.baymin.springboot.service.IHospitalService;
 import com.baymin.springboot.service.IOrderRefundService;
 import com.baymin.springboot.service.IOrderService;
-import com.baymin.springboot.store.entity.Admin;
-import com.baymin.springboot.store.entity.Evaluate;
-import com.baymin.springboot.store.entity.OrderRefund;
-import com.baymin.springboot.store.entity.OrderStaffChange;
+import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.enumconstant.CommonDealStatus;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,9 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -41,6 +39,9 @@ public class AfterSalesController {
 
     @Autowired
     private IOrderRefundService orderRefundService;
+
+    @Autowired
+    private IHospitalService hospitalService;
 
     @ResponseBody
     @PostMapping(value = "queryStaffchangeForPage")
@@ -137,14 +138,28 @@ public class AfterSalesController {
     @ResponseBody
     @PostMapping(value = "queryEvaluateForPage")
     public Map<String, Object> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus,
-                                                 String datemin, String datemax, HttpServletRequest request) {
+                                                 String datemin, String datemax, String hospitalName, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
+        Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
+
+        Set<String> hospitalNameSet = new HashSet<>();
+        if (StringUtils.isBlank(hospitalName)) {
+            List<Hospital> hospitalList = hospitalService.getUserHospital(sysUser.getId());
+            if (CollectionUtils.isNotEmpty(hospitalList)) {
+                for (Hospital hospital : hospitalList) {
+                    hospitalNameSet.add(hospital.getHospitalName());
+                }
+            }
+        } else {
+            hospitalNameSet.add(hospitalName);
+        }
+
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 new Sort(Sort.Direction.DESC, "createTime"));
-        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageRequest, grade, orderId, auditStatus, maxDate, minDate);
+        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageRequest, grade, orderId, auditStatus, maxDate, minDate, hospitalNameSet);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;

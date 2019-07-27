@@ -11,11 +11,12 @@ import org.springframework.data.domain.Pageable;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public interface IAfterSalesService {
     Page<OrderStaffChange> queryOrderChangePage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId);
 
-    Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus, Date maxDate, Date minDate);
+    Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus, Date maxDate, Date minDate, Set<String> hospitalNameSet);
 
     Page<OrderRefund> queryRefundPage(Pageable pageable, CommonDealStatus dealStatus, Date maxDate, Date minDate, String orderId);
 

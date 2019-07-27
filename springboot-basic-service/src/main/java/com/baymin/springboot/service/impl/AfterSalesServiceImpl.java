@@ -124,7 +124,7 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
     }
 
     @Override
-    public Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus, Date maxDate, Date minDate) {
+    public Page<Evaluate> queryEvaluatePage(Pageable pageable, Integer grade, String orderId, CommonDealStatus auditStatus, Date maxDate, Date minDate, Set<String> hospitalNameSet) {
         BooleanBuilder builder = new BooleanBuilder();
         QEvaluate qEvaluate = QEvaluate.evaluate;
 
@@ -142,6 +142,9 @@ public class AfterSalesServiceImpl implements IAfterSalesService {
         }
         if (Objects.nonNull(minDate)) {
             builder.and(qEvaluate.createTime.gt(minDate));
+        }
+        if (CollectionUtils.isNotEmpty(hospitalNameSet)) {
+            builder.and(qEvaluate.hospitalName.in(hospitalNameSet));
         }
 
         Page<Evaluate> page = evaluateRepository.findAll(builder, pageable);

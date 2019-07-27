@@ -363,6 +363,7 @@ public class OrderServiceImpl implements IOrderService {
         }
 
         evaluate.setCareType(order.getCareType());
+        evaluate.setHospitalName(order.getHospitalName());
         evaluate.setCreateTime(new Date());
         evaluate.setAuditStatus(CommonDealStatus.APPLY);
         evaluate.setUserId(order.getOrderUserId());
@@ -415,7 +416,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource, String account, String address) {
+    public Page<Order> queryOrderForPage(Pageable pageable, OrderStatus status, String orderId, CareType careType, Date maxDate, Date minDate, String payStatus, String orderSource, String account, String address, Set<String> hospitalNameSet) {
 
         String userId = null;
         if (StringUtils.isNotBlank(account)) {
@@ -464,6 +465,9 @@ public class OrderServiceImpl implements IOrderService {
         }
         if (CollectionUtils.isNotEmpty(orderIds)) {
             builder.and(qOrder.id.in(orderIds));
+        }
+        if (CollectionUtils.isNotEmpty(hospitalNameSet)) {
+            builder.and(qOrder.hospitalName.in(hospitalNameSet));
         }
 
         Page<Order> page = orderRepository.findAll(builder, pageable);
@@ -1061,7 +1065,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<QuickOrderReport> queryQuickOrderReport(String hospitalAddress, Date maxDate, Date minDate, Date paymaxDate, Date payminDate) {
+    public List<QuickOrderReport> queryQuickOrderReport(Set<String> hospitalNameSet, Date maxDate, Date minDate, Date paymaxDate, Date payminDate, String hospitalDepartment, String groupType) {
         int queryParamLength = 0;
         if (Objects.isNull(minDate)) {
             minDate = DateUtil.dayBegin("1970-01-01");
@@ -1077,13 +1081,21 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.nonNull(paymaxDate)) {
             queryParamLength++;
         }
-        if (StringUtils.isNotBlank(hospitalAddress)) {
+        if (StringUtils.isNoneBlank(hospitalDepartment)) {
             queryParamLength++;
         }
 
         int queryParamIndex = 0;
         Object[] queryParams = new Object[queryParamLength];
-        StringBuilder sb = new StringBuilder("select t.HOSPITAL_NAME as hospitalName,  " +
+
+        StringBuilder sb = new StringBuilder();
+        if (StringUtils.equals("hospital", groupType)) {
+            sb.append("select t.HOSPITAL_NAME as title,  ");
+        } else {
+            sb.append("select t.HOSPITAL_DEPARTMENT as title,  ");
+        }
+
+        sb.append(
                 " CAST(COALESCE(sum(t.TOTAL_FEE), 0) AS DECIMAL(18,2)) as totalFee,   " +
                 " CAST(COALESCE(sum(t.REFUND_FEE), 0) AS DECIMAL(18,2)) as refundFee,  " +
                 " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=0,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as totalInFee, " +
@@ -1095,7 +1107,7 @@ public class OrderServiceImpl implements IOrderService {
                 " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=1,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as outOneToMany, " +
                 " CAST(COALESCE(sum(if(t.SERVICE_SCOPE=1 and t.SERVICE_MODE=2,t.TOTAL_FEE,0)), 0) AS DECIMAL(18,2)) as outManyToOne " +
                 " from (\n" +
-                " SELECT o.id, o.TOTAL_FEE, r.REFUND_FEE, o.HOSPITAL_NAME, o.SERVICE_SCOPE, o.SERVICE_MODE  " +
+                " SELECT o.id, o.TOTAL_FEE, r.REFUND_FEE, o.HOSPITAL_NAME, o.HOSPITAL_DEPARTMENT, o.SERVICE_SCOPE, o.SERVICE_MODE  " +
                 " FROM T_ORDER o \n" +
                 " LEFT JOIN T_ORDER_REFUND r on o.id=r.ORDER_ID and r.DEAL_STATUS=2  " +
                 " WHERE o.ORDER_SOURCE='WECHAT_QUICK' and o.PAY_TIME is not null and o.ORDER_TIME>=? and o.ORDER_TIME<=? ");
@@ -1110,12 +1122,29 @@ public class OrderServiceImpl implements IOrderService {
             sb.append("  and o.PAY_TIME<=? ");
             queryParams[queryParamIndex++] = paymaxDate;
         }
-
-        if (StringUtils.isNotBlank(hospitalAddress)) {
-            sb.append(" and o.HOSPITAL_NAME = ? ");
-            queryParams[queryParamIndex++] =  hospitalAddress;
+        if (StringUtils.isNoneBlank(hospitalDepartment)) {
+            sb.append("  and o.HOSPITAL_DEPARTMENT=? ");
+            queryParams[queryParamIndex++] = hospitalDepartment;
         }
-        sb.append(" ) t GROUP BY t.HOSPITAL_NAME ");
+
+        if (CollectionUtils.isNotEmpty(hospitalNameSet)) {
+            sb.append(" and o.HOSPITAL_NAME in (");
+            int loopCount = 1;
+            for (String hospitalName : hospitalNameSet) {
+                sb.append("'").append(hospitalName).append("'");
+                if (loopCount != hospitalNameSet.size()) {
+                    sb.append(",");
+                }
+                loopCount++;
+            }
+            sb.append(") ");
+        }
+
+        if (StringUtils.equals("hospital", groupType)) {
+            sb.append(" ) t GROUP BY t.HOSPITAL_NAME ");
+        } else {
+            sb.append(" ) t GROUP BY t.HOSPITAL_DEPARTMENT ");
+        }
 
         List<QuickOrderReport> jsVoList = jdbcTemplate.query(sb.toString(), queryParams, new QuickOrderReport());
 
@@ -1222,7 +1251,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope) {
+    public List<Order> queryQuickOrder(Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope, String department) {
         BooleanBuilder builder = new BooleanBuilder();
         QOrder qOrder = QOrder.order;
 
@@ -1239,8 +1268,11 @@ public class OrderServiceImpl implements IOrderService {
         if (Objects.nonNull(payminDate)) {
             builder.and(qOrder.payTime.gt(payminDate));
         }
-        if (Objects.nonNull(hospitalName)) {
+        if (StringUtils.isNotBlank(hospitalName)) {
             builder.and(qOrder.hospitalName.eq(hospitalName));
+        }
+        if (StringUtils.isNotBlank(department)) {
+            builder.and(qOrder.hospitalDepartment.eq(department));
         }
         if (StringUtils.equals("REFUND", queryType)) {
             builder.and(qOrder.refundStatus.eq(CommonDealStatus.COMPLETED));

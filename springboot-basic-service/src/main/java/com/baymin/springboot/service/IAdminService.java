@@ -11,6 +11,8 @@ public interface IAdminService {
 
     void updateAdmin(Admin admin);
 
+    void updateAdminForManage(Admin admin);
+
     Page<Admin> queryAdminForPage(Pageable pageable);
 
     Admin getAdminById(String userId);
