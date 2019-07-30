@@ -14,6 +14,7 @@ function loadTable() {
                 size: params.limit,  //页面大小
                 page: params.offset / params.limit,
                 hospitalName: hospitalName,
+                department: department,
                 datemin: datemin,
                 datemax: datemax,
                 serviceScope: serviceScope,
@@ -42,6 +43,11 @@ function loadTable() {
             {
                 field: 'hospitalName',
                 title: '医院',
+                align: 'center'
+            },
+            {
+                field: 'hospitalDepartment',
+                title: '科室',
                 align: 'center'
             },
             {
@@ -126,4 +132,12 @@ function loadTable() {
 
 var refreshData = function () {
     $('#menuTable').bootstrapTable('refresh');
+}
+
+function downloadExcel() {
+    var url = contextPath + "report/queryQuickOrderForExport?hospitalName=" + hospitalName +
+        "&department=" + department + "&datemin=" + datemin +
+        "&datemax=" + datemax + "&paydatemin=" + paydatemin +
+        "&paydatemax=" + paydatemax + "&serviceScope=" + serviceScope;
+    window.open(url);
 }

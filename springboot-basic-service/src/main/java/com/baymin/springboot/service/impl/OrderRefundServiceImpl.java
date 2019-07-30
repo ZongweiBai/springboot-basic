@@ -75,7 +75,7 @@ public class OrderRefundServiceImpl implements IOrderRefundService {
 
         OrderExt orderExt = orderExtRepository.findByOrderId(order.getId());
         if (Objects.nonNull(orderExt)) {
-            if ((order.getCareType() == CareType.HOME_CARE || order.getCareType() == CareType.HOSPITAL_CARE) && orderExt.getServiceDuration() < orderRefund.getRefundDuration()) {
+            if ((order.getCareType() == CareType.HOME_CARE || order.getCareType() == CareType.HOSPITAL_CARE) && Objects.nonNull(orderExt.getServiceDuration()) && orderExt.getServiceDuration() < orderRefund.getRefundDuration()) {
                 throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "退款天数不能大于订单天数"));
             } else if (order.getCareType() == CareType.REHABILITATION && orderExt.getServiceNumber() < orderRefund.getRefundDuration()) {
                 throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), "退款次数不能大于订单次数"));

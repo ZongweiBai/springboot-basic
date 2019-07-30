@@ -123,7 +123,7 @@ h4{line-height:30px}
 .permission-list > dt{ background-color:#efefef;padding:5px 10px}
 .permission-list > dd{ padding:10px; padding-left:30px}
 .permission-list > dd > dl{ border-bottom:solid 0px #eee; padding:5px 0}
-.permission-list > dd > dl > dt{ display:inline-block;float:left;white-space:nowrap;width:100px}
+.permission-list > dd > dl > dt{ display:inline-block;float:left;white-space:nowrap;width:25%;height: 30px;}
 .permission-list > dd > dl > dd{ margin-left:100px;}
 .permission-list > dd > dl > dd > label{ padding-right:10px}
 

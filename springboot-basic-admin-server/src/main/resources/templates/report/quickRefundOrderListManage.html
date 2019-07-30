@@ -16,6 +16,9 @@
 </head>
 <body>
 <div class="pd-20">
+    <div style="margin-top: 10px;margin-bottom: 10px;">
+        <button type="button" class="btn btn-success" onclick="downloadExcel();"><i class="Hui-iconfont">&#xe644;</i>导出Excel</button>
+    </div>
 	<table id="menuTable" class="table table-border table-bordered table-bg">
 
 	</table>
@@ -27,6 +30,7 @@
     var paydatemin = [[${paydatemin}]];
     var paydatemax = [[${paydatemax}]];
     var hospitalName = [[${hospitalName}]];
+    var department = [[${department}]];
     /*]]>*/
 </script>
 <script type="text/javascript" src="lib/layui/layui.js" th:src="@{/lib/layui/layui.js}" charset="utf-8"></script>

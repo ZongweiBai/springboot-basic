@@ -445,6 +445,7 @@ public class SystemController {
     public Map<String, Object> getAdminById(String userId, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Admin admin = adminService.getAdminById(userId);
+
         if (admin == null) {
             resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
             resultMap.put(WebConstant.MESSAGE, "没有该用户");
@@ -474,7 +475,7 @@ public class SystemController {
                 admin.setGrade(oldData.getGrade());
                 admin.setLastLoginTime(oldData.getLastLoginTime());
                 admin.setPassword(oldData.getPassword());
-                adminService.updateAdmin(admin);
+                adminService.updateAdminForManage(admin);
             }
             resultMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
         } catch (Exception e) {

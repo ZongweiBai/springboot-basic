@@ -455,7 +455,7 @@ public class IndexController {
     }
 
     @GetMapping("/index/report/quickOrderlist/manage")
-    public String manageQuickOrderListForReport(String hospitalName, String datemin, String datemax,
+    public String manageQuickOrderListForReport(String hospitalName, String datemin, String datemax, String department,
                                                 String paydatemin, String paydatemax, String serviceScope, Model model) {
         log.error("获取到的hospitalName是{}", hospitalName);
         model.addAttribute("datemin", datemin);
@@ -465,15 +465,17 @@ public class IndexController {
         model.addAttribute("serviceScope", serviceScope);
         try {
             model.addAttribute("hospitalName", URLDecoder.decode(hospitalName, "utf-8"));
+            model.addAttribute("department", URLDecoder.decode(department, "utf-8"));
         } catch (Exception e) {
             log.warn("hospitalName解码失败:{}", e.getMessage());
             model.addAttribute("hospitalName", hospitalName);
+            model.addAttribute("department", department);
         }
         return "report/quickOrderListManage";
     }
 
     @GetMapping("/index/report/quickRefundOrderlist/manage")
-    public String manageQuickRefundOrderListForReport(String hospitalName, String datemin, String datemax,
+    public String manageQuickRefundOrderListForReport(String hospitalName, String datemin, String datemax, String department,
                                                 String paydatemin, String paydatemax, Model model) {
         model.addAttribute("datemin", datemin);
         model.addAttribute("datemax", datemax);
@@ -481,9 +483,11 @@ public class IndexController {
         model.addAttribute("paydatemax", paydatemax);
         try {
             model.addAttribute("hospitalName", URLDecoder.decode(hospitalName, "utf-8"));
+            model.addAttribute("department", URLDecoder.decode(department, "utf-8"));
         } catch (Exception e) {
             log.warn("hospitalName解码失败:{}", e.getMessage());
             model.addAttribute("hospitalName", hospitalName);
+            model.addAttribute("department", department);
         }
         return "report/quickRefundOrderListManage";
     }

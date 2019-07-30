@@ -1,6 +1,5 @@
 package com.baymin.springboot.store.entity;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,32 +7,27 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
-@ApiModel(description = "医院信息")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "T_HOSPITAL")
-public class Hospital {
+@Table(name = "T_ADMIN_HOSPITAL_RELATION")
+public class AdminHospitalRelation implements Serializable {
 
-    @ApiModelProperty(notes = "医院ID")
     @Id
     @Column(name = "ID", length = 32)
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid")
     private String id;
 
-    @ApiModelProperty(notes = "医院名称")
-    @Column(name = "HOSPITAL_NAME", length = 128)
-    private String hospitalName;
+    @ApiModelProperty(notes = "管理员ID")
+    @Column(name = "ADMIN_ID", length = 32)
+    private String adminId;
 
-    @ApiModelProperty(hidden = true)
-    @Transient
-    private String departmentNames;
-
-    @ApiModelProperty(hidden = true)
-    @Transient
-    private Boolean checked;
+    @ApiModelProperty(notes = "医院ID")
+    @Column(name = "HOSPITAL_ID", length = 32)
+    private String hospitalId;
 
 }

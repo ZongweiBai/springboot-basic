@@ -2,6 +2,9 @@ $().ready(function () {
 
     selectStaff('WORKER');
 
+    // 同步加载医院的过滤信息
+    loadAdminHospital()
+
     // 订单统计
     loadAllTable();
 
@@ -32,6 +35,27 @@ function selectStaff(staffType) {
         error: function () {
             tip.hideLoading();
             tip.alertError("加载护工信息失败");
+        }
+    });
+}
+
+function loadAdminHospital() {
+    $.ajax({
+        type: "GET",
+        url: contextPath + "/hospital/getUserHospital",
+        async: false,
+        data: {},
+        success: function (data) {
+            if (data.result == 200) {
+                var rows = data.rows;
+                let html = ''
+                if (!isEmpty(rows)) {
+                    rows.forEach(hospital => {
+                        html += '<option value="' + hospital.hospitalName + '">' + hospital.hospitalName + '</option>'
+                    })
+                }
+                $("#hospitalName").append(html)
+            }
         }
     });
 }

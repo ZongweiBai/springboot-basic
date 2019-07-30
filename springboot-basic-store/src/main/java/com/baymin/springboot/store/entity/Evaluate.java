@@ -35,6 +35,10 @@ public class Evaluate implements Serializable {
     @Column(name = "ORDER_ID", length = 32)
     private String orderId;
 
+    @ApiModelProperty(notes = "医院")
+    @Column(name = "HOSPITAL_NAME", length = 128)
+    private String hospitalName;
+
     @ApiModelProperty(notes = "陪护类型", hidden = true)
     @Type(type = "com.baymin.springboot.store.enumconstant.convert.DbEnumType")
     @Column(name = "CARE_TYPE")

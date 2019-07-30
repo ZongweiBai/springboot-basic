@@ -7,6 +7,16 @@ $().ready(function () {
 
 });
 
+function queryTable() {
+    var groupType = $("#groupType").val()
+    var hospitalAddress = $("#allHospitalAddress").val()
+    if (groupType === 'department' && isEmpty(hospitalAddress)) {
+        tip.alertError("请先选择医院")
+        return
+    }
+    $('#allOrderTable').bootstrapTable('refresh');
+}
+
 function loadJSTable() {
     $('#allOrderTable').bootstrapTable({
         url: contextPath + "report/queryQuickOrderReport",
@@ -21,7 +31,9 @@ function loadJSTable() {
                 datemax: $("#allDatemax").val(),
                 paydatemin: $("#payDatemin").val(),
                 paydatemax: $("#payDatemax").val(),
-                hospitalAddress: $("#allHospitalAddress").val()
+                groupType: $("#groupType").val(),
+                hospitalAddress: $("#allHospitalAddress").val(),
+                hospitalDepartment: $("#hospitalDepartment").val()
             };
             return paramsMap;
         },
@@ -34,7 +46,7 @@ function loadJSTable() {
             [
                 {
                     title: '医院',
-                    field: 'hospitalName',
+                    field: 'title',
                     rowspan: 2,
                     align: 'center',
                     valign: 'middle',
@@ -46,8 +58,14 @@ function loadJSTable() {
                     align: 'center',
                     valign: 'middle',
                     formatter: function (value, row, index) {
-                        var hospitalName = row.hospitalName
-                        content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showDetail(\'' + hospitalName + '\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        var groupType = $("#groupType").val()
+                        var title = row.title
+                        if (groupType === 'hospital') {
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showDetail(\'' + title + '\', \'\')" title="订单详情">￥' + value + '</a>&nbsp;';
+                        } else {
+                            var hospitalName = $("#allHospitalAddress").val()
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showDetail(\'' + hospitalName + '\', \'' + title + '\')" title="订单详情">￥' + value + '</a>&nbsp;';
+                        }
                         return content;
                     }
                 },
@@ -58,8 +76,14 @@ function loadJSTable() {
                     align: 'center',
                     valign: 'middle',
                     formatter: function (value, row, index) {
-                        var hospitalName = row.hospitalName
-                        content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showRefundDetail(\'' + hospitalName + '\')" title="退款订单详情">￥'+ value +'</a>&nbsp;';
+                        var groupType = $("#groupType").val()
+                        var title = row.title
+                        if (groupType === 'hospital') {
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showRefundDetail(\'' + title + '\', \'\')" title="退款订单详情">￥' + value + '</a>&nbsp;';
+                        } else {
+                            var hospitalName = $("#allHospitalAddress").val()
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showRefundDetail(\'' + hospitalName + '\', \'' + title + '\')" title="退款订单详情">￥'+ value +'</a>&nbsp;';
+                        }
                         return content;
                     }
                 },
@@ -90,8 +114,14 @@ function loadJSTable() {
                     title: '合计',
                     align: 'center',
                     formatter: function (value, row, index) {
-                        var hospitalName = row.hospitalName
-                        content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + hospitalName + '\', \'INSIDE\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        var groupType = $("#groupType").val()
+                        var title = row.title
+                        if (groupType === 'hospital') {
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + title + '\', \'INSIDE\', \'\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        } else {
+                            var hospitalName = $("#allHospitalAddress").val()
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + hospitalName + '\', \'INSIDE\', \'' + title + '\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        }
                         return content;
                     }
                 },
@@ -124,8 +154,14 @@ function loadJSTable() {
                     title: '合计',
                     align: 'center',
                     formatter: function (value, row, index) {
-                        var hospitalName = row.hospitalName
-                        content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + hospitalName + '\', \'OUTSIDE\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        var groupType = $("#groupType").val()
+                        var title = row.title
+                        if (groupType === 'hospital') {
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + title + '\', \'OUTSIDE\', \'\')" title="订单详情">￥' + value + '</a>&nbsp;';
+                        } else {
+                            var hospitalName = $("#allHospitalAddress").val()
+                            content = '<a href="javascript:void(0);" style="color: #0a6999;" onclick="showOtherDetail(\'' + hospitalName + '\', \'OUTSIDE\', \'' + title + '\')" title="订单详情">￥'+ value +'</a>&nbsp;';
+                        }
                         return content;
                     }
                 },
@@ -146,7 +182,16 @@ function loadJSTable() {
                     }
                 },
             ]
-        ]
+        ],
+        onLoadSuccess: function (data) {
+            var thinnerobjs = document.getElementsByClassName("th-inner");  //通过类名找到标签
+            var groupType = $("#groupType").val()
+            if (groupType === 'department') {
+                thinnerobjs[0].textContent = "科室"
+            } else {
+                thinnerobjs[0].textContent = "医院"
+            }
+        }
     });
 }
 
@@ -159,16 +204,20 @@ function downloadExcel() {
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
     var hospitalAddress = $("#allHospitalAddress").val()
+    var hospitalDepartment = $("#hospitalDepartment").val()
+    var groupType = $("#groupType").val()
     var url = contextPath + "report/downloadQuickRefundOrder?datemin=" + datemin +
         "&datemax=" + datemax + "&paydatemin=" + paydatemin +
-        "&paydatemax=" + paydatemax + "&hospitalAddress=" + hospitalAddress;
+        "&paydatemax=" + paydatemax + "&hospitalAddress=" + hospitalAddress +
+        "&hospitalDepartment=" + hospitalDepartment + "&groupType=" + groupType;
     window.open(url);
 }
 
 function initHospital() {
     $.ajax({
         type: "GET",
-        url: contextPath + "hospital/getAllHospital",
+        url: contextPath + "hospital/getUserHospital",
+        async: false,
         data: {},
         success: function (data) {
             if (data.result == 200) {
@@ -184,31 +233,67 @@ function initHospital() {
     });
 }
 
-function showDetail(hospitalName) {
+function selectHospitalDepartment() {
+    var allHospitalAddress = $("#allHospitalAddress").val()
+    $("#hospitalDepartment").html('<option value="">选择科室</option>')
+    if (isEmpty(allHospitalAddress)) {
+        return
+    }
+
+    $.ajax({
+        type: "GET",
+        url: contextPath + "hospital/getDepartmentByHospital",
+        async: false,
+        data: {
+            "hospitalName": allHospitalAddress
+        },
+        success: function (data) {
+            if (data.result == 200) {
+                var rows = data.rows;
+                if (!isEmpty(rows)) {
+                    for (var index = 0; index < rows.length; index++) {
+                        $("#hospitalDepartment").append("<option value='" + rows[index].departmentName + "'>" + rows[index].departmentName + "</option>");
+                    }
+                }
+            }
+        }
+    });
+}
+
+function showDetail(hospitalName, department) {
     var datemin = $("#allDatemin").val()
     var datemax = $("#allDatemax").val()
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
     hospitalName = encodeURI(hospitalName)
+    if (!isEmpty(department)) {
+        department = encodeURI(department)
+    }
     console.log(hospitalName)
-    tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax);
+    tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax + "&department=" + department);
 }
 
-function showOtherDetail(hospitalName, serviceScope) {
+function showOtherDetail(hospitalName, serviceScope, department) {
     var datemin = $("#allDatemin").val()
     var datemax = $("#allDatemax").val()
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
     hospitalName = encodeURI(hospitalName)
+    if (!isEmpty(department)) {
+        department = encodeURI(department)
+    }
     console.log(hospitalName)
-    tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax + "&serviceScope=" + serviceScope);
+    tip.openIframe("订单详情", contextPath + 'index/report/quickOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax + "&serviceScope=" + serviceScope + "&department=" + department);
 }
 
-function showRefundDetail(hospitalName) {
+function showRefundDetail(hospitalName, department) {
     var datemin = $("#allDatemin").val()
     var datemax = $("#allDatemax").val()
     var paydatemin = $("#payDatemin").val()
     var paydatemax = $("#payDatemax").val()
     hospitalName = escape(hospitalName)
-    tip.openIframe("订单详情", contextPath + 'index/report/quickRefundOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax);
+    if (!isEmpty(department)) {
+        department = encodeURI(department)
+    }
+    tip.openIframe("订单详情", contextPath + 'index/report/quickRefundOrderlist/manage?hospitalName=' + hospitalName + "&datemin=" + datemin + "&datemax=" + datemax + "&paydatemin=" + paydatemin + "&paydatemax=" + paydatemax + "&department=" + department);
 }

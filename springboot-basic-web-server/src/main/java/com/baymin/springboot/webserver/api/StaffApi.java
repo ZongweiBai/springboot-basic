@@ -118,7 +118,7 @@ public class StaffApi {
         if (Objects.isNull(staffId) || Objects.isNull(status)) {
             throw new WebServerException(HttpStatus.BAD_REQUEST, new ErrorInfo(ErrorCode.invalid_request.name(), INVALID_REQUEST));
         }
-        List<Order> orderList = orderService.queryUserOrder(staffId, status, "staff");
+        List<Order> orderList = orderService.queryUserOrder(staffId, status, "staff", null, null);
         return orderList;
     }
 

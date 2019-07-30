@@ -11,7 +11,8 @@ import java.util.Objects;
 @Data
 public class QuickOrderReport implements RowMapper<QuickOrderReport> {
 
-    private String hospitalName;
+    // 前端显示的title
+    private String title;
 
     private Double totalFee;
 
@@ -38,7 +39,7 @@ public class QuickOrderReport implements RowMapper<QuickOrderReport> {
     @Override
     public QuickOrderReport mapRow(ResultSet resultSet, int i) throws SQLException {
         QuickOrderReport report = new QuickOrderReport();
-        report.setHospitalName(resultSet.getString("hospitalName"));
+        report.setTitle(resultSet.getString("title"));
         report.setTotalFee(resultSet.getDouble("totalFee"));
         report.setRefundFee(resultSet.getDouble("refundFee"));
         if (Objects.isNull(report.getRefundFee())) {
