@@ -474,7 +474,8 @@ public class OrderServiceImpl implements IOrderService {
             builder.and(qOrder.id.in(orderIds));
         }
         if (CollectionUtils.isNotEmpty(hospitalNameSet)) {
-            builder.and(qOrder.hospitalName.in(hospitalNameSet));
+            builder.and(qOrder.hospitalName.in(hospitalNameSet).or(qOrder.careType.eq(CareType.REHABILITATION)));
+//            builder.and(qOrder.hospitalName.in(hospitalNameSet));
         }
 
         Page<Order> page = orderRepository.findAll(builder, pageable);
