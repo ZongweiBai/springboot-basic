@@ -197,7 +197,7 @@ function parseMenuList(rows) {
     content += '<dd><dl class="cl permission-list2">';
     for (var i = 0; i < rows.length; i++) {
         var subMenu = rows[i];
-        content += '<dt>';
+        content += '<dt style="width: 50%;">';
         content += '<label class="">';
         if (subMenu.checked == true || isEmpty(userId)) {
             content += '<input type="checkbox" value="' + subMenu.id + '" id="menu_' + i + '" name="hospitalList[' + menuIndex + '].id" checked="checked" />' + subMenu.hospitalName + '</label>';

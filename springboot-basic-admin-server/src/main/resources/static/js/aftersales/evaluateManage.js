@@ -19,8 +19,10 @@ function loadAdminHospital() {
                     rows.forEach(hospital => {
                         html += '<option value="' + hospital.hospitalName + '">' + hospital.hospitalName + '</option>'
                     })
+                    $("#hospitalName").append(html)
+                } else {
+                    $("#hospitalName").html('<option value="-1"></option>')
                 }
-                $("#hospitalName").append(html)
             }
         }
     });

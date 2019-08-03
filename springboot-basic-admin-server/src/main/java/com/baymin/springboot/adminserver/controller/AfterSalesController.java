@@ -153,6 +153,8 @@ public class AfterSalesController {
                     hospitalNameSet.add(hospital.getHospitalName());
                 }
             }
+        } else if (StringUtils.equals("-1", hospitalName)) {
+            hospitalNameSet.add("NO_HOSPITAL");
         } else {
             hospitalNameSet.add(hospitalName);
         }

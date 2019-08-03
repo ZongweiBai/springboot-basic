@@ -227,6 +227,9 @@ function initHospital() {
                         $("#hospitalAddress").append("<option value='" + rows[index].hospitalName + "'>" + rows[index].hospitalName + "</option>");
                         $("#allHospitalAddress").append("<option value='" + rows[index].hospitalName + "'>" + rows[index].hospitalName + "</option>");
                     }
+                } else {
+                    $("#hospitalAddress").html('<option value="-1"></option>')
+                    $("#allHospitalAddress").html('<option value="-1"></option>')
                 }
             }
         }

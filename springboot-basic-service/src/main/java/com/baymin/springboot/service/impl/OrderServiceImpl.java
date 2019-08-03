@@ -1160,7 +1160,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate) {
+    public List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate, Set<String> hospitalNameSet) {
         if (Objects.isNull(minDate)) {
             minDate = DateUtil.dayBegin("1970-01-01");
         }
@@ -1171,11 +1171,17 @@ public class OrderServiceImpl implements IOrderService {
         StringBuilder sb = new StringBuilder("select DATE_FORMAT(t.ORDER_TIME,'%Y-%m-%d') as orderTime, t.SERVICE_STAFF_ID as staffId, count(t.ID) as orderCount, CAST(COALESCE(sum(t.TOTAL_FEE), 0) AS DECIMAL(18,2)) as totalFee\n" +
                 " from T_ORDER t \n" +
                 " where t.STATUS=4 and t.pay_Time is not null and t.ORDER_TIME>=? and t.ORDER_TIME<=? and t.CARE_TYPE in ('1') ");
-
+        if (CollectionUtils.isNotEmpty(hospitalNameSet)) {
+            sb.append(" and t.HOSPITAL_NAME in(' ");
+            sb.append(String.join("','", hospitalNameSet));
+            sb.append("')");
+        }
         if (StringUtils.isNotBlank(serviceStaffId)) {
             sb.append(" and t.SERVICE_STAFF_ID='").append(serviceStaffId).append("'");
         }
         sb.append("   group by DATE_FORMAT(t.ORDER_TIME,'%Y-%m-%d'), t.SERVICE_STAFF_ID order by orderTime desc");
+
+        logger.info(sb.toString());
 
         List<HospitalBizVo> jsVoList = jdbcTemplate.query(sb.toString(), new Object[]{minDate, maxDate}, new HospitalBizVo());
 

@@ -174,6 +174,8 @@ public class ReportController {
                     hospitalNameSet.add(hospital.getHospitalName());
                 }
             }
+        } else if (StringUtils.equals("-1", hospitalAddress)) {
+            hospitalNameSet.add("NO_HOSPITAL");
         } else {
             hospitalNameSet.add(hospitalAddress);
         }
@@ -188,13 +190,29 @@ public class ReportController {
     @ResponseBody
     @PostMapping(value = "queryHospitalBizReport")
     public Map<String, Object> queryHospitalBizReport(Pageable pageable, String serviceStaffId,
-                                                      String datemin, String datemax, HttpServletRequest request) {
+                                                      String datemin, String datemax, String hospitalName, HttpServletRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
         Date minDate = DateUtil.dayBegin(datemin);
 
+        Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
+
+        Set<String> hospitalNameSet = new HashSet<>();
+        if (StringUtils.isBlank(hospitalName)) {
+            List<Hospital> hospitalList = hospitalService.getUserHospital(sysUser.getId());
+            if (CollectionUtils.isNotEmpty(hospitalList)) {
+                for (Hospital hospital : hospitalList) {
+                    hospitalNameSet.add(hospital.getHospitalName());
+                }
+            }
+        } else if (StringUtils.equals("-1", hospitalName)) {
+            hospitalNameSet.add("NO_HOSPITAL");
+        } else {
+            hospitalNameSet.add(hospitalName);
+        }
+
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
-        List<HospitalBizVo> queryResult = orderService.queryHospitalBizReport(pageRequest, serviceStaffId, maxDate, minDate);
+        List<HospitalBizVo> queryResult = orderService.queryHospitalBizReport(pageRequest, serviceStaffId, maxDate, minDate, hospitalNameSet);
         resultMap.put(WebConstant.TOTAL, queryResult.size());
         resultMap.put(WebConstant.ROWS, queryResult);
         return resultMap;
@@ -300,6 +318,8 @@ public class ReportController {
                     hospitalNameSet.add(hospital.getHospitalName());
                 }
             }
+        } else if (StringUtils.equals("-1", hospitalAddress)) {
+            hospitalNameSet.add("NO_HOSPITAL");
         } else {
             hospitalNameSet.add(hospitalAddress);
         }

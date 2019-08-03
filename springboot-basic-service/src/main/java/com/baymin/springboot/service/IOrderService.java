@@ -61,7 +61,7 @@ public interface IOrderService {
 
     List<JSVo> queryOrderJSReport(PageRequest pageRequest, String careTypes, String hospitalAddress, Date maxDate, Date minDate);
 
-    List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate);
+    List<HospitalBizVo> queryHospitalBizReport(PageRequest pageRequest, String serviceStaffId, Date maxDate, Date minDate, Set<String> hospitalNameSet);
 
     List<Order> queryHospitalOrder(String orderTime, String staffId);
 
