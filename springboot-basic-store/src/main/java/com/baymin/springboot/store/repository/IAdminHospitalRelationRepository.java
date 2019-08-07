@@ -16,4 +16,7 @@ public interface IAdminHospitalRelationRepository extends PagingAndSortingReposi
     @Modifying
     @Query("delete from AdminHospitalRelation where adminId = :adminId")
     void deleteByAdminId(@Param("adminId") String adminId);
+
+    @Query("select s from AdminHospitalRelation s where s.hospitalId in :hospitalIds")
+    List<AdminHospitalRelation> findByHospitalIds(@Param("hospitalIds") List<String> hospitalIds);
 }

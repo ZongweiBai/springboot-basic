@@ -1,12 +1,14 @@
 package com.baymin.springboot.service.impl;
 
 import com.baymin.springboot.service.IAdminService;
+import com.baymin.springboot.service.IHospitalService;
 import com.baymin.springboot.service.IOrganizationService;
 import com.baymin.springboot.store.entity.*;
 import com.baymin.springboot.store.repository.IAdminHospitalRelationRepository;
 import com.baymin.springboot.store.repository.IAdminRepository;
 import com.baymin.springboot.store.repository.IHospitalRepository;
 import com.baymin.springboot.store.repository.ISysRoleRepository;
+import com.querydsl.core.BooleanBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class AdminServiceImpl implements IAdminService {
     @Autowired
     private IAdminHospitalRelationRepository adminHospitalRelationRepository;
 
+    @Autowired
+    private IHospitalService hospitalService;
+
     @Override
     public Admin getAdminByAccount(String account) {
         return adminRepository.findByAccount(account);
@@ -58,8 +63,33 @@ public class AdminServiceImpl implements IAdminService {
     }
 
     @Override
-    public Page<Admin> queryAdminForPage(Pageable pageable) {
-        Page<Admin> adminPage = adminRepository.findAll(pageable);
+    public Page<Admin> queryAdminForPage(Pageable pageable, String mobile, String account, String adminName, String hospitalName) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        QAdmin qAdmin = QAdmin.admin;
+        if (StringUtils.isNotBlank(mobile)) {
+            builder.and(qAdmin.mobile.likeIgnoreCase("%" + mobile + "%"));
+        }
+        if (StringUtils.isNotBlank(account)) {
+            builder.and(qAdmin.account.likeIgnoreCase("%" + account + "%"));
+        }
+        if (StringUtils.isNotBlank(adminName)) {
+            builder.and(qAdmin.adminName.likeIgnoreCase("%" + adminName + "%"));
+        }
+        if (StringUtils.isNotBlank(hospitalName)) {
+            List<Hospital> hospitalList = hospitalService.queryHospitalByName(hospitalName);
+            if (CollectionUtils.isEmpty(hospitalList)) {
+                builder.and(qAdmin.id.eq("-1"));
+            } else {
+                List<AdminHospitalRelation> relationList = adminHospitalRelationRepository.findByHospitalIds(hospitalList.stream().map(Hospital::getId).collect(Collectors.toList()));
+                if (CollectionUtils.isNotEmpty(relationList)) {
+                    builder.and(qAdmin.id.in(relationList.stream().map(AdminHospitalRelation::getAdminId).collect(Collectors.toList())));
+                } else {
+                    builder.and(qAdmin.id.eq("-1"));
+                }
+            }
+        }
+        Page<Admin> adminPage = adminRepository.findAll(builder, pageable);
         if (CollectionUtils.isNotEmpty(adminPage.getContent())) {
             List<Organization> organizationList = organizationService.getAllOrg();
             List<SysRole> roleList = sysRoleRepository.findAllRoles();

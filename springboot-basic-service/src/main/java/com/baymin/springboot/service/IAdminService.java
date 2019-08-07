@@ -13,7 +13,7 @@ public interface IAdminService {
 
     void updateAdminForManage(Admin admin);
 
-    Page<Admin> queryAdminForPage(Pageable pageable);
+    Page<Admin> queryAdminForPage(Pageable pageable, String mobile, String account, String adminName, String hospitalName);
 
     Admin getAdminById(String userId);
 

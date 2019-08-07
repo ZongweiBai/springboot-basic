@@ -14,7 +14,11 @@ function loadTable() {
                 size: params.limit,  //页面大小
                 page: params.offset / params.limit,
                 sort: params.sort,
-                order: params.order
+                order: params.order,
+                account: $("#account").val(),
+                adminName: $("#adminName").val(),
+                hospitalName: $("#hospitalName").val(),
+                mobile: $("#mobile").val()
             };
             return paramsMap;
         },

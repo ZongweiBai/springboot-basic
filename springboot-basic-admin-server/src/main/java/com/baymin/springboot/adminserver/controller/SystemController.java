@@ -428,13 +428,13 @@ public class SystemController {
      ******************************************************/
     @ResponseBody
     @RequestMapping(value = "queryAdminForPage", method = RequestMethod.POST)
-    public Map<String, Object> queryAdminForPage(Pageable pageable, HttpServletRequest request) {
+    public Map<String, Object> queryAdminForPage(Pageable pageable, String mobile, String account, String adminName, String hospitalName) {
         Map<String, Object> resultMap = new HashMap<>();
 
         LinkedHashMap<String, String> order = new LinkedHashMap<>();
         order.put("createTime", "desc");
         pageable.getSort().and(new Sort(Sort.Direction.DESC, "createTime"));
-        Page<Admin> sysMenuQueryResult = adminService.queryAdminForPage(pageable);
+        Page<Admin> sysMenuQueryResult = adminService.queryAdminForPage(pageable, mobile, account, adminName, hospitalName);
         resultMap.put(WebConstant.TOTAL, sysMenuQueryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, sysMenuQueryResult.getContent());
         return resultMap;

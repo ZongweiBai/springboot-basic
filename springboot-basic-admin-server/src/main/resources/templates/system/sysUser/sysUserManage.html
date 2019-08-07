@@ -16,16 +16,25 @@
 <nav class="breadcrumb"><i style="font-size: 18px;" class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 系统管理 <span class="c-gray en">&gt;</span> 用户管理</nav>
 <div class="pd-20">
 
-	<div class="cl pd-5 bg-1 bk-gray mt-20">
-		<button type="submit" class="btn btn-success" onclick="$('#menuTable').bootstrapTable('refresh');">
-			<i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i>刷新
-		</button>
-        <span class="r">
+	<form id="menuForm" name="menuForm" onsubmit="$('#menuTable').bootstrapTable('refresh');return false;" method="post">
+		<div style="margin-top: 10px;margin-bottom: 10px;">
+			用户账号：
+			<input type="text" class="input-text" style="width:120px" placeholder="输入用户账号" id="account" name="account">
+			姓名：
+			<input type="text" class="input-text" style="width:120px" placeholder="输入姓名" id="adminName" name="adminName">
+			手机号码：
+			<input type="text" class="input-text" style="width:120px" placeholder="输入手机号码" id="mobile" name="mobile">
+			医院：
+			<input type="text" class="input-text" style="width:120px" placeholder="输入医院名称" id="hospitalName" name="hospitalName">
+
+			<button type="submit" class="btn btn-success" id="" name=""><i style="font-size: 18px;" class="Hui-iconfont">&#xe665;</i>搜索</button>
+			<span class="r">
             <a href="javascript:;" onclick="addRole();" class="btn btn-primary radius">
                 <i style="font-size: 18px;" class="Hui-iconfont">&#xe600;</i> 新增用户
             </a>
 		</span>
-	</div>
+		</div>
+	</form>
 	<table id="menuTable" class="table table-border table-bordered table-bg">
 
 	</table>
