@@ -143,6 +143,11 @@ public class AdminServiceImpl implements IAdminService {
     }
 
     @Override
+    public void deleteAdminById(String userId) {
+        adminRepository.deleteById(userId);
+    }
+
+    @Override
     public List<Admin> queryAdminByRoleType(String roleType) {
         List<SysRole> roleList = sysRoleRepository.findByRoleType(roleType);
         if (CollectionUtils.isEmpty(roleList)) {

@@ -234,6 +234,28 @@ public class SystemController {
         return reMap;
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/deleteUser", method = RequestMethod.POST)
+    public Map<String, Object> deleteUser(String userId, HttpServletRequest request) throws Exception {
+        Map<String, Object> reMap = new HashMap<>();
+        HttpSession session = request.getSession();
+        Admin sysUser = (Admin) session.getAttribute(WebConstant.ADMIN_USER_SESSION);
+        if (sysUser == null) {
+            reMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            reMap.put(WebConstant.MESSAGE, "请先登录");
+            return reMap;
+        }
+        try {
+            adminService.deleteAdminById(userId);
+            reMap.put(WebConstant.RESULT, WebConstant.SUCCESS);
+        } catch (Exception e) {
+            e.printStackTrace();
+            reMap.put(WebConstant.RESULT, WebConstant.FAULT);
+            reMap.put(WebConstant.MESSAGE, "删除用户失败");
+        }
+        return reMap;
+    }
+
     /**
      * wap图片上传，
      *

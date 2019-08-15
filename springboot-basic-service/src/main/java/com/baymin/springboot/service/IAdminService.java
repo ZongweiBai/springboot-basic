@@ -20,4 +20,6 @@ public interface IAdminService {
     void saveAdmin(Admin admin, Admin sysUser);
 
     List<Admin> queryAdminByRoleType(String roleType);
+
+    void deleteAdminById(String userId);
 }

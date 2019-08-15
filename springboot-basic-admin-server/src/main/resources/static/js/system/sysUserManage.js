@@ -100,6 +100,7 @@ function loadTable() {
                         if (row.grade == 2) {
                             var content = '<a href="javascript:void(0);" style="text-decoration:none;" onclick="editRole(\'' + value + '\')" title="编辑"><i style="font-size: 18px;" class="Hui-iconfont">&#xe6df;</i></a>&nbsp;';
                             content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="resetPsd(\'' + row.account + '\')" title="重置密码"><i style="font-size: 18px;" class="Hui-iconfont">&#xe68f;</i></a>&nbsp;';
+                            content += '<a href="javascript:void(0);" style="text-decoration:none;" onclick="deleteUser(\'' + value + '\')" title="删除用户"><i style="font-size: 18px;" class="Hui-iconfont">&#xe609;</i></a>&nbsp;';
                             return content;
                         } else {
                             return "";
@@ -155,4 +156,27 @@ function resetPsd(account) {
             }
         }
     });
+}
+
+function deleteUser(userId) {
+    tip.confirm("确定要删除吗？删除后无法恢复！", function () {
+        $.ajax({
+            type: "POST",
+            url: contextPath + "/system/deleteUser",
+            data: {
+                "userId": userId
+            },
+            success: function (data) {
+                if (data.result == 200) {
+                    tip.alertSuccess("删除成功", refreshData);
+                } else {
+                    tip.alertError("删除失败");
+                }
+            }
+        });
+    });
+}
+
+var refreshData = function () {
+    $('#menuTable').bootstrapTable('refresh');
 }

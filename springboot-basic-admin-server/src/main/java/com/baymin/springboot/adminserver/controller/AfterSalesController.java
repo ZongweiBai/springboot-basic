@@ -145,23 +145,23 @@ public class AfterSalesController {
 
         Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
 
-        Set<String> hospitalNameSet = new HashSet<>();
-        if (StringUtils.isBlank(hospitalName)) {
-            List<Hospital> hospitalList = hospitalService.getUserHospital(sysUser.getId());
-            if (CollectionUtils.isNotEmpty(hospitalList)) {
-                for (Hospital hospital : hospitalList) {
-                    hospitalNameSet.add(hospital.getHospitalName());
-                }
-            }
-        } else if (StringUtils.equals("-1", hospitalName)) {
-            hospitalNameSet.add("NO_HOSPITAL");
-        } else {
-            hospitalNameSet.add(hospitalName);
-        }
+//        Set<String> hospitalNameSet = new HashSet<>();
+//        if (StringUtils.isBlank(hospitalName)) {
+//            List<Hospital> hospitalList = hospitalService.getUserHospital(sysUser.getId());
+//            if (CollectionUtils.isNotEmpty(hospitalList)) {
+//                for (Hospital hospital : hospitalList) {
+//                    hospitalNameSet.add(hospital.getHospitalName());
+//                }
+//            }
+//        } else if (StringUtils.equals("-1", hospitalName)) {
+//            hospitalNameSet.add("NO_HOSPITAL");
+//        } else {
+//            hospitalNameSet.add(hospitalName);
+//        }
 
         PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(),
                 new Sort(Sort.Direction.DESC, "createTime"));
-        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageRequest, grade, orderId, auditStatus, maxDate, minDate, hospitalNameSet);
+        Page<Evaluate> queryResult = afterSalesService.queryEvaluatePage(pageRequest, grade, orderId, auditStatus, maxDate, minDate, null);
         resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
         resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
