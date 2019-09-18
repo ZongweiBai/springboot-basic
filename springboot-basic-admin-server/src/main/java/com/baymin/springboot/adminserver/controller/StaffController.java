@@ -57,7 +57,7 @@ public class StaffController {
         Map<String, Object> resultMap = new HashMap<>();
         Admin sysUser = (Admin) request.getSession().getAttribute(WebConstant.ADMIN_USER_SESSION);
         try {
-            long count = staffService.checkUniqueMobile(serviceStaff.getMobile(), null);
+            long count = staffService.checkUniqueMobile(serviceStaff.getMobile(), serviceStaff.getId());
             if (count > 0) {
                 resultMap.put(WebConstant.RESULT, WebConstant.FAULT);
                 resultMap.put(WebConstant.MESSAGE, "该手机号码已注册！");
