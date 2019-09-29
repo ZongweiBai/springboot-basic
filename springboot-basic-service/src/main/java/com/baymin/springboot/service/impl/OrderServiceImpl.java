@@ -1365,7 +1365,7 @@ public class OrderServiceImpl implements IOrderService {
     }
 
     @Override
-    public Page<Order> queryQuickOrderForPage(PageRequest pageRequest, Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope) {
+    public Page<Order> queryQuickOrderForPage(PageRequest pageRequest, Date minDate, Date maxDate, String hospitalName, Date paymaxDate, Date payminDate, String queryType, String serviceScope, String department) {
         BooleanBuilder builder = new BooleanBuilder();
         QOrder qOrder = QOrder.order;
 
@@ -1384,6 +1384,9 @@ public class OrderServiceImpl implements IOrderService {
         }
         if (Objects.nonNull(hospitalName)) {
             builder.and(qOrder.hospitalName.eq(hospitalName));
+        }
+        if (StringUtils.isNotBlank(department)) {
+            builder.and(qOrder.hospitalDepartment.eq(department));
         }
         if (StringUtils.equals("REFUND", queryType)) {
             builder.and(qOrder.refundStatus.eq(CommonDealStatus.COMPLETED));

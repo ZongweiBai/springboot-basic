@@ -60,10 +60,19 @@ function loadTable() {
                 title: '患者',
                 align: 'center',
                 formatter: function (value, row, index) {
-                    if (!isEmpty(value)) {
-                        return value.nickName + "(" + value.account + ")";
+                    if (row.orderSource === 'WECHAT_QUICK') {
+                        var orderExt = row.orderExt
+                        if (!isEmpty(orderExt)) {
+                            return orderExt.contact + "(" + orderExt.contactMobile + ")";
+                        } else {
+                            return "-";
+                        }
                     } else {
-                        return "-";
+                        if (!isEmpty(value)) {
+                            return value.nickName + "(" + value.account + ")";
+                        } else {
+                            return "-";
+                        }
                     }
                 }
             },

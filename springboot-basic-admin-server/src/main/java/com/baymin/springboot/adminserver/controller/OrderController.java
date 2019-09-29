@@ -95,7 +95,7 @@ public class OrderController {
 
     @ResponseBody
     @PostMapping(value = "queryQuickOrder")
-    public Map<String, Object> queryQuickOrder(String datemin, String datemax, String serviceScope,
+    public Map<String, Object> queryQuickOrder(Pageable pageable, String datemin, String datemax, String serviceScope,
                                                String paydatemin, String paydatemax, String hospitalName, String department) {
         Map<String, Object> resultMap = new HashMap<>();
         Date maxDate = DateUtil.dayEnd(datemax);
@@ -103,9 +103,10 @@ public class OrderController {
         Date paymaxDate = DateUtil.dayEnd(paydatemax);
         Date payminDate = DateUtil.dayBegin(paydatemin);
 
-        List<Order> queryResult = orderService.queryQuickOrder(minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL_WITH_PAID", serviceScope, department);
-        resultMap.put(WebConstant.TOTAL, queryResult.size());
-        resultMap.put(WebConstant.ROWS, queryResult);
+        PageRequest pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), new Sort(Sort.Direction.DESC, "orderTime"));
+        Page<Order> queryResult = orderService.queryQuickOrderForPage(pageRequest, minDate, maxDate, hospitalName, paymaxDate, payminDate, "NORMAL_WITH_PAID", serviceScope, department);
+        resultMap.put(WebConstant.TOTAL, queryResult.getTotalElements());
+        resultMap.put(WebConstant.ROWS, queryResult.getContent());
         return resultMap;
     }
 
