@@ -127,8 +127,13 @@ function loadDataInfo(refundId) {
                 $("#refundFeeTd").html(refund.refundFee + " 元");
                 if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
                     $("#serviceDuration").html(orderExt.serviceDuration + "天");
+                    serviceDuration = orderExt.serviceDuration;
+                } else if (order.careType == 'REHABILITATION') {
+                    $("#serviceDuration").html(orderExt.serviceNumber + "次");
+                    serviceDuration = orderExt.serviceNumber;
                 } else {
                     $("#serviceDuration").html(orderExt.serviceDuration + "次");
+                    serviceDuration = orderExt.serviceDuration;
                 }
                 $("#refundDesc").html(refund.refundDesc);
                 if (order.careType == 'HOSPITAL_CARE' || order.careType == 'HOME_CARE') {
@@ -147,7 +152,6 @@ function loadDataInfo(refundId) {
                 $("#bankAccountNumber").html(refund.bankAccountNumber);
 
                 careType = order.careType;
-                serviceDuration = orderExt.serviceDuration;
                 totalFee = order.totalFee;
 
                 $("#id").val(refund.id);
