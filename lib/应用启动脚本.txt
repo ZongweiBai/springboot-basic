@@ -1,0 +1,18 @@
+# 重启Docker
+systemctl restart docker
+
+# 启动mysql nginx
+docker restart mysql_master
+docker restart nginx
+
+# 查看mysql、redis和nginx的状态
+docker container ls
+
+# 启动应用
+cd /var/lib/modules/
+./Admin-Server/bin/Admin_Server.sh restart
+./API-Server/bin/API_Server.sh restart
+./Timer-Server/bin/Timer_Server.sh restart
+
+# 查看应用状态
+jps
