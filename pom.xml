@@ -22,7 +22,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
-        <springboot.version>2.0.4.RELEASE</springboot.version>
+        <springboot.version>2.5.12</springboot.version>
         <mysql.version>8.0.12</mysql.version>
         <hibernate-validator.version>6.1.0.Final</hibernate-validator.version>
         <el-api.version>3.0.1-b06</el-api.version>
